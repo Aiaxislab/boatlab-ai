@@ -103,6 +103,6 @@ def predict(race: dict, lanes: list[float], runs: dict, n_buy: int = 6) -> dict:
     return dict(
         scores=scores, place=pp, marks=marks, order=[i + 1 for i in order],
         top5=[(c, p) for c, p in ranked[:5]],
-        buy=[c for c, _ in buy], buy_prob=sum(p for _, p in buy),
+        buy=[c for c, _ in buy], buy_each=[p for _, p in buy], buy_prob=sum(p for _, p in buy),
         trio=[c for c, _ in trio_ranked[:3]], trio_prob=sum(p for _, p in trio_ranked[:3]),
     )

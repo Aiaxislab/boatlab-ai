@@ -68,6 +68,12 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
   <p class="muted" style="margin-bottom:0">毎朝の処理で、前日までに答え合わせできたレースが1行ずつ追加されます。クリアボタンを押すまで消えません（クリアすると、その日より前のレースは二度と追加されません）。</p>
 </div>
 
+<h2>毎朝のメール</h2>
+<div class="panel">
+  <p id="mail-meta" class="muted" style="margin-top:0">読み込み中…</p>
+  <div class="row"><button id="mail-test">今日の分をいま送ってみる</button></div>
+</div>
+
 <h2>絞り込み</h2>
 <div class="panel">
   <div class="row">
@@ -81,6 +87,7 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
     <label>会場 <select id="venue"><option value="">すべて</option></select></label>
     <label>レース <select id="race"><option value="">すべて</option></select></label>
     <label>曜日 <select id="week"><option value="">すべて</option></select></label>
+    <label>予想的中確率 <select id="prob"><option value="">すべて</option></select></label>
   </div>
 </div>
 
@@ -95,7 +102,7 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 <div class="note">
 <b>数え方</b>　◎1着率：本命が1着になった割合。◎3着内率：本命が3着以内に入った割合。予想1位的中：一番確率が高いと出した3連単1点が当たった割合。
 買い目的中率：PDFの3連単6点のどれかが当たった割合。回収率：6点を100円ずつ買ったときの払戻÷購入額（100%超でプラス）。収支：払戻−購入額。
-3連複：安定策の3点を100円ずつ買ったときの数字。レース数が10未満の行は薄く表示しています。表の見出しを押すと並べ替えできます。
+3連複：安定策の3点を100円ずつ買ったときの数字。予想的中確率：PDFに載せた「買い目の的中確率」。予想的中確率別のタブで、その確率帯のレースが実際に何%当たったかを見られます。レース数が10未満の行は薄く表示しています。表の見出しを押すと並べ替えできます。
 </div>
 </main>
 <script>
@@ -130,7 +137,7 @@ function parseCSV(text) {
   return rows.filter((r) => r.length > 1);
 }
 
-let RACES = [], TAB = "venue", SORT = null;
+let RACES = [], TAB = "prob", SORT = null;
 
 function toRaces(rows) {
   const [head, ...body] = rows;
@@ -142,6 +149,7 @@ function toRaces(rows) {
     honmei_win: +g(r, "本命1着"), honmei_top3: +g(r, "本命3着内"), top1_hit: +g(r, "予想1位的中"),
     buy: g(r, "買い目"), buy_hit: +g(r, "買い目的中"), buy_cost: +g(r, "購入額"), buy_return: +g(r, "払戻"),
     trio: g(r, "3連複買い目"), trio_result: g(r, "3連複結果"), trio_hit: +g(r, "3連複的中"), trio_cost: +g(r, "3連複購入額"), trio_return: +g(r, "3連複払戻"),
+    prob: g(r, "予想的中確率") ? +g(r, "予想的中確率") / 100 : null,
   }));
 }
 
@@ -149,17 +157,19 @@ function summary(rs) {
   const n = rs.length, s = (k) => rs.reduce((a, r) => a + r[k], 0);
   if (!n) return { races: 0 };
   const bc = s("buy_cost"), br = s("buy_return"), tc = s("trio_cost"), tr = s("trio_return");
-  return { races: n, honmei_win: s("honmei_win") / n, honmei_top3: s("honmei_top3") / n, top1_hit: s("top1_hit") / n,
+  const ps = rs.filter((r) => r.prob != null);
+  return { races: n, prob_avg: ps.length ? ps.reduce((a, r) => a + r.prob, 0) / ps.length : null, honmei_win: s("honmei_win") / n, honmei_top3: s("honmei_top3") / n, top1_hit: s("top1_hit") / n,
     buy_hit: s("buy_hit") / n, buy_roi: bc ? br / bc : null, buy_profit: br - bc, trio_hit: s("trio_hit") / n, trio_roi: tc ? tr / tc : null, trio_profit: tr - tc };
 }
 
 function filtered() {
-  const f = $("from").value, t = $("to").value, v = $("venue").value, r = $("race").value, w = $("week").value;
-  return RACES.filter((x) => (!f || x.date >= f) && (!t || x.date <= t) && (!v || x.jcd === v) && (!r || x.no === +r) && (!w || x.week === w));
+  const f = $("from").value, t = $("to").value, v = $("venue").value, r = $("race").value, w = $("week").value, p = $("prob").value;
+  return RACES.filter((x) => (!f || x.date >= f) && (!t || x.date <= t) && (!v || x.jcd === v) && (!r || x.no === +r) && (!w || x.week === w) && (!p || (x.prob != null && x.prob * 100 >= +p)));
 }
 
 const COLS = [
   ["races", "レース数", (v) => v.toLocaleString()],
+  ["prob_avg", "予想的中確率（平均）", "rate"],
   ["honmei_win", "◎1着率", "rate"], ["honmei_top3", "◎3着内率", "rate"], ["top1_hit", "予想1位的中", "rate"],
   ["buy_hit", "買い目的中率", "rate"], ["buy_roi", "回収率", "roi"], ["buy_profit", "収支", "yen"],
   ["trio_hit", "3連複的中率", "rate"], ["trio_roi", "3連複回収率", "roi"],
@@ -172,7 +182,9 @@ function cell(fmt, v) {
   return `<td class="n ${v > 0 ? "plus" : v < 0 ? "minus" : ""}">${yen(v)}</td>`;
 }
 
+const band = (p) => (p == null ? "—" : String(Math.min(9, Math.floor(p * 10))));
 const GROUPS = {
+  prob: ["予想的中確率別", (r) => band(r.prob), (k) => (k === "—" ? "記録なし" : k === "0" ? "10%未満" : k === "9" ? "90%以上" : `${k}0%台`)],
   venue: ["会場別", (r) => r.jcd, (k, rs) => rs[0].venue],
   race: ["レース別（1R〜12R）", (r) => String(r.no).padStart(2, "0"), (k) => +k + "R"],
   week: ["曜日別", (r) => String(WEEK.indexOf(r.week)), (k) => WEEK[+k] + "曜日"],
@@ -190,9 +202,11 @@ function renderGroup(rs) {
   let rows = [...m].map(([k, list]) => ({ k, label: label(k, list), ...summary(list) }));
   if (SORT) rows.sort((a, b) => ((a[SORT.k] ?? -Infinity) - (b[SORT.k] ?? -Infinity)) * SORT.dir);
   else rows.sort((a, b) => (a.k < b.k ? -1 : 1) * (DEFAULT_ORDER[TAB] || 1));
-  const head = `<tr><th data-k="">${GROUPS[TAB][0].replace(/別.*$/, "") || "区分"}</th>${COLS.map(([k, t]) => `<th class="n ${SORT && SORT.k === k ? "sorted" + (SORT.dir > 0 ? " asc" : "") : ""}" data-k="${k}">${t}</th>`).join("")}</tr>`;
+  const head = `<tr><th data-k="">${GROUPS[TAB][0].replace(/別.*$/, "").replace("予想的中確率", "確率帯") || "区分"}</th>${COLS.map(([k, t]) => `<th class="n ${SORT && SORT.k === k ? "sorted" + (SORT.dir > 0 ? " asc" : "") : ""}" data-k="${k}">${t}</th>`).join("")}</tr>`;
   $("table").innerHTML = `<table>${head}${rows.map((r) => `<tr class="${r.races < 10 ? "few" : ""}"><td>${esc(r.label)}</td>${COLS.map(([k, , f]) => cell(f, r[k])).join("")}</tr>`).join("")}</table>`;
-  $("table-note").textContent = `${rows.length}行`;
+  $("table-note").textContent = TAB === "prob"
+    ? "「予想的中確率（平均）」と「買い目的中率」が近いほど、予想の確率が当てになっているということです。高い確率帯ほど買い目的中率も高ければ、確率の高いレースを選んで買う意味があります。"
+    : `${rows.length}行`;
 }
 
 const LIST_MAX = 500;
@@ -241,6 +255,10 @@ async function loadUsage() {
       g("CSV（レースごとの成績）", u.csv, ""),
       g("PDF", u.pdf, `${u.pdfFiles}ファイル${u.oldestPdf ? "・" + u.oldestPdf + "から" : ""}`),
     ].join("");
+    $("mail-meta").textContent = u.mail
+      ? `毎朝6時〜8時半に、買い目の的中確率が${u.mailMin}%を超えたレースだけをメールで送ります（予想ができしだい1日1回）。`
+      : "まだ送り先が設定されていません（GitHub の Secrets に MAIL_TO を登録すると始まります）。";
+    $("mail-test").disabled = !u.mail;
     $("usage-note").textContent = `内訳：PDF ${bytes(u.pdf)}／CSV ${bytes(u.csv)}／公開データ ${bytes(u.data)}／ページ ${bytes(u.site)}${u.other ? "／その他 " + bytes(u.other) : ""}。PDFは30日たつと自動で消えます。Cloudflare R2 の無料枠は10GBまでです。`;
   } catch (e) {
     $("gauges").innerHTML = `<div class="panel muted">容量を読み込めませんでした。</div>`;
@@ -268,6 +286,7 @@ async function loadRaces() {
 
 $("race").innerHTML += Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1}R</option>`).join("");
 $("week").innerHTML += WEEK.map((w) => `<option value="${w}">${w}曜日</option>`).join("");
+$("prob").innerHTML += [30, 40, 50, 60, 70].map((p) => `<option value="${p}">${p}%以上</option>`).join("");
 $("tabs").innerHTML = Object.entries(GROUPS).map(([k, [t]]) => `<button class="chip ${k === TAB ? "on" : ""}" data-tab="${k}">${t}</button>`).join("");
 $("tabs").onclick = (e) => {
   const b = e.target.closest("[data-tab]"); if (!b) return;
@@ -282,8 +301,18 @@ $("table").onclick = (e) => {
   render();
 };
 document.querySelectorAll("[data-range]").forEach((b) => (b.onclick = () => setRange(b.dataset.range)));
-["from", "to", "venue", "race", "week"].forEach((id) => ($(id).onchange = () => { if (id === "from" || id === "to") document.querySelectorAll("[data-range]").forEach((b) => b.classList.remove("on")); render(); }));
+["from", "to", "venue", "race", "week", "prob"].forEach((id) => ($(id).onchange = () => { if (id === "from" || id === "to") document.querySelectorAll("[data-range]").forEach((b) => b.classList.remove("on")); render(); }));
 $("dl").onclick = () => { location.href = "races.csv?dl=1"; };
+$("mail-test").onclick = async () => {
+  $("mail-test").disabled = true;
+  try {
+    const r = await (await fetch("mail-test", { method: "POST", headers: { "x-boatlab-admin": "mail" } })).json();
+    alert(r.ok ? `${r.date} の予想で送りました（${r.count}レース）。メールを確認してください。` : r.reason);
+  } catch (e) {
+    alert("送れませんでした。ページを開き直してもう一度試してください。");
+  }
+  $("mail-test").disabled = false;
+};
 $("clear").onclick = async () => {
   const ans = prompt("レースごとの成績データをすべて消します。元に戻せません。\n先にCSVをダウンロードしておくことをおすすめします。\n\n消す場合は「クリア」と入力してください。");
   if (ans === null) return;

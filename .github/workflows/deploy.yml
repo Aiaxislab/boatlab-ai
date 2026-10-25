@@ -33,6 +33,7 @@ jobs:
           ADMIN_PATH: ${{ secrets.ADMIN_PATH }}
           ACCESS_TEAM: ${{ secrets.ACCESS_TEAM }}
           ACCESS_AUD: ${{ secrets.ACCESS_AUD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
         run: |
           args=(--var "SITE_BYTES:$(du -sb site | cut -f1)")
           if [ -n "$ADMIN_PATH" ] && [ -n "$ACCESS_TEAM" ]; then
@@ -41,4 +42,5 @@ jobs:
           else
             echo "::warning::ADMIN_PATH・ACCESS_TEAM が未登録なので、管理者ダッシュボードは表示されません（README参照）"
           fi
+          [ -n "$MAIL_TO" ] && args+=(--var "MAIL_TO:$MAIL_TO")
           npx wrangler deploy "${args[@]}"

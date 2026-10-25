@@ -97,6 +97,7 @@ jobs:
             npx wrangler r2 object put "boatlab/$key" --file "$f" --content-type "application/json; charset=utf-8" --remote
           done
           npx wrangler r2 object put boatlab/admin/races.csv --file out/admin/races.csv --content-type "text/csv; charset=utf-8" --remote
+          npx wrangler r2 object put boatlab/admin/picks.json --file out/admin/picks.json --content-type "application/json; charset=utf-8" --remote
           # 以前は成績を公開していた。今は管理者ダッシュボードだけで見るので、公開側のファイルは消す
           npx wrangler r2 object delete boatlab/data/stats.json --remote || true
 

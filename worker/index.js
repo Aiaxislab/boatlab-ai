@@ -3,6 +3,7 @@
 // 管理者ダッシュボードは admin.js（公開ページからはリンクしない・Cloudflare Access で守る）。
 
 import { handleAdmin } from "./admin.js";
+import { dailyMail } from "./mail.js";
 
 const VENUE_NAMES = { "01": "桐生", "02": "戸田", "03": "江戸川", "04": "平和島", "05": "多摩川", "06": "浜名湖", "07": "蒲郡", "08": "常滑", "09": "津", "10": "三国", "11": "びわこ", "12": "住之江", "13": "尼崎", "14": "鳴門", "15": "丸亀", "16": "児島", "17": "宮島", "18": "徳山", "19": "下関", "20": "若松", "21": "芦屋", "22": "福岡", "23": "唐津", "24": "大村" };
 
@@ -26,6 +27,11 @@ async function fromBucket(env, key) {
 }
 
 export default {
+  // 毎朝 6:00〜8:30（日本時間）に30分おき。今日の予想ができていれば、高確率のレースをメールする（1日1回）
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(dailyMail(env).then((r) => console.log(JSON.stringify(r))));
+  },
+
   async fetch(request, env) {
     const url = new URL(request.url);
     // workers.dev のURLで確認するときは BoatLab AI 側を表示する
