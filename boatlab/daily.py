@@ -12,7 +12,7 @@ import datetime as dt
 import json
 from pathlib import Path
 
-from . import grade, ledger, render, sources
+from . import grade, ledger, ml, render, sources
 from .parse import parse_program, parse_results
 from .venues import VENUES
 
@@ -102,18 +102,23 @@ def main() -> None:
     if args.venues:
         program = {k: v for k, v in program.items() if k in args.venues.split(",")}
 
+    # AI学習モデル（週1回の学習で「採用」になったものだけ）。無ければ今までの簡易モデル
+    ai = ml.load(OUT / "admin" / "ml" / "model.json")
+    model_name = f"AI {ai['trained_at'][:10]}" if ai else "簡易"
+    print(f"予想モデル: {model_name}")
+
     html_dir = OUT / "html"
     pdf_dir = OUT / "pdf" / today.isoformat()
     html_dir.mkdir(parents=True, exist_ok=True)
     pdf_dir.mkdir(parents=True, exist_ok=True)
 
-    preds = dict(date=today.isoformat(), generated=generated, venues={})
+    preds = dict(date=today.isoformat(), generated=generated, model=model_name, venues={})
     listing, pairs, picks = [], [], []
     for jcd in sorted(program):
         prog = program[jcd]
         if not prog["races"] or jcd not in VENUES:
             continue
-        ctx = render.venue_context(jcd, prog, today, history, generated)
+        ctx = render.venue_context(jcd, prog, today, history, generated, ai=ai)
         html = html_dir / f"{jcd}.html"
         html.write_text(render.render_html(ctx), encoding="utf-8")
         pairs.append((html, pdf_dir / f"{jcd}.pdf"))
@@ -155,7 +160,7 @@ def main() -> None:
     _save(STATE / "archive.json", archive)
     _save(OUT / "data" / "today.json", today_json)
     _save(OUT / "data" / "archive.json", archive)
-    _save(OUT / "admin" / "picks.json", dict(date=today.isoformat(), generated=generated, races=picks))
+    _save(OUT / "admin" / "picks.json", dict(date=today.isoformat(), generated=generated, model=model_name, races=picks))
     print(f"{today}: {len(listing)}場のPDFを作成しました")
 
 

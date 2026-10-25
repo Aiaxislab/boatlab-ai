@@ -87,6 +87,9 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 <div class="scroll" id="mail-table" style="margin-top:10px;max-height:520px;overflow-y:auto"></div>
 <p class="muted" id="mail-note"></p>
 
+<h2>AI学習モデル</h2>
+<div class="panel" id="model">読み込み中…</div>
+
 <h2>絞り込み</h2>
 <div class="panel">
   <div class="row">
@@ -163,6 +166,7 @@ function toRaces(rows) {
     buy: g(r, "買い目"), buy_hit: +g(r, "買い目的中"), buy_cost: +g(r, "購入額"), buy_return: +g(r, "払戻"),
     trio: g(r, "3連複買い目"), trio_result: g(r, "3連複結果"), trio_hit: +g(r, "3連複的中"), trio_cost: +g(r, "3連複購入額"), trio_return: +g(r, "3連複払戻"),
     prob: g(r, "予想的中確率") ? +g(r, "予想的中確率") / 100 : null,
+    model: g(r, "モデル") || "簡易",
   }));
 }
 
@@ -201,6 +205,7 @@ const GROUPS = {
   venue: ["会場別", (r) => r.jcd, (k, rs) => rs[0].venue],
   race: ["レース別（1R〜12R）", (r) => String(r.no).padStart(2, "0"), (k) => +k + "R"],
   week: ["曜日別", (r) => String(WEEK.indexOf(r.week)), (k) => WEEK[+k] + "曜日"],
+  model: ["予想モデル別", (r) => r.model, (k) => (k === "簡易" ? "簡易モデル" : k.replace(/^AI /, "AI学習モデル（") + "学習）")],
   month: ["月別", (r) => r.date.slice(0, 7), (k) => k.replace("-", "年") + "月"],
   day: ["日別", (r) => r.date, (k, rs) => `${k.slice(5).replace("-", "/")}（${rs[0].week}）`],
   venue_race: ["会場×レース", (r) => r.jcd + "-" + String(r.no).padStart(2, "0"), (k, rs) => `${rs[0].venue} ${rs[0].no}R`],
@@ -304,7 +309,7 @@ async function loadUsage() {
     $("mail-test").disabled = !u.mail;
     MAIL_MIN = u.mailMin;
     $("mail-min").innerHTML = u.mailChoices.map((p) => `<option value="${p}" ${p === u.mailMin ? "selected" : ""}>${p}%</option>`).join("");
-    $("usage-note").textContent = `内訳：PDF ${bytes(u.pdf)}／CSV ${bytes(u.csv)}／公開データ ${bytes(u.data)}／ページ ${bytes(u.site)}${u.other ? "／その他 " + bytes(u.other) : ""}。PDFは30日たつと自動で消えます。Cloudflare R2 の無料枠は10GBまでです。`;
+    $("usage-note").textContent = `内訳：PDF ${bytes(u.pdf)}／CSV ${bytes(u.csv)}／公開データ ${bytes(u.data)}／ページ ${bytes(u.site)}${u.ml ? "／AI学習データ " + bytes(u.ml) : ""}${u.other ? "／その他 " + bytes(u.other) : ""}。PDFは30日たつと自動で消えます。Cloudflare R2 の無料枠は10GBまでです。`;
   } catch (e) {
     $("gauges").innerHTML = `<div class="panel muted">容量を読み込めませんでした。</div>`;
   }
@@ -384,6 +389,46 @@ document.querySelectorAll("[data-mail]").forEach((b) => (b.onclick = () => {
 async function loadMailLog() {
   try { MAIL_LOG = await (await fetch("mail-log", { cache: "no-store" })).json(); } catch (e) { MAIL_LOG = []; }
 }
+
+// AI学習モデルの状態と、今の簡易モデルとの比べ方
+const W_NAMES = { nat: "全国勝率", nat2: "全国2連率", loc: "当地勝率（全国との差）", loc2: "当地2連率（全国との差）", loc_none: "当地初出走", motor: "モーター2連率", boat: "ボート2連率", age: "年齢", weight: "体重", A1: "級別A1", A2: "級別A2", B2: "級別B2", st: "今節の平均ST（遅いほど）", st_none: "今節初戦" };
+async function loadModel() {
+  let m = null;
+  try { m = await (await fetch("model", { cache: "no-store" })).json(); } catch (e) {}
+  if (!m) {
+    $("model").innerHTML = `<p class="muted" style="margin:0">まだ学習していません。毎週月曜3時に GitHub の「AIモデルの学習」が動きます（Actions から手動でも動かせます）。学習が終わるまでは、今までの簡易モデル（手で決めた重み）で予想します。</p>`;
+    return;
+  }
+  const c = m.check, a = c.ml, b = c.base;
+  const row = (t, k, f, better) => {
+    const x = a[k], y = b[k], win = better === "high" ? x > y : x < y;
+    return `<tr><td>${t}</td><td class="n ${win ? "plus" : ""}">${f(x)}</td><td class="n">${f(y)}</td></tr>`;
+  };
+  const p = (x) => pct(x);
+  const ex = (x) => pct(Math.exp(x));
+  const weights = Object.entries(m.main_weights || {}).filter(([k]) => W_NAMES[k]).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1]));
+  $("model").innerHTML = `
+    <p style="margin-top:0"><b>${m.adopted ? "採用中" : "不採用（簡易モデルのまま）"}</b>　${esc(m.trained_at)} に学習。
+    学習に使ったレース：${m.data.races.toLocaleString()}（${m.data.since}〜${m.data.until}）。調整した項目：${m.n_weights}個。</p>
+    <p class="muted">学習に使っていない直近の${c.races.toLocaleString()}レース（${c.since}〜${c.until}）で、今の簡易モデルと当たり具合を比べました。下の「実際の結果に付けていた確率」が高いほど良いモデルで、これが簡易モデルより高いときだけ採用します。</p>
+    <div class="scroll"><table style="min-width:0"><tr><th>比べた項目</th><th class="n">AI学習モデル</th><th class="n">簡易モデル</th></tr>
+    ${row("実際の3連単に付けていた確率（平均的な値）", "tri_logp", ex, "high")}
+    ${row("実際の1着艇に付けていた確率（平均的な値）", "win_logp", ex, "high")}
+    ${row("◎1着率", "honmei_win", p, "high")}
+    ${row("買い目（6点）的中率", "buy_hit", p, "high")}
+    ${row("回収率（6点を100円ずつ）", "buy_roi", p, "high")}
+    </table></div>
+    <h3 style="font-size:14px;margin:14px 0 6px">確率は当てになるか（AI学習モデル・検証期間）</h3>
+    <div class="scroll"><table style="min-width:0"><tr><th>買い目の的中確率</th><th class="n">レース数</th><th class="n">予想した確率（平均）</th><th class="n">実際の的中率</th></tr>
+    ${a.bands.map((x) => `<tr class="${x.races < 10 ? "few" : ""}"><td>${x.band}%台</td><td class="n">${x.races.toLocaleString()}</td><td class="n">${p(x.said)}</td><td class="n">${p(x.hit)}</td></tr>`).join("")}
+    </table></div>
+    <h3 style="font-size:14px;margin:14px 0 6px">学習した重み（主なもの）</h3>
+    <p class="muted" style="margin-top:0">プラスはその値が平均より高い艇ほど強い、マイナスは弱いという意味です。ほかに、場ごとのコースの有利さと、風・波・潮での変わり方を学習しています。</p>
+    <div class="scroll"><table style="min-width:0"><tr><th>項目</th><th class="n">重み</th></tr>
+    ${weights.map(([k, v]) => `<tr><td>${W_NAMES[k]}</td><td class="n ${v > 0 ? "plus" : "minus"}">${v > 0 ? "+" : ""}${v.toFixed(3)}</td></tr>`).join("")}
+    </table></div>`;
+}
+loadModel();
 
 setRange("all");
 Promise.all([loadMailLog(), loadUsage()]).then(loadRaces);

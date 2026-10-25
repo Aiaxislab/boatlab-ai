@@ -3,7 +3,7 @@ on:
   schedule:
     - cron: "30 20 * * *" # 毎日 5:30（日本時間）。GitHubの都合で数十分遅れることがある
   pull_request: # 変更の確認用。今日（日本時間）の分を作るだけで、データ保存とアップロードはしない
-    paths: ["boatlab/**", "templates/**", "scripts/**", ".github/workflows/daily.yml"]
+    paths: ["boatlab/**", "templates/**", "scripts/**", ".github/workflows/daily.yml", "requirements.txt"]
   workflow_dispatch:
     inputs:
       date:
@@ -65,8 +65,10 @@ jobs:
               echo "$out"; exit 1
             fi
           }
+          mkdir -p out/admin/ml
           get admin/races.csv
           get admin/meta.json
+          get admin/ml/model.json # AI学習モデル（週1回の学習で作る。無ければ簡易モデルで予想）
 
       - name: PDFを作る
         run: |

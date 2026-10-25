@@ -6,7 +6,7 @@ from statistics import mean
 
 from jinja2 import Environment, FileSystemLoader
 
-from . import conditions, model
+from . import conditions, ml, model
 from .venues import VENUES
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -98,7 +98,19 @@ def _why(race: dict, pred: dict, lanes: list[float], venue_name: str) -> list[di
     return out
 
 
-def venue_context(jcd: str, prog: dict, day: dt.date, history: dict, generated: str, n_buy: int = 6) -> dict:
+def ai_env(fc: dict | None, td: dict | None, yest: list[dict], hhmm: str) -> dict:
+    """AI学習モデルに渡す、そのレースの風・波・潮。朝の時点の情報なので、風は気象庁予報の文章からの目安、
+    波は前日のその場の平均（学習では実際の値を使っている）。"""
+    wind, wdir = ml.wind_from_forecast(fc.get("wind", "") if fc else "")
+    env = dict(wind=wind, dir=wdir, wave=round(mean(r["wave"] for r in yest)) if yest else None)
+    t = conditions.tide_at(td, hhmm)
+    if t and t["trend"] in ml.TIDE_TRENDS:
+        env.update(tide=t["trend"], tide_dev=round(t["level"] - sum(td["hourly"]) / 24))
+    return env
+
+
+def venue_context(jcd: str, prog: dict, day: dt.date, history: dict, generated: str, n_buy: int = 6,
+                  ai: dict | None = None) -> dict:
     v = VENUES[jcd]
     lanes, n_lane = model.lane_rates(history, jcd)
     runs = model.series_runs(history, jcd, day, prog["day"])
@@ -123,7 +135,13 @@ def venue_context(jcd: str, prog: dict, day: dt.date, history: dict, generated: 
             st = [x["st"] for x in b["runs_raw"] if x["st"] is not None]
             b["st_avg"] = mean(st) if st else None
             b["runs"] = _runs(b["runs_raw"], b["series"])
-        pred = model.predict(race, lanes, runs, n_buy=n_buy)
+        ai_scores = None
+        if ai:
+            boats = sorted(race["boats"], key=lambda b: b["waku"])
+            feats = ml.boat_features(boats, jcd, [b["st_avg"] for b in boats], ai_env(fc, td, yest, race["deadline"]))
+            by_waku = dict(zip([b["waku"] for b in boats], ml.scores(ai, feats)))
+            ai_scores = [by_waku[b["waku"]] for b in race["boats"]]
+        pred = model.predict(race, lanes, runs, n_buy=n_buy, scores=ai_scores)
         for b, (p1, p2, p3) in zip(race["boats"], pred["place"]):
             b.update(p1=_pct(p1), p2=_pct(p2), p3=_pct(p3))
         race = dict(race, pred=pred, pop_pct=conditions.pop_at(fc, race["deadline"]),
@@ -131,7 +149,13 @@ def venue_context(jcd: str, prog: dict, day: dt.date, history: dict, generated: 
         race["why"] = _why(race, pred, lanes, v["name"])
         races.append(race)
     lane_note = f"直近{n_lane}レース＋全国平均で補正" if n_lane else "全国平均（今後は場ごとの集計）"
-    return dict(date=day, weekday=WEEK[day.weekday()], generated=generated, n_buy=n_buy,
+    if ai:
+        model_note = (f"予測はAI学習モデル（過去{ai['data']['races']:,}レースの結果から重みを学習。{ai['trained_at'][:10]}更新）で、"
+                      "勝率・当地勝率・モーター・ボート・級別・年齢・体重・今節のスタート・場ごとのコースの有利さに加え、"
+                      "気象庁予報の風と潮位表の潮を使って計算しています。")
+    else:
+        model_note = "予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。"
+    return dict(date=day, weekday=WEEK[day.weekday()], generated=generated, n_buy=n_buy, model_note=model_note,
                 venue=dict(name=v["name"], title=prog["title"], day=prog["day"]),
                 races=races, cond=cond, lanes=lanes, lane_note=lane_note,
                 gloss=gloss(v["name"], lanes[0]),
