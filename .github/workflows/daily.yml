@@ -52,6 +52,22 @@ jobs:
           npm install --no-audit --no-fund
           npx playwright install chromium
 
+      - name: 管理者ダッシュボードのCSVを R2 から取ってくる
+        if: env.CLOUDFLARE_API_TOKEN != '' && github.event_name != 'pull_request'
+        run: |
+          # 無いとき（初回・クリア直後）だけ空から作り直す。通信エラーなどのときは止める（記録を消さないため）
+          get() {
+            if out=$(npx wrangler r2 object get "boatlab/$1" --file "out/$1" --remote 2>&1); then
+              echo "$1 を取得しました"
+            elif echo "$out" | grep -q "The specified key does not exist"; then
+              rm -f "out/$1"; echo "$1 はまだありません"
+            else
+              echo "$out"; exit 1
+            fi
+          }
+          get admin/races.csv
+          get admin/meta.json
+
       - name: PDFを作る
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -80,6 +96,9 @@ jobs:
             key="${f#out/}"
             npx wrangler r2 object put "boatlab/$key" --file "$f" --content-type "application/json; charset=utf-8" --remote
           done
+          npx wrangler r2 object put boatlab/admin/races.csv --file out/admin/races.csv --content-type "text/csv; charset=utf-8" --remote
+          # 以前は成績を公開していた。今は管理者ダッシュボードだけで見るので、公開側のファイルは消す
+          npx wrangler r2 object delete boatlab/data/stats.json --remote || true
 
       - name: 作ったPDFを Actions の画面から落とせるようにする
         uses: actions/upload-artifact@v4

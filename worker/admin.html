@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>管理者ダッシュボード</title>
+<style>
+:root{--ink:#14181b;--muted:#5d666c;--line:#d5dce3;--bg:#f5f7fa;--card:#fff;--accent:#0b5cad;--navy:#0a2550;--red:#c8102e;--good:#1d7f45;--soft:#e3eefa;--track:#e6ebf0;--warn:#d98a00}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#e8edf2;--muted:#9aa6b1;--line:#2b3540;--bg:#0e141b;--card:#161e27;--accent:#5aa9f0;--navy:#cfe2ff;--red:#ff6b7d;--good:#4cc27e;--soft:#1b2a3c;--track:#243040;--warn:#f0b44c}}
+:root[data-theme="dark"]{--ink:#e8edf2;--muted:#9aa6b1;--line:#2b3540;--bg:#0e141b;--card:#161e27;--accent:#5aa9f0;--navy:#cfe2ff;--red:#ff6b7d;--good:#4cc27e;--soft:#1b2a3c;--track:#243040;--warn:#f0b44c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,-apple-system,"Hiragino Sans",sans-serif;line-height:1.6;font-size:14px}
+header{background:linear-gradient(115deg,#051a3d,#0a3378 45%,#0d56b3);color:#fff;padding:16px}
+header .in,main{max-width:1100px;margin:0 auto}
+header h1{margin:0;font-size:20px}
+header p{margin:2px 0 0;font-size:12px;color:#cfe6ff}
+main{padding:16px}
+h2{font-size:17px;margin:26px 0 10px;color:var(--navy);border-left:4px solid var(--accent);padding-left:8px}
+.muted{color:var(--muted);font-size:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px}
+.gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.gauge .k{font-size:13px;font-weight:700}
+.gauge .v{font-size:22px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.meter{height:10px;background:var(--track);border-radius:5px;overflow:hidden;margin:6px 0}
+.meter i{display:block;height:100%;background:var(--accent);min-width:2px}
+.meter i.warn{background:var(--warn)}.meter i.bad{background:var(--red)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+label{font-size:13px}
+input,select,button{font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+button{cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+button.danger{border-color:var(--red);color:var(--red);font-weight:700}
+button.chip.on{background:var(--soft);border-color:var(--accent)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
+.kpi .k{font-size:12px;color:var(--muted)}
+.kpi .v{font-size:24px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:760px}
+td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;white-space:nowrap}
+th{color:var(--muted);font-weight:500;font-size:12px;cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card)}
+th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
+.n{text-align:right;font-variant-numeric:tabular-nums}
+.bar{display:inline-block;width:46px;height:6px;background:var(--track);border-radius:3px;margin-left:6px;vertical-align:1px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.plus{color:var(--good);font-weight:700}.minus{color:var(--red)}
+.hit{color:var(--good);font-weight:700}
+.few{opacity:.55}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+.note{background:var(--soft);border-radius:8px;padding:12px 14px;font-size:12px;margin-top:16px}
+</style>
+</head><body>
+<header><div class="in"><h1>BoatLab AI 管理者ダッシュボード</h1><p>このページはあなた専用です。公開ページからはリンクしていません。</p></div></header>
+<main>
+
+<h2>容量</h2>
+<div class="gauges" id="gauges"><div class="panel muted">読み込み中…</div></div>
+<p class="muted" id="usage-note"></p>
+
+<h2>レースごとの成績データ（CSV）</h2>
+<div class="panel">
+  <p id="csv-meta" class="muted" style="margin-top:0">読み込み中…</p>
+  <div class="row">
+    <button class="primary" id="dl">CSVをダウンロード</button>
+    <button class="danger" id="clear">データをクリア</button>
+  </div>
+  <p class="muted" style="margin-bottom:0">毎朝の処理で、前日までに答え合わせできたレースが1行ずつ追加されます。クリアボタンを押すまで消えません（クリアすると、その日より前のレースは二度と追加されません）。</p>
+</div>
+
+<h2>絞り込み</h2>
+<div class="panel">
+  <div class="row">
+    <label>期間 <input type="date" id="from"> 〜 <input type="date" id="to"></label>
+    <button class="chip" data-range="all">全期間</button>
+    <button class="chip" data-range="30">直近30日</button>
+    <button class="chip" data-range="7">直近7日</button>
+    <button class="chip" data-range="month">今月</button>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <label>会場 <select id="venue"><option value="">すべて</option></select></label>
+    <label>レース <select id="race"><option value="">すべて</option></select></label>
+    <label>曜日 <select id="week"><option value="">すべて</option></select></label>
+  </div>
+</div>
+
+<h2>全体</h2>
+<div class="kpis" id="kpis"></div>
+
+<h2>内訳</h2>
+<div class="tabs" id="tabs"></div>
+<div class="scroll" id="table"></div>
+<p class="muted" id="table-note"></p>
+
+<div class="note">
+<b>数え方</b>　◎1着率：本命が1着になった割合。◎3着内率：本命が3着以内に入った割合。予想1位的中：一番確率が高いと出した3連単1点が当たった割合。
+買い目的中率：PDFの3連単6点のどれかが当たった割合。回収率：6点を100円ずつ買ったときの払戻÷購入額（100%超でプラス）。収支：払戻−購入額。
+3連複：安定策の3点を100円ずつ買ったときの数字。レース数が10未満の行は薄く表示しています。表の見出しを押すと並べ替えできます。
+</div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pct = (x) => (x == null || isNaN(x) ? "―" : (x * 100).toFixed(1) + "%");
+const yen = (x) => (x > 0 ? "+" : "") + Math.round(x).toLocaleString() + "円";
+const WEEK = ["月", "火", "水", "木", "金", "土", "日"];
+const VENUES = ["桐生","戸田","江戸川","平和島","多摩川","浜名湖","蒲郡","常滑","津","三国","びわこ","住之江","尼崎","鳴門","丸亀","児島","宮島","徳山","下関","若松","芦屋","福岡","唐津","大村"];
+const jst = (d = new Date()) => new Date(d.getTime() + 9 * 3600e3).toISOString().slice(0, 10);
+const addDays = (iso, n) => jst(new Date(new Date(iso + "T00:00:00+09:00").getTime() + n * 864e5));
+
+function bytes(n) {
+  if (n < 1024) return n + " B";
+  const u = ["KB", "MB", "GB"]; let i = -1;
+  do { n /= 1024; i++; } while (n >= 1024 && i < 2);
+  return (n >= 100 ? n.toFixed(0) : n.toFixed(1)) + " " + u[i];
+}
+
+function parseCSV(text) {
+  const rows = []; let row = [], f = "", q = false;
+  text = text.replace(/^﻿/, "");
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === ",") { row.push(f); f = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && text[i + 1] === "\n") i++; row.push(f); rows.push(row); row = []; f = ""; }
+    else f += c;
+  }
+  if (f || row.length) { row.push(f); rows.push(row); }
+  return rows.filter((r) => r.length > 1);
+}
+
+let RACES = [], TAB = "venue", SORT = null;
+
+function toRaces(rows) {
+  const [head, ...body] = rows;
+  const ix = Object.fromEntries((head || []).map((h, i) => [h, i]));
+  const g = (r, k) => r[ix[k]];
+  return body.map((r) => ({
+    date: g(r, "日付"), week: g(r, "曜日"), jcd: g(r, "場コード"), venue: g(r, "会場"), no: +g(r, "レース"),
+    deadline: g(r, "締切"), result: g(r, "結果"), honmei: g(r, "本命"), top1: g(r, "予想1位"),
+    honmei_win: +g(r, "本命1着"), honmei_top3: +g(r, "本命3着内"), top1_hit: +g(r, "予想1位的中"),
+    buy: g(r, "買い目"), buy_hit: +g(r, "買い目的中"), buy_cost: +g(r, "購入額"), buy_return: +g(r, "払戻"),
+    trio: g(r, "3連複買い目"), trio_result: g(r, "3連複結果"), trio_hit: +g(r, "3連複的中"), trio_cost: +g(r, "3連複購入額"), trio_return: +g(r, "3連複払戻"),
+  }));
+}
+
+function summary(rs) {
+  const n = rs.length, s = (k) => rs.reduce((a, r) => a + r[k], 0);
+  if (!n) return { races: 0 };
+  const bc = s("buy_cost"), br = s("buy_return"), tc = s("trio_cost"), tr = s("trio_return");
+  return { races: n, honmei_win: s("honmei_win") / n, honmei_top3: s("honmei_top3") / n, top1_hit: s("top1_hit") / n,
+    buy_hit: s("buy_hit") / n, buy_roi: bc ? br / bc : null, buy_profit: br - bc, trio_hit: s("trio_hit") / n, trio_roi: tc ? tr / tc : null, trio_profit: tr - tc };
+}
+
+function filtered() {
+  const f = $("from").value, t = $("to").value, v = $("venue").value, r = $("race").value, w = $("week").value;
+  return RACES.filter((x) => (!f || x.date >= f) && (!t || x.date <= t) && (!v || x.jcd === v) && (!r || x.no === +r) && (!w || x.week === w));
+}
+
+const COLS = [
+  ["races", "レース数", (v) => v.toLocaleString()],
+  ["honmei_win", "◎1着率", "rate"], ["honmei_top3", "◎3着内率", "rate"], ["top1_hit", "予想1位的中", "rate"],
+  ["buy_hit", "買い目的中率", "rate"], ["buy_roi", "回収率", "roi"], ["buy_profit", "収支", "yen"],
+  ["trio_hit", "3連複的中率", "rate"], ["trio_roi", "3連複回収率", "roi"],
+];
+function cell(fmt, v) {
+  if (v == null) return `<td class="n">―</td>`;
+  if (typeof fmt === "function") return `<td class="n">${fmt(v)}</td>`;
+  if (fmt === "rate") return `<td class="n">${pct(v)}<span class="bar"><i style="width:${Math.min(100, v * 100)}%"></i></span></td>`;
+  if (fmt === "roi") return `<td class="n ${v >= 1 ? "plus" : ""}">${pct(v)}</td>`;
+  return `<td class="n ${v > 0 ? "plus" : v < 0 ? "minus" : ""}">${yen(v)}</td>`;
+}
+
+const GROUPS = {
+  venue: ["会場別", (r) => r.jcd, (k, rs) => rs[0].venue],
+  race: ["レース別（1R〜12R）", (r) => String(r.no).padStart(2, "0"), (k) => +k + "R"],
+  week: ["曜日別", (r) => String(WEEK.indexOf(r.week)), (k) => WEEK[+k] + "曜日"],
+  month: ["月別", (r) => r.date.slice(0, 7), (k) => k.replace("-", "年") + "月"],
+  day: ["日別", (r) => r.date, (k, rs) => `${k.slice(5).replace("-", "/")}（${rs[0].week}）`],
+  venue_race: ["会場×レース", (r) => r.jcd + "-" + String(r.no).padStart(2, "0"), (k, rs) => `${rs[0].venue} ${rs[0].no}R`],
+  list: ["各レース一覧"],
+};
+const DEFAULT_ORDER = { month: -1, day: -1 };
+
+function renderGroup(rs) {
+  const [, keyOf, label] = GROUPS[TAB];
+  const m = new Map();
+  for (const r of rs) { const k = keyOf(r); if (!m.has(k)) m.set(k, []); m.get(k).push(r); }
+  let rows = [...m].map(([k, list]) => ({ k, label: label(k, list), ...summary(list) }));
+  if (SORT) rows.sort((a, b) => ((a[SORT.k] ?? -Infinity) - (b[SORT.k] ?? -Infinity)) * SORT.dir);
+  else rows.sort((a, b) => (a.k < b.k ? -1 : 1) * (DEFAULT_ORDER[TAB] || 1));
+  const head = `<tr><th data-k="">${GROUPS[TAB][0].replace(/別.*$/, "") || "区分"}</th>${COLS.map(([k, t]) => `<th class="n ${SORT && SORT.k === k ? "sorted" + (SORT.dir > 0 ? " asc" : "") : ""}" data-k="${k}">${t}</th>`).join("")}</tr>`;
+  $("table").innerHTML = `<table>${head}${rows.map((r) => `<tr class="${r.races < 10 ? "few" : ""}"><td>${esc(r.label)}</td>${COLS.map(([k, , f]) => cell(f, r[k])).join("")}</tr>`).join("")}</table>`;
+  $("table-note").textContent = `${rows.length}行`;
+}
+
+const LIST_MAX = 500;
+function renderList(rs) {
+  const rows = [...rs].sort((a, b) => (a.date + a.jcd + String(a.no).padStart(2, "0") < b.date + b.jcd + String(b.no).padStart(2, "0") ? 1 : -1)).slice(0, LIST_MAX);
+  const mark = (x) => (x ? `<span class="hit">○</span>` : "×");
+  $("table").innerHTML = `<table><tr><th>日付</th><th>会場</th><th>R</th><th>締切</th><th>結果</th><th>◎</th><th>◎1着</th><th>◎3着内</th><th>予想1位</th><th>買い目</th><th>的中</th><th class="n">払戻</th><th class="n">収支</th><th>3連複</th><th class="n">3連複収支</th></tr>
+    ${rows.map((r) => `<tr><td>${r.date}（${r.week}）</td><td>${esc(r.venue)}</td><td>${r.no}R</td><td>${esc(r.deadline)}</td><td>${esc(r.result)}</td><td>${esc(r.honmei)}</td>
+      <td>${mark(r.honmei_win)}</td><td>${mark(r.honmei_top3)}</td><td>${esc(r.top1)} ${mark(r.top1_hit)}</td><td class="muted">${esc(r.buy)}</td><td>${mark(r.buy_hit)}</td>
+      <td class="n">${r.buy_return.toLocaleString()}円</td>${cell("yen", r.buy_return - r.buy_cost)}<td>${mark(r.trio_hit)}</td>${cell("yen", r.trio_return - r.trio_cost)}</tr>`).join("")}</table>`;
+  $("table-note").textContent = rs.length > LIST_MAX ? `新しい順に${LIST_MAX}件まで表示（全${rs.length.toLocaleString()}件はCSVで見られます）` : `${rs.length}件`;
+}
+
+function render() {
+  const rs = filtered();
+  const s = summary(rs);
+  const k = (label, v, sub) => `<div class="kpi"><div class="k">${label}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`;
+  $("kpis").innerHTML = s.races ? [
+    k("レース数", s.races.toLocaleString(), rs.length ? `${rs.map((r) => r.date).sort()[0]} 〜` : ""),
+    k("◎の1着率", pct(s.honmei_win), `3着内 ${pct(s.honmei_top3)}`),
+    k("買い目の的中率", pct(s.buy_hit), `予想1位 ${pct(s.top1_hit)}`),
+    k("買い目の回収率", pct(s.buy_roi), yen(s.buy_profit)),
+    k("3連複の的中率", pct(s.trio_hit), `回収率 ${pct(s.trio_roi)}`),
+  ].join("") : `<div class="panel empty">この条件に当てはまるレースはありません。</div>`;
+  if (!rs.length) { $("table").innerHTML = `<div class="empty">データがありません。</div>`; $("table-note").textContent = ""; return; }
+  TAB === "list" ? renderList(rs) : renderGroup(rs);
+}
+
+function setRange(kind) {
+  const today = jst();
+  $("to").value = kind === "all" ? "" : today;
+  $("from").value = kind === "all" ? "" : kind === "month" ? today.slice(0, 8) + "01" : addDays(today, -(+kind));
+  document.querySelectorAll("[data-range]").forEach((b) => b.classList.toggle("on", b.dataset.range === kind));
+  render();
+}
+
+async function loadUsage() {
+  try {
+    const u = await (await fetch("usage", { cache: "no-store" })).json();
+    const g = (label, n, sub) => {
+      const p = n / u.limit, cls = p > 0.9 ? "bad" : p > 0.7 ? "warn" : "";
+      return `<div class="panel gauge"><div class="k">${label}</div><div class="v">${bytes(n)}</div><div class="meter"><i class="${cls}" style="width:${Math.min(100, p * 100)}%"></i></div><div class="muted">無料枠10GBのうち ${(p * 100).toFixed(p < 0.01 ? 3 : 1)}%${sub ? "　" + sub : ""}</div></div>`;
+    };
+    $("gauges").innerHTML = [
+      g("サイト全体", u.total, `（PDF・CSV・データ・ページ）`),
+      g("CSV（レースごとの成績）", u.csv, ""),
+      g("PDF", u.pdf, `${u.pdfFiles}ファイル${u.oldestPdf ? "・" + u.oldestPdf + "から" : ""}`),
+    ].join("");
+    $("usage-note").textContent = `内訳：PDF ${bytes(u.pdf)}／CSV ${bytes(u.csv)}／公開データ ${bytes(u.data)}／ページ ${bytes(u.site)}${u.other ? "／その他 " + bytes(u.other) : ""}。PDFは30日たつと自動で消えます。Cloudflare R2 の無料枠は10GBまでです。`;
+  } catch (e) {
+    $("gauges").innerHTML = `<div class="panel muted">容量を読み込めませんでした。</div>`;
+  }
+}
+
+async function loadRaces() {
+  try {
+    const r = await fetch("races.csv", { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    const text = await r.text();
+    RACES = text ? toRaces(parseCSV(text)) : [];
+    const from = r.headers.get("x-cleared-from");
+    const dates = RACES.map((x) => x.date).sort();
+    $("csv-meta").textContent = RACES.length
+      ? `${RACES.length.toLocaleString()}レース分を記録中（${dates[0]} 〜 ${dates[dates.length - 1]}）。${from ? from + " にクリアしました。" : ""}`
+      : `まだ記録がありません。${from ? from + " にクリアしました。翌朝から" + from + "以降のレースが追加されます。" : "翌朝の処理から記録が始まります。"}`;
+    const used = new Set(RACES.map((x) => x.jcd));
+    $("venue").innerHTML = `<option value="">すべて</option>` + VENUES.map((n, i) => [String(i + 1).padStart(2, "0"), n]).filter(([c]) => used.has(c)).map(([c, n]) => `<option value="${c}">${n}</option>`).join("");
+  } catch (e) {
+    $("csv-meta").textContent = "CSVを読み込めませんでした。";
+  }
+  render();
+}
+
+$("race").innerHTML += Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1}R</option>`).join("");
+$("week").innerHTML += WEEK.map((w) => `<option value="${w}">${w}曜日</option>`).join("");
+$("tabs").innerHTML = Object.entries(GROUPS).map(([k, [t]]) => `<button class="chip ${k === TAB ? "on" : ""}" data-tab="${k}">${t}</button>`).join("");
+$("tabs").onclick = (e) => {
+  const b = e.target.closest("[data-tab]"); if (!b) return;
+  TAB = b.dataset.tab; SORT = null;
+  document.querySelectorAll("[data-tab]").forEach((x) => x.classList.toggle("on", x === b));
+  render();
+};
+$("table").onclick = (e) => {
+  const th = e.target.closest("th[data-k]"); if (!th || TAB === "list") return;
+  const k = th.dataset.k;
+  SORT = !k ? null : SORT && SORT.k === k ? { k, dir: -SORT.dir } : { k, dir: -1 };
+  render();
+};
+document.querySelectorAll("[data-range]").forEach((b) => (b.onclick = () => setRange(b.dataset.range)));
+["from", "to", "venue", "race", "week"].forEach((id) => ($(id).onchange = () => { if (id === "from" || id === "to") document.querySelectorAll("[data-range]").forEach((b) => b.classList.remove("on")); render(); }));
+$("dl").onclick = () => { location.href = "races.csv?dl=1"; };
+$("clear").onclick = async () => {
+  const ans = prompt("レースごとの成績データをすべて消します。元に戻せません。\n先にCSVをダウンロードしておくことをおすすめします。\n\n消す場合は「クリア」と入力してください。");
+  if (ans === null) return;
+  if (ans.trim() !== "クリア") { alert("「クリア」と入力されなかったので、消していません。"); return; }
+  const r = await fetch("clear", { method: "POST", headers: { "x-boatlab-admin": "clear" } });
+  if (!r.ok) { alert("クリアできませんでした。ページを開き直してもう一度試してください。"); return; }
+  alert("クリアしました。");
+  await Promise.all([loadRaces(), loadUsage()]);
+};
+
+setRange("all");
+loadRaces();
+loadUsage();
+</script>
+</body></html>

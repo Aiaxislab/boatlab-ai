@@ -3,12 +3,12 @@
 「BoatLab AI ― AI分析 競艇情報 ｜ by AI Axis Lab」のサイトと、毎朝の予想PDFを自動で作る仕組みです。
 
 - `https://aiaxislab.win/` … 運営元 AI Axis Lab のサイト（運営者情報・利用規約・プライバシーポリシー・お問い合わせ）
-- `https://boat.aiaxislab.win/` … BoatLab AI（本日の予想PDF・的中率・過去30日）
+- `https://boat.aiaxislab.win/` … BoatLab AI（本日の予想PDF・過去30日）
 
 ## 毎日の動き
 
 1. 毎朝5:30（日本時間）に GitHub Actions の「毎朝のPDF作成」が動きます。
-2. 前日までの競走成績を取り込み、これまでの予想の答え合わせをして、的中率・回収率を集計します。
+2. 前日までの競走成績を取り込み、これまでの予想の答え合わせをして、管理者ダッシュボード用のCSVに1レースずつ記録します。
 3. その日に開催する全場について、1場ごとに「表紙＋12レース」のPDFを作ります。
 4. PDFと集計データを Cloudflare R2 に置きます。PDFは30日で自動的に消えます。
 5. 予想・結果・成績のデータは `data` ブランチにずっと残します（予想を後から書き換えていない証拠にもなります）。
@@ -24,6 +24,29 @@
 3. Actions タブ →「サイトを公開」→ Run workflow（R2 バケットの作成とサイトの公開をします）
 4. Actions タブ →「毎朝のPDF作成」→ Run workflow（1回目は過去90日の成績を取り込むので少し時間がかかります）
 5. お問い合わせ用に Cloudflare の Email Routing で `contact@aiaxislab.win` を自分のメールに転送する
+
+## 管理者ダッシュボード（自分だけが見るページ）
+
+的中率・回収率は一般公開せず、`https://aiaxislab.win/<ADMIN_PATH>/` の管理者ダッシュボードだけで見ます。
+
+- 全体・会場別・レース別（1R〜12R）・曜日別・月別・日別・会場×レース・各レース一覧。期間・会場・レース・曜日で絞り込み
+- レースごとの成績は R2 の `admin/races.csv` に毎朝追加。ダッシュボードの「クリア」を押すまで消えない（クリアした日より前のレースは二度と足さない）。いつでもCSVでダウンロード可
+- 容量ゲージ（サイト全体・CSV・PDF。R2 無料枠10GBに対する割合）
+
+守り方：
+1. Cloudflare Access（Zero Trust の無料プラン）で、そのURLを自分のメールアドレスだけがログインできるようにする
+2. Worker でも Access の証明書（JWT）を確かめ、無い・違うときは普通の「ページが見つかりません」を返す
+3. URLの文字列（ADMIN_PATH）はリポジトリに書かず GitHub Secrets に置く。公開ページ・robots・サイトマップのどこからもリンクしない
+
+GitHub Secrets に登録するもの（3つそろうまでダッシュボードは表示されません）：
+
+| 名前 | 中身 |
+|---|---|
+| `ADMIN_PATH` | ダッシュボードのURLの文字列（16文字以上のでたらめな英数字） |
+| `ACCESS_TEAM` | Zero Trust のチーム名（`xxxx.cloudflareaccess.com` の `xxxx`） |
+| `ACCESS_AUD` | Access アプリケーションの「Application Audience (AUD) Tag」 |
+
+登録・変更したら Actions →「サイトを公開」→ Run workflow で反映します。
 
 ## 手元で動かす
 
@@ -44,6 +67,8 @@ python -m boatlab.daily --date 2026-10-26 --venues 06   # 浜名湖だけ作る
 | `templates/` | PDFの紙面（HTMLとCSS） |
 | `site/boat/`, `site/main/` | サイトのページ |
 | `worker/index.js`, `wrangler.toml` | Cloudflare Workers の設定 |
+| `worker/admin.js`, `worker/admin.html` | 管理者ダッシュボード |
+| `boatlab/ledger.py` | ダッシュボード用CSVへの追記 |
 | `.github/workflows/` | 毎朝の自動実行とサイト公開 |
 
 ## 予想の計算について
