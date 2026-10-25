@@ -11,6 +11,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: feature/daily-pdf
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq lhasa fonts-noto-cjk > /dev/null
           pip install -q -r requirements.txt
