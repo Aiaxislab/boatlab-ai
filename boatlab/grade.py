@@ -20,7 +20,9 @@ def grade_day(preds: dict, results: dict) -> list[dict]:
             buy = [tuple(c) for c in p["buy"]]
             trio_buy = [tuple(c) for c in p["trio"]]
             rows.append(dict(
-                date=preds["date"], jcd=jcd, no=p["no"], result=list(tri),
+                date=preds["date"], jcd=jcd, no=p["no"], deadline=p["deadline"], result=list(tri),
+                honmei=honmei, top1=list(p["top5"][0]), buy=[list(c) for c in buy], trio=[list(c) for c in trio_buy],
+                trio_result=list(trio) if trio else None,
                 honmei_win=tri[0] == honmei, honmei_top3=honmei in tri,
                 top1_hit=tuple(p["top5"][0]) == tri,
                 buy_hit=tri in buy, buy_cost=100 * len(buy),

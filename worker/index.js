@@ -1,5 +1,8 @@
 // aiaxislab.win（運営元のサイト）と boat.aiaxislab.win（BoatLab AI）を1つのWorkerで配信する。
 // ページは site/ の静的ファイル、PDFと日々のデータは R2 バケットから返す。
+// 管理者ダッシュボードは admin.js（公開ページからはリンクしない・Cloudflare Access で守る）。
+
+import { handleAdmin } from "./admin.js";
 
 const VENUE_NAMES = { "01": "桐生", "02": "戸田", "03": "江戸川", "04": "平和島", "05": "多摩川", "06": "浜名湖", "07": "蒲郡", "08": "常滑", "09": "津", "10": "三国", "11": "びわこ", "12": "住之江", "13": "尼崎", "14": "鳴門", "15": "丸亀", "16": "児島", "17": "宮島", "18": "徳山", "19": "下関", "20": "若松", "21": "芦屋", "22": "福岡", "23": "唐津", "24": "大村" };
 
@@ -28,7 +31,11 @@ export default {
     // workers.dev のURLで確認するときは BoatLab AI 側を表示する
     const boat = url.hostname.startsWith("boat.") || url.hostname.endsWith(".workers.dev");
 
-    if (boat && /^\/(pdf|data)\//.test(url.pathname)) {
+    const admin = await handleAdmin(request, env, url);
+    if (admin) return admin;
+
+    // 公開するのは本日分と過去30日の一覧だけ（成績の集計は管理者ダッシュボードへ移した）
+    if (boat && /^\/(pdf\/\d{4}-\d{2}-\d{2}\/\d{2}\.pdf|data\/(today|archive)\.json)$/.test(url.pathname)) {
       return fromBucket(env, url.pathname.slice(1));
     }
 

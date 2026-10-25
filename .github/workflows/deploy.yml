@@ -28,4 +28,16 @@ jobs:
           npx wrangler r2 bucket create boatlab || true
           npx wrangler r2 bucket lifecycle add boatlab delete-old-pdf pdf/ --expire-days 30 --force || true
           npx wrangler r2 bucket lifecycle list boatlab
-      - run: npx wrangler deploy
+      - name: 公開する（管理者ダッシュボードの設定は Secrets から渡す。リポジトリには書かない）
+        env:
+          ADMIN_PATH: ${{ secrets.ADMIN_PATH }}
+          ACCESS_TEAM: ${{ secrets.ACCESS_TEAM }}
+          ACCESS_AUD: ${{ secrets.ACCESS_AUD }}
+        run: |
+          args=(--var "SITE_BYTES:$(du -sb site | cut -f1)")
+          if [ -n "$ADMIN_PATH" ] && [ -n "$ACCESS_TEAM" ] && [ -n "$ACCESS_AUD" ]; then
+            args+=(--var "ADMIN_PATH:$ADMIN_PATH" --var "ACCESS_TEAM:$ACCESS_TEAM" --var "ACCESS_AUD:$ACCESS_AUD")
+          else
+            echo "::warning::ADMIN_PATH・ACCESS_TEAM・ACCESS_AUD が未登録なので、管理者ダッシュボードは表示されません（README参照）"
+          fi
+          npx wrangler deploy "${args[@]}"

@@ -4,6 +4,7 @@
 
 state/ … 結果・予想・成績のデータ（ずっと残す。GitHubの data ブランチに保存）
 out/   … サイトに載せるもの（PDFはR2で30日たつと自動で消える）
+out/admin/ … 管理者ダッシュボード用のCSV。R2から取ってきたものに今回の分を足して戻す
 """
 
 import argparse
@@ -11,7 +12,7 @@ import datetime as dt
 import json
 from pathlib import Path
 
-from . import grade, render, sources
+from . import grade, ledger, render, sources
 from .parse import parse_program, parse_results
 from .venues import VENUES
 
@@ -55,7 +56,7 @@ def update_history(today: dt.date, backfill: int) -> dict:
     return dict(sorted(history.items()))
 
 
-def regrade(history: dict, generated: str) -> dict:
+def regrade(history: dict, generated: str) -> tuple[dict, list[dict]]:
     graded = []
     for path in sorted((STATE / "preds").glob("*.json")):
         preds = _load(path, None)
@@ -63,7 +64,18 @@ def regrade(history: dict, generated: str) -> dict:
             graded += grade.grade_day(preds, history[preds["date"]])
     stats = grade.build_stats(graded, generated)
     _save(STATE / "stats.json", stats)
-    return stats
+    return stats, graded
+
+
+def update_ledger(graded: list[dict]) -> None:
+    """ダッシュボードのCSVに、答え合わせできたレースを足す。"""
+    path = OUT / "admin" / "races.csv"
+    existing = path.read_text(encoding="utf-8") if path.exists() else None
+    meta = _load(OUT / "admin" / "meta.json", {})
+    text, added = ledger.merge(existing, graded, meta.get("from"))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    print(f"ダッシュボードのCSVに {added}レース追加しました")
 
 
 def main() -> None:
@@ -79,8 +91,9 @@ def main() -> None:
     generated = now.strftime("%m/%d %H:%M")
 
     history = update_history(today, args.backfill)
-    stats = regrade(history, generated)
+    stats, graded = regrade(history, generated)
     print(f"成績データ {len(history)}日分、答え合わせ {stats['total'].get('races', 0)}レース")
+    update_ledger(graded)
 
     text = sources.mbrace_text("B", today)
     if not text:
@@ -134,7 +147,6 @@ def main() -> None:
     _save(STATE / "archive.json", archive)
     _save(OUT / "data" / "today.json", today_json)
     _save(OUT / "data" / "archive.json", archive)
-    _save(OUT / "data" / "stats.json", stats)
     print(f"{today}: {len(listing)}場のPDFを作成しました")
 
 
