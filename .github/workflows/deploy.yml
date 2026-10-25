@@ -28,6 +28,21 @@ jobs:
           npx wrangler r2 bucket create boatlab || true
           npx wrangler r2 bucket lifecycle add boatlab delete-old-pdf pdf/ --expire-days 30 --force || true
           npx wrangler r2 bucket lifecycle list boatlab
+      - name: workers.dev のサブドメインを用意する（毎朝のメールの時刻設定に必要。初回だけ作る）
+        continue-on-error: true # 作れなくてもサイトの公開は続ける
+        run: |
+          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain"
+          auth="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          current=$(curl -s -H "$auth" "$api" | jq -r '.result.subdomain // empty')
+          if [ -n "$current" ]; then echo "作成済み"; exit 0; fi
+          # サイトは独自ドメインだけで公開する（wrangler.toml の workers_dev = false）。サブドメインは時刻設定のためだけに作る
+          for name in aiaxislab "aiaxislab-$(openssl rand -hex 3)" "aiaxislab-$(openssl rand -hex 4)"; do
+            res=$(curl -s -X PUT -H "$auth" -H "Content-Type: application/json" --data "{\"subdomain\":\"$name\"}" "$api")
+            if [ "$(echo "$res" | jq -r .success)" = "true" ]; then echo "作成しました"; exit 0; fi
+            echo "$res" | jq -c '.errors'
+          done
+          echo "::error::workers.dev のサブドメインを作れませんでした。Cloudflare の「Compute」→「Workers & Pages」を一度開いてから、もう一度実行してください"
+          exit 1
       - name: 公開する（管理者ダッシュボードの設定は Secrets から渡す。リポジトリには書かない）
         env:
           ADMIN_PATH: ${{ secrets.ADMIN_PATH }}
