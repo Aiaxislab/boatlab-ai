@@ -38,13 +38,13 @@
 2. Worker でも Access の証明書（JWT）を確かめ、無い・違うときは普通の「ページが見つかりません」を返す
 3. URLの文字列（ADMIN_PATH）はリポジトリに書かず GitHub Secrets に置く。公開ページ・robots・サイトマップのどこからもリンクしない
 
-GitHub Secrets に登録するもの（3つそろうまでダッシュボードは表示されません）：
+GitHub Secrets に登録するもの（ADMIN_PATH と ACCESS_TEAM がそろうまでダッシュボードは表示されません）：
 
 | 名前 | 中身 |
 |---|---|
 | `ADMIN_PATH` | ダッシュボードのURLの文字列（16文字以上のでたらめな英数字） |
 | `ACCESS_TEAM` | Zero Trust のチーム名（`xxxx.cloudflareaccess.com` の `xxxx`） |
-| `ACCESS_AUD` | Access アプリケーションの「Application Audience (AUD) Tag」 |
+| `ACCESS_AUD` | 任意。Access アプリケーションの「Application Audience (AUD) Tag」（一覧の「…」→ Copy as JSON の `aud`）。Access アプリを2つ以上作るときは必ず登録 |
 
 登録・変更したら Actions →「サイトを公開」→ Run workflow で反映します。
 

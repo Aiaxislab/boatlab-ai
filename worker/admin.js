@@ -1,8 +1,10 @@
 // 管理者ダッシュボード（https://aiaxislab.win/<ADMIN_PATH>/）。
 // 守りは2重: 1) Cloudflare Access のログイン（許可したメールアドレスだけ）
 //            2) Worker 側でも Access の証明書（JWT）を検証し、無ければ普通の404を返す
-// ADMIN_PATH・ACCESS_TEAM・ACCESS_AUD は公開リポジトリに書かず、GitHub Secrets から公開時に渡す。
-// どれかが未設定なら、ダッシュボードはどこにも存在しないのと同じ扱いになる。
+// ADMIN_PATH・ACCESS_TEAM（・ACCESS_AUD）は公開リポジトリに書かず、GitHub Secrets から公開時に渡す。
+// ADMIN_PATH か ACCESS_TEAM が未設定なら、ダッシュボードはどこにも存在しないのと同じ扱いになる。
+// ACCESS_AUD は任意。無いときは「自分のチームが発行した証明書か」までを確かめる
+// （チームの Access アプリがこれ1つなら守りは同じ。アプリを増やすなら AUD も登録すること）。
 
 import PAGE from "./admin.html";
 
@@ -29,7 +31,7 @@ async function accessOk(request, env) {
     const host = teamHost(env.ACCESS_TEAM);
     const now = Date.now() / 1000;
     const aud = Array.isArray(payload.aud) ? payload.aud : [payload.aud];
-    if (header.alg !== "RS256" || payload.iss !== `https://${host}` || !aud.includes(env.ACCESS_AUD) || !(payload.exp > now)) return false;
+    if (header.alg !== "RS256" || payload.iss !== `https://${host}` || (env.ACCESS_AUD && !aud.includes(env.ACCESS_AUD)) || !(payload.exp > now)) return false;
     const res = await fetch(`https://${host}/cdn-cgi/access/certs`, { cf: { cacheTtl: 3600, cacheEverything: true } });
     const jwk = (await res.json()).keys.find((k) => k.kid === header.kid);
     if (!jwk) return false;
@@ -65,7 +67,7 @@ const jstDate = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 1
 
 export async function handleAdmin(request, env, url) {
   const base = env.ADMIN_PATH && String(env.ADMIN_PATH).replace(/^\/+|\/+$/g, "");
-  if (!base || base.length < 16 || !env.ACCESS_TEAM || !env.ACCESS_AUD) return null;
+  if (!base || base.length < 16 || !env.ACCESS_TEAM) return null;
   if (url.hostname.startsWith("boat.")) return null;
   const root = `/${base}`;
   if (url.pathname !== root && !url.pathname.startsWith(root + "/")) return null;
