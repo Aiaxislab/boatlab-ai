@@ -1,0 +1,30 @@
+name: probe-data-sources
+on:
+  push:
+    branches: [probe]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq lhasa > /dev/null
+      - name: fetch
+        run: |
+          mkdir out && cd out
+          UA="Mozilla/5.0 (compatible; BoatLabAI-probe/0.1)"
+          get() { echo "== $1"; curl -sSL -A "$UA" -m 60 -o "$2" -w '%{http_code} %{size_download}\n' "$1" || true; }
+          get https://www1.mbrace.or.jp/od2/B/202610/b261025.lzh b261025.lzh
+          get https://www1.mbrace.or.jp/od2/B/202610/b261026.lzh b261026.lzh
+          get https://www1.mbrace.or.jp/od2/K/202610/k261024.lzh k261024.lzh
+          get https://www1.mbrace.or.jp/od2/K/202610/k261025.lzh k261025.lzh
+          for f in *.lzh; do lha -xq "$f" || true; done
+          get "https://www.boatrace.jp/owpc/pc/race/index?hd=20261026" index_20261026.html
+          get "https://www.boatrace.jp/owpc/pc/race/beforeinfo?rno=1&jcd=06&hd=20261025" beforeinfo.html
+          get https://www.jma.go.jp/bosai/forecast/data/forecast/220000.json fc_220000.json
+          get https://www.jma.go.jp/bosai/common/const/area.json area.json
+          get https://www.data.jma.go.jp/kaiyou/db/tide/suisan/station2026.php station2026.html
+          get https://www.data.jma.go.jp/kaiyou/data/db/tide/suisan/txt/2026/MI.txt tide_MI.txt
+          ls -la
+      - uses: actions/upload-artifact@v4
+        with:
+          name: probe
+          path: out/
