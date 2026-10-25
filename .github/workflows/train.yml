@@ -1,0 +1,83 @@
+name: AIモデルの学習
+on:
+  schedule:
+    - cron: "0 18 * * 0" # 毎週月曜 3:00（日本時間）
+  pull_request: # 変更の確認用。直近1か月分だけで学習し、試しにPDFを作る。アップロードはしない
+    paths: ["boatlab/**", "templates/**", ".github/workflows/train.yml", "requirements.txt"]
+  workflow_dispatch:
+    inputs:
+      months:
+        description: "何か月分で学習するか"
+        required: false
+        default: "36"
+
+concurrency: train
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300 # 初回は過去3年分のデータを取りに行くので時間がかかる（2回目からは足りない月だけ）
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      MONTHS: ${{ github.event_name == 'pull_request' && '1' || inputs.months || '36' }}
+      UPLOAD: ${{ github.event_name != 'pull_request' && secrets.CLOUDFLARE_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 道具の準備
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lhasa fonts-noto-cjk > /dev/null
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: |
+          pip install -q -r requirements.txt
+          npm install --no-audit --no-fund
+
+      - name: これまでに作った学習データを R2 から取ってくる
+        if: env.UPLOAD == 'true'
+        run: |
+          mkdir -p out/ml/races
+          for m in $(python -m boatlab.train --print-months --months "$MONTHS"); do
+            key="admin/ml/races/$m.jsonl.gz"
+            if out=$(npx wrangler r2 object get "boatlab/$key" --file "out/ml/races/$m.jsonl.gz" --remote 2>&1); then
+              echo "$m を取得しました"
+            elif echo "$out" | grep -q "The specified key does not exist"; then
+              rm -f "out/ml/races/$m.jsonl.gz"; echo "$m はまだありません（これから作ります）"
+            else
+              echo "$out"; exit 1
+            fi
+          done
+
+      - name: 学習する（足りない月の学習データ作り → 学習 → 今の簡易モデルと比べる）
+        run: python -m boatlab.train --months "$MONTHS"
+
+      - name: 学習データとモデルを R2 に置く
+        if: env.UPLOAD == 'true'
+        run: |
+          for m in $(cat out/ml/changed.txt); do
+            npx wrangler r2 object put "boatlab/admin/ml/races/$m.jsonl.gz" --file "out/ml/races/$m.jsonl.gz" --content-type application/gzip --remote
+          done
+          npx wrangler r2 object put boatlab/admin/ml/model.json --file out/ml/model.json --content-type "application/json; charset=utf-8" --remote
+
+      - name: 試しにAI学習モデルでPDFを作る（変更の確認のときだけ）
+        if: github.event_name == 'pull_request'
+        run: |
+          npx playwright install chromium
+          # 1か月分の学習では「不採用」になることもあるので、確認用に採用扱いにして使う
+          mkdir -p out/admin/ml
+          python -c "import json,pathlib; m=json.loads(pathlib.Path('out/ml/model.json').read_text()); m['adopted']=True; pathlib.Path('out/admin/ml/model.json').write_text(json.dumps(m, ensure_ascii=False))"
+          python -m boatlab.daily --date "$(TZ=Asia/Tokyo date +%F)" --venues 06,24 --backfill 3
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ml
+          path: |
+            out/ml/model.json
+            out/pdf/
+          retention-days: 7

@@ -85,8 +85,10 @@ def place_probs(tri: dict) -> list[tuple[float, float, float]]:
     return out
 
 
-def predict(race: dict, lanes: list[float], runs: dict, n_buy: int = 6) -> dict:
-    scores = score_boats(race["boats"], lanes, runs)
+def predict(race: dict, lanes: list[float], runs: dict, n_buy: int = 6, scores: list[float] | None = None) -> dict:
+    """scores を渡すと（AI学習モデルの点数）、手の重みの点数の代わりにそれを使う。"""
+    if scores is None:
+        scores = score_boats(race["boats"], lanes, runs)
     tri = trifecta(scores)
     ranked = sorted(tri.items(), key=lambda kv: -kv[1])
     pp = place_probs(tri)

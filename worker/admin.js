@@ -11,6 +11,7 @@ import { dailyMail, LOG_KEY, SETTINGS_KEY, MIN_CHOICES, mailMinPct } from "./mai
 
 const CSV_KEY = "admin/races.csv";
 const META_KEY = "admin/meta.json";
+const MODEL_KEY = "admin/ml/model.json"; // 週1回の「AIモデルの学習」が置く
 const NOT_FOUND = () => new Response("ページが見つかりません", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
 const PRIVATE = { "cache-control": "no-store", "x-robots-tag": "noindex, nofollow", "referrer-policy": "no-referrer", "x-frame-options": "DENY" };
 
@@ -44,7 +45,7 @@ async function accessOk(request, env) {
 }
 
 async function usage(env) {
-  const sum = { pdf: 0, csv: 0, data: 0, other: 0, pdfFiles: 0, oldestPdf: null };
+  const sum = { pdf: 0, csv: 0, data: 0, ml: 0, other: 0, pdfFiles: 0, oldestPdf: null };
   let cursor;
   do {
     const page = await env.BUCKET.list({ cursor, limit: 1000 });
@@ -56,12 +57,13 @@ async function usage(env) {
         if (!sum.oldestPdf || d < sum.oldestPdf) sum.oldestPdf = d;
       } else if (o.key === CSV_KEY) sum.csv += o.size;
       else if (o.key.startsWith("data/")) sum.data += o.size;
+      else if (o.key.startsWith("admin/ml/")) sum.ml += o.size;
       else sum.other += o.size;
     }
     cursor = page.truncated ? page.cursor : undefined;
   } while (cursor);
   const site = Number(env.SITE_BYTES) || 0;
-  return { ...sum, site, total: sum.pdf + sum.csv + sum.data + sum.other + site, limit: 10 * 1024 ** 3, mail: !!env.MAIL_TO, mailMin: await mailMinPct(env), mailChoices: MIN_CHOICES };
+  return { ...sum, site, total: sum.pdf + sum.csv + sum.data + sum.ml + sum.other + site, limit: 10 * 1024 ** 3, mail: !!env.MAIL_TO, mailMin: await mailMinPct(env), mailChoices: MIN_CHOICES };
 }
 
 const jstDate = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
@@ -88,6 +90,18 @@ export async function handleAdmin(request, env, url) {
   }
   if (sub === "/usage" && request.method === "GET") {
     return new Response(JSON.stringify(await usage(env)), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+  }
+  if (sub === "/model" && request.method === "GET") {
+    // AI学習モデルの状態（重みそのものは大きいので、主なものだけ返す）
+    const obj = await env.BUCKET.get(MODEL_KEY);
+    let body = "null";
+    if (obj) {
+      const { weights = {}, ...m } = await obj.json();
+      m.n_weights = Object.keys(weights).length;
+      m.main_weights = Object.fromEntries(Object.entries(weights).filter(([k]) => !k.startsWith("V")));
+      body = JSON.stringify(m);
+    }
+    return new Response(body, { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
   if (sub === "/mail-log" && request.method === "GET") {
     const obj = await env.BUCKET.get(LOG_KEY);
