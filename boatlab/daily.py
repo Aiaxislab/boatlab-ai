@@ -37,7 +37,7 @@ def _deadline(day: dt.date, hhmm: str) -> dt.datetime:
 def update_history(today: dt.date, backfill: int) -> dict:
     """直近90日の競走成績を state/results に集める。足りない日だけ取りに行く。"""
     history, fetched = {}, 0
-    for back in range(HISTORY_DAYS, 0, -1):
+    for back in range(1, HISTORY_DAYS + 1):  # 新しい日から順に
         day = today - dt.timedelta(days=back)
         path = STATE / "results" / f"{day.isoformat()}.json"
         data = _load(path, None)
@@ -52,7 +52,7 @@ def update_history(today: dt.date, backfill: int) -> dict:
                 _save(path, data)
         if data:
             history[day.isoformat()] = {k: v for k, v in data.items() if not k.startswith("_")}
-    return history
+    return dict(sorted(history.items()))
 
 
 def regrade(history: dict, generated: str) -> dict:
