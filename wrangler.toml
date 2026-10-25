@@ -1,0 +1,20 @@
+# Cloudflare Workers の設定。GitHub Actions から `wrangler deploy` で公開する。
+name = "aiaxislab"
+main = "worker/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+routes = [
+  { pattern = "aiaxislab.win", custom_domain = true },
+  { pattern = "boat.aiaxislab.win", custom_domain = true },
+]
+
+[assets]
+directory = "site"
+binding = "ASSETS"
+run_worker_first = true
+html_handling = "none"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "boatlab"

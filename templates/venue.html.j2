@@ -1,0 +1,128 @@
+{%- macro bt(n, lg=false) %}<span class="bt n{{ n }}{{ ' lg' if lg }}">{{ n }}</span>{% endmacro -%}
+{%- macro combo(c, sep='-') %}<span class="combo">{% for n in c %}{{ bt(n) }}{% if not loop.last %}<i>{{ sep }}</i>{% endif %}{% endfor %}</span>{% endmacro -%}
+{%- macro band(r=None) %}
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">{{ date.year }}<span>.</span>{{ '%02d' % date.month }}<span>.</span>{{ '%02d' % date.day }}<em>{{ weekday }}</em></div>
+    <div class="v">{{ venue.name }}　{{ venue.day }}日目</div>
+    <div class="u">データ基準 {{ generated }}（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+{%- endmacro -%}
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<title>BoatLab AI {{ venue.name }} {{ date.isoformat() }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>{{ css }}</style></head><body>
+
+<section class="page cover">
+{{ band() }}
+<h1>{{ venue.name }}　全{{ races|length }}レース</h1>
+<p>{{ venue.title }}　{{ venue.day }}日目</p>
+<table class="idx">
+  <thead><tr><th>R</th><th>締切予定</th><th>種別</th><th>◎本命</th><th>買い目の的中確率（{{ n_buy }}点）</th><th>3連単 1番人気予想</th></tr></thead>
+  <tbody>
+  {% for r in races %}
+  <tr><td><b>{{ r.no }}R</b></td><td class="num">{{ r.deadline }}</td><td>{{ r.kind }}</td>
+  <td>{{ bt(r.pred.order[0]) }} {{ r.boats[r.pred.order[0]-1].name }}</td>
+  <td class="num">約{{ (r.pred.buy_prob*100)|round|int }}%</td><td>{{ combo(r.pred.top5[0][0]) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<div class="cond" style="margin-top:6px">
+  <div><span class="k">天気（気象庁予報・{{ cond.area }}）</span><span class="v">{{ cond.weather_short or '―' }}</span><div class="s">{{ cond.weather or '' }}</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">{{ cond.wind_short or '―' }}</span><div class="s">{{ cond.wind or '' }}</div></div>
+  <div><span class="k">前日の水面（公式発表）</span><span class="v">{{ cond.yesterday or '―' }}</span><div class="s">{{ cond.yesterday_sub or '' }}</div></div>
+  <div><span class="k">{{ venue.name }}1コース1着率</span><span class="v num">{{ '%.1f' % (lanes[0]*100) }}%</span><div class="s">{{ lane_note }}</div></div>
+</div>
+{{ gloss }}
+<div class="src foot"><b>この冊子について</b>　朝の時点の公開情報（出走表・前日までの成績・気象庁の予報と潮位表）から自動で作成しています。展示航走・オッズ・直前の気象は入っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI</span></div>
+</section>
+
+{% for r in races %}
+<section class="page">
+{{ band() }}
+<div class="race">
+  <div class="rl">
+    <span class="venue">{{ venue.name }}</span>
+    <h1>第{{ r.no }}R<span>{{ r.kind }}</span></h1>
+    <div class="rs">{{ venue.title }} {{ venue.day }}日目<i>｜</i>{{ r.distance }}m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">{{ r.deadline }}</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・{{ cond.area }}）</span><span class="v">{{ cond.weather_short or '―' }}{% if r.pop_pct is not none %}<small> 降水確率{{ r.pop_pct }}%</small>{% endif %}</span><div class="s">{{ cond.weather or '' }}</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">{{ cond.wind_short or '―' }}</span><div class="s">{{ cond.wind or '' }}</div></div>
+  {% if r.tide %}
+  <div><span class="k">潮（気象庁 {{ cond.tide_name }}の潮位表）</span><span class="v">約{{ r.tide.level }}cm・{{ r.tide.trend }}</span><div class="s">{% if r.tide.near %}{{ r.tide.near[1] }}{{ r.tide.near[2] }}（{{ r.tide.near[3] }}cm）の{% if r.tide.near[0] >= 0 %}約{{ r.tide.near[0] }}分前{% else %}約{{ -r.tide.near[0] }}分後{% endif %}{% endif %}</div></div>
+  {% else %}
+  <div><span class="k">前日の水面（公式発表）</span><span class="v">{{ cond.yesterday or '―' }}</span><div class="s">{{ cond.yesterday_sub or '潮の影響が小さい水面' }}</div></div>
+  {% endif %}
+  <div><span class="k">{{ venue.name }}1コース1着率</span><span class="v num">{{ '%.1f' % (lanes[0]*100) }}%</span><div class="s">{{ lane_note }}</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  {% for b in r.boats %}
+  <tr>
+    <td class="waku">{{ bt(b.waku, true) }}<div class="mk">{{ r.pred.marks[loop.index0] }}</div></td>
+    <td class="who"><b>{{ b.name }}</b><div class="sub">{{ b.cls }} / {{ b.toban }} / {{ b.branch }} {{ b.age }}歳 {{ b.weight }}kg</div></td>
+    <td class="num">{{ '%.2f' % b.nat_win }}<div class="sub">{{ '%.1f' % b.nat_2r }}%</div></td>
+    <td class="num">{{ '%.2f' % b.loc_win if b.loc_win else '―' }}<div class="sub">{{ ('%.1f%%' % b.loc_2r) if b.loc_win else '初出走' }}</div></td>
+    <td class="num">#{{ b.motor }}<div class="sub">{{ '%.1f' % b.motor_2r }}%</div></td>
+    <td class="num">#{{ b.boat }}<div class="sub">{{ '%.1f' % b.boat_2r }}%</div></td>
+    <td class="runs">{% for x in b.runs %}<span class="run {{ x.cls }}" title="{{ x.title }}">{{ x.mark }}</span>{% endfor %}{% if not b.runs %}<span class="sub">今節初戦</span>{% endif %}</td>
+    <td class="num new">{{ '%.2f' % b.st_avg if b.st_avg is not none else '―' }}</td>
+    <td class="num new strong">{{ b.p1 }}</td>
+    <td class="num new">{{ b.p2 }}</td>
+    <td class="num new">{{ b.p3 }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+{{ gloss }}
+<div class="why box">
+{% for w in r.why %}<div>{{ bt(w.waku) }}<p><b>{{ w.head }}</b>{{ w.body }}</p></div>
+{% endfor %}
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>{{ n_buy }}点で的中確率 約{{ (r.pred.buy_prob*100)|round|int }}%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos">{% for c in r.pred.buy %}{{ combo(c) }}{% endfor %}</div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos">{% for c in r.pred.trio %}{{ combo(c, '=') }}{% endfor %}</div><small>3点で約{{ (r.pred.trio_prob*100)|round|int }}%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    {% for c, p in r.pred.top5 %}<tr><td>{{ loop.index }}</td><td>{{ combo(c) }}</td><td class="num">{{ '%.1f' % (p*100) }}%</td><td class="num">{{ (1/p)|round|int }}倍</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（{{ cond.area_full }}）」{% if cond.tide_name %}「潮位表（{{ cond.tide_name }}）」{% endif %}をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+{% endfor %}
+</body></html>
