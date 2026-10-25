@@ -108,7 +108,7 @@ def main() -> None:
     pdf_dir.mkdir(parents=True, exist_ok=True)
 
     preds = dict(date=today.isoformat(), generated=generated, venues={})
-    listing, pairs = [], []
+    listing, pairs, picks = [], [], []
     for jcd in sorted(program):
         prog = program[jcd]
         if not prog["races"] or jcd not in VENUES:
@@ -122,6 +122,14 @@ def main() -> None:
             no=r["no"], deadline=r["deadline"], order=r["pred"]["order"],
             top5=[list(c) for c, _ in r["pred"]["top5"]], buy=[list(c) for c in r["pred"]["buy"]],
             trio=[list(c) for c in r["pred"]["trio"]], buy_prob=round(r["pred"]["buy_prob"], 4),
+        ) for r in ctx["races"] if now < _deadline(today, r["deadline"])]
+        # 毎朝のメール用（締切前のレースだけ。どこまでの確率を送るかは Worker 側で決める）
+        picks += [dict(
+            jcd=jcd, venue=VENUES[jcd]["name"], no=r["no"], deadline=r["deadline"], kind=r["kind"],
+            honmei=r["pred"]["order"][0], honmei_name=r["boats"][r["pred"]["order"][0] - 1]["name"],
+            buy=[dict(combo=list(c), prob=round(p, 4)) for c, p in zip(r["pred"]["buy"], r["pred"]["buy_each"])],
+            buy_prob=round(r["pred"]["buy_prob"], 4), trio=[list(c) for c in r["pred"]["trio"]],
+            trio_prob=round(r["pred"]["trio_prob"], 4), pdf=f"pdf/{today.isoformat()}/{jcd}.pdf",
         ) for r in ctx["races"] if now < _deadline(today, r["deadline"])]
         listing.append(dict(
             jcd=jcd, name=VENUES[jcd]["name"], title=prog["title"], day=prog["day"],
@@ -147,6 +155,7 @@ def main() -> None:
     _save(STATE / "archive.json", archive)
     _save(OUT / "data" / "today.json", today_json)
     _save(OUT / "data" / "archive.json", archive)
+    _save(OUT / "admin" / "picks.json", dict(date=today.isoformat(), generated=generated, races=picks))
     print(f"{today}: {len(listing)}場のPDFを作成しました")
 
 

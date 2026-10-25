@@ -32,6 +32,8 @@
 - 全体・会場別・レース別（1R〜12R）・曜日別・月別・日別・会場×レース・各レース一覧。期間・会場・レース・曜日で絞り込み
 - レースごとの成績は R2 の `admin/races.csv` に毎朝追加。ダッシュボードの「クリア」を押すまで消えない（クリアした日より前のレースは二度と足さない）。いつでもCSVでダウンロード可
 - 容量ゲージ（サイト全体・CSV・PDF。R2 無料枠10GBに対する割合）
+- 予想的中確率別（10%台〜）の実際の的中率・回収率。確率の高いレースほど本当に当たるかを確かめる
+- 毎朝のメール：買い目の的中確率が50%を超えたレースだけを、買い方つきで送る（`worker/mail.js`。Worker の Cron が 6:00〜8:30 に30分おきに見て、その日の予想ができていれば1回だけ送る）
 
 守り方：
 1. Cloudflare Access（Zero Trust の無料プラン）で、そのURLを自分のメールアドレスだけがログインできるようにする
@@ -45,6 +47,7 @@ GitHub Secrets に登録するもの（ADMIN_PATH と ACCESS_TEAM がそろう�
 | `ADMIN_PATH` | ダッシュボードのURLの文字列（16文字以上のでたらめな英数字） |
 | `ACCESS_TEAM` | Zero Trust のチーム名（`xxxx.cloudflareaccess.com` の `xxxx`） |
 | `ACCESS_AUD` | 任意。Access アプリケーションの「Application Audience (AUD) Tag」（一覧の「…」→ Copy as JSON の `aud`）。Access アプリを2つ以上作るときは必ず登録 |
+| `MAIL_TO` | 毎朝のメールの送り先。カンマ区切りで複数可（空白なし）。Cloudflare の Email Routing →「Destination addresses」で確認済みのアドレスだけに届く |
 
 登録・変更したら Actions →「サイトを公開」→ Run workflow で反映します。
 

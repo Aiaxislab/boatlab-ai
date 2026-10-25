@@ -7,6 +7,7 @@
 // （チームの Access アプリがこれ1つなら守りは同じ。アプリを増やすなら AUD も登録すること）。
 
 import PAGE from "./admin.html";
+import { dailyMail, LOG_KEY } from "./mail.js";
 
 const CSV_KEY = "admin/races.csv";
 const META_KEY = "admin/meta.json";
@@ -60,7 +61,7 @@ async function usage(env) {
     cursor = page.truncated ? page.cursor : undefined;
   } while (cursor);
   const site = Number(env.SITE_BYTES) || 0;
-  return { ...sum, site, total: sum.pdf + sum.csv + sum.data + sum.other + site, limit: 10 * 1024 ** 3 };
+  return { ...sum, site, total: sum.pdf + sum.csv + sum.data + sum.other + site, limit: 10 * 1024 ** 3, mail: !!env.MAIL_TO, mailMin: Number(env.MAIL_MIN) || 50 };
 }
 
 const jstDate = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
@@ -87,6 +88,20 @@ export async function handleAdmin(request, env, url) {
   }
   if (sub === "/usage" && request.method === "GET") {
     return new Response(JSON.stringify(await usage(env)), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+  }
+  if (sub === "/mail-log" && request.method === "GET") {
+    const obj = await env.BUCKET.get(LOG_KEY);
+    return new Response(obj ? obj.body : "[]", { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+  }
+  if (sub === "/mail-test" && request.method === "POST") {
+    if (request.headers.get("origin") !== url.origin || request.headers.get("x-boatlab-admin") !== "mail") return NOT_FOUND();
+    let result;
+    try {
+      result = await dailyMail(env, { force: true });
+    } catch (e) {
+      result = { ok: false, reason: `送信に失敗しました（${e.message}）` };
+    }
+    return new Response(JSON.stringify(result), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
   if (sub === "/clear" && request.method === "POST") {
     // 別のサイトから勝手に送らせる攻撃（CSRF）を防ぐため、同じページからの送信だけ受け付ける

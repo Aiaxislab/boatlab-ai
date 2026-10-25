@@ -18,3 +18,11 @@ html_handling = "none"
 [[r2_buckets]]
 binding = "BUCKET"
 bucket_name = "boatlab"
+
+# 毎朝のメール（worker/mail.js）。6:00〜8:30（日本時間）に30分おき
+[triggers]
+crons = ["0,30 21-23 * * *"]
+
+# Cloudflare Email Routing で確認済みのアドレスにだけ送れる。送り先は Secrets の MAIL_TO
+[[send_email]]
+name = "MAIL"
