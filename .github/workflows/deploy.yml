@@ -35,9 +35,10 @@ jobs:
           ACCESS_AUD: ${{ secrets.ACCESS_AUD }}
         run: |
           args=(--var "SITE_BYTES:$(du -sb site | cut -f1)")
-          if [ -n "$ADMIN_PATH" ] && [ -n "$ACCESS_TEAM" ] && [ -n "$ACCESS_AUD" ]; then
-            args+=(--var "ADMIN_PATH:$ADMIN_PATH" --var "ACCESS_TEAM:$ACCESS_TEAM" --var "ACCESS_AUD:$ACCESS_AUD")
+          if [ -n "$ADMIN_PATH" ] && [ -n "$ACCESS_TEAM" ]; then
+            args+=(--var "ADMIN_PATH:$ADMIN_PATH" --var "ACCESS_TEAM:$ACCESS_TEAM")
+            [ -n "$ACCESS_AUD" ] && args+=(--var "ACCESS_AUD:$ACCESS_AUD")
           else
-            echo "::warning::ADMIN_PATH・ACCESS_TEAM・ACCESS_AUD が未登録なので、管理者ダッシュボードは表示されません（README参照）"
+            echo "::warning::ADMIN_PATH・ACCESS_TEAM が未登録なので、管理者ダッシュボードは表示されません（README参照）"
           fi
           npx wrangler deploy "${args[@]}"
