@@ -7,7 +7,7 @@
 // （チームの Access アプリがこれ1つなら守りは同じ。アプリを増やすなら AUD も登録すること）。
 
 import PAGE from "./admin.html";
-import { dailyMail, LOG_KEY } from "./mail.js";
+import { dailyMail, LOG_KEY, SETTINGS_KEY, MIN_CHOICES, mailMinPct } from "./mail.js";
 
 const CSV_KEY = "admin/races.csv";
 const META_KEY = "admin/meta.json";
@@ -61,7 +61,7 @@ async function usage(env) {
     cursor = page.truncated ? page.cursor : undefined;
   } while (cursor);
   const site = Number(env.SITE_BYTES) || 0;
-  return { ...sum, site, total: sum.pdf + sum.csv + sum.data + sum.other + site, limit: 10 * 1024 ** 3, mail: !!env.MAIL_TO, mailMin: Number(env.MAIL_MIN) || 50 };
+  return { ...sum, site, total: sum.pdf + sum.csv + sum.data + sum.other + site, limit: 10 * 1024 ** 3, mail: !!env.MAIL_TO, mailMin: await mailMinPct(env), mailChoices: MIN_CHOICES };
 }
 
 const jstDate = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
@@ -92,6 +92,16 @@ export async function handleAdmin(request, env, url) {
   if (sub === "/mail-log" && request.method === "GET") {
     const obj = await env.BUCKET.get(LOG_KEY);
     return new Response(obj ? obj.body : "[]", { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+  }
+  if (sub === "/settings" && request.method === "POST") {
+    if (request.headers.get("origin") !== url.origin || request.headers.get("x-boatlab-admin") !== "settings") return NOT_FOUND();
+    const body = await request.json().catch(() => ({}));
+    const mailMin = Number(body.mailMin);
+    if (!MIN_CHOICES.includes(mailMin)) return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+    const old = await env.BUCKET.get(SETTINGS_KEY);
+    const settings = { ...(old ? await old.json() : {}), mailMin, updated_at: new Date(Date.now() + 9 * 3600e3).toISOString().replace("Z", "+09:00") };
+    await env.BUCKET.put(SETTINGS_KEY, JSON.stringify(settings), { httpMetadata: { contentType: "application/json" } });
+    return new Response(JSON.stringify({ ok: true, mailMin }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
   if (sub === "/mail-test" && request.method === "POST") {
     if (request.headers.get("origin") !== url.origin || request.headers.get("x-boatlab-admin") !== "mail") return NOT_FOUND();
