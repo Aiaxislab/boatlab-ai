@@ -16,7 +16,7 @@ concurrency: train
 jobs:
   train:
     runs-on: ubuntu-latest
-    timeout-minutes: 300 # 初回は過去3年分のデータを取りに行くので時間がかかる（2回目からは足りない月だけ）
+    timeout-minutes: 300 # データ作りは3時間まで（3年分は1回では終わらないので、新しい月から作って残りは次回）
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

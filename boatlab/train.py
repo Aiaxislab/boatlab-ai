@@ -117,21 +117,33 @@ def month_keys(today: dt.date, months: int) -> list[str]:
     return yms[::-1]
 
 
-def ensure_data(base: Path, months: int, today: dt.date) -> tuple[list[dict], list[str]]:
-    """必要な月の学習データをそろえる。足りない月・途中までの月だけ作り直す。"""
+def ensure_data(base: Path, months: int, today: dt.date, budget_min: float) -> tuple[list[dict], list[str]]:
+    """必要な月の学習データをそろえる。足りない月・途中までの月だけ作り直す。
+
+    1日分を作るのに20〜30秒かかる（3年分だと7時間を超える）ので、新しい月から順に作り、
+    budget_min 分を過ぎたら残りの月は次回に回す（作った月は R2 に置かれ、次回は取ってくるだけ）。
+    """
+    import time
+    start = time.time()
     upto = today - dt.timedelta(days=1)  # 前日まで（成績が出そろっている日）
-    yms = month_keys(today, months)
-    rows, changed, cache, tides = [], [], {}, {}
-    for key in yms:
+    rows, changed, skipped, cache, tides = [], [], [], {}, {}
+    for key in reversed(month_keys(today, months)):
         path = base / "races" / f"{key}.jsonl.gz"
         meta, got = ml.read_rows(path) if path.exists() else ({}, [])
         _, month_last = _month_range(key)
         want = min(month_last, upto).isoformat()
         if meta.get("version") != 1 or meta.get("upto", "") < want:
+            if time.time() - start > budget_min * 60:
+                skipped.append(key)
+                rows += got  # 途中までの月はあるだけ使う
+                continue
+            cache.clear()  # メモリ節約（成績はファイルにも控えてある）
             meta, got = build_month(key, upto, cache, tides)
             ml.write_rows(path, meta, got)
             changed.append(key)
         rows += got
+    if skipped:
+        print(f"時間の都合で次回に回した月: {', '.join(sorted(skipped))}（もう一度動かすと続きを作ります）")
     return rows, changed
 
 
@@ -157,6 +169,7 @@ def main() -> None:
     ap.add_argument("--months", type=int, default=36, help="何か月分で学習するか")
     ap.add_argument("--dir", default="out/ml", help="学習データとモデルの置き場")
     ap.add_argument("--date", help="今日（YYYY-MM-DD）。省略すると今日（日本時間）")
+    ap.add_argument("--budget", type=float, default=180, help="学習データ作りに使う時間の上限（分）")
     ap.add_argument("--print-months", action="store_true", help="使う月（YYYY-MM）を並べて表示するだけ")
     args = ap.parse_args()
     base = Path(args.dir)
@@ -166,7 +179,7 @@ def main() -> None:
         print(" ".join(month_keys(today, args.months)))
         return
 
-    rows, changed = ensure_data(base, args.months, today)
+    rows, changed = ensure_data(base, args.months, today, args.budget)
     (base / "changed.txt").write_text("".join(f"{k}\n" for k in changed), encoding="utf-8")
     print(f"学習データ {len(rows)}レース（作り直した月: {', '.join(changed) or 'なし'}）")
     if len(rows) < 500:
