@@ -7,7 +7,7 @@
 // （チームの Access アプリがこれ1つなら守りは同じ。アプリを増やすなら AUD も登録すること）。
 
 import PAGE from "./admin.html";
-import { dailyMail } from "./mail.js";
+import { dailyMail, LOG_KEY } from "./mail.js";
 
 const CSV_KEY = "admin/races.csv";
 const META_KEY = "admin/meta.json";
@@ -88,6 +88,10 @@ export async function handleAdmin(request, env, url) {
   }
   if (sub === "/usage" && request.method === "GET") {
     return new Response(JSON.stringify(await usage(env)), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+  }
+  if (sub === "/mail-log" && request.method === "GET") {
+    const obj = await env.BUCKET.get(LOG_KEY);
+    return new Response(obj ? obj.body : "[]", { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
   if (sub === "/mail-test" && request.method === "POST") {
     if (request.headers.get("origin") !== url.origin || request.headers.get("x-boatlab-admin") !== "mail") return NOT_FOUND();

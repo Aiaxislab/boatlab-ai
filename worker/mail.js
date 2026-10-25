@@ -4,6 +4,7 @@
 // 送り先 MAIL_TO は GitHub Secrets から渡す（カンマ区切りで複数可。Cloudflare Email Routing で確認済みのアドレスだけに届く）。
 
 const SENT_KEY = "admin/mail-sent.json";
+export const LOG_KEY = "admin/mail-log.json"; // 送ったレースの記録（ダッシュボードで結果と突き合わせる）
 const WEEK = ["日", "月", "火", "水", "木", "金", "土"];
 const combo = (c, sep = "-") => c.join(sep);
 const pct = (p) => (p * 100).toFixed(1) + "%";
@@ -39,7 +40,7 @@ export function buildMail(picks, min) {
     "※朝の時点の情報で計算しています（展示・オッズ・直前の天候は入っていません）。",
     `予想作成：${picks.generated}`,
   );
-  return { subject, text: lines.join("\n"), count: races.length };
+  return { subject, text: lines.join("\n"), count: races.length, keys: races.map((r) => `${r.jcd}-${r.no}`) };
 }
 
 function b64(str) {
@@ -86,8 +87,14 @@ export async function dailyMail(env, { force = false } = {}) {
   if (picks.date !== today && !force) return { ok: false, reason: "今日の予想データがまだありません" };
   const sent = await env.BUCKET.get(SENT_KEY);
   if (!force && sent && (await sent.json()).date === today) return { ok: false, reason: "今日はもう送りました" };
-  const { subject, text, count } = buildMail(picks, minOf(env));
+  const { subject, text, count, keys } = buildMail(picks, minOf(env));
   await sendMail(env, subject, text);
-  if (!force) await env.BUCKET.put(SENT_KEY, JSON.stringify({ date: today, count }));
+  if (!force) {
+    await env.BUCKET.put(SENT_KEY, JSON.stringify({ date: today, count }));
+    const old = await env.BUCKET.get(LOG_KEY);
+    const log = (old ? await old.json() : []).filter((d) => d.date !== picks.date);
+    log.push({ date: picks.date, min: minOf(env), races: keys });
+    await env.BUCKET.put(LOG_KEY, JSON.stringify(log));
+  }
   return { ok: true, count, date: picks.date };
 }
