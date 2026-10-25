@@ -71,7 +71,11 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 <h2>毎朝のメール</h2>
 <div class="panel">
   <p id="mail-meta" class="muted" style="margin-top:0">読み込み中…</p>
-  <div class="row"><button id="mail-test">今日の分をいま送ってみる</button></div>
+  <div class="row">
+    <label>メールで送る基準：買い目の的中確率が <select id="mail-min"></select> を超えたレース</label>
+    <button id="mail-test">今日の分をいま送ってみる</button>
+  </div>
+  <p class="muted" style="margin-bottom:0">基準を変えると、次の朝のメールから変わります（「いま送ってみる」はすぐ新しい基準で送ります）。</p>
 </div>
 
 <h2>メールで送ったレースの結果</h2>
@@ -299,6 +303,7 @@ async function loadUsage() {
       : "まだ送り先が設定されていません（GitHub の Secrets に MAIL_TO を登録すると始まります）。";
     $("mail-test").disabled = !u.mail;
     MAIL_MIN = u.mailMin;
+    $("mail-min").innerHTML = u.mailChoices.map((p) => `<option value="${p}" ${p === u.mailMin ? "selected" : ""}>${p}%</option>`).join("");
     $("usage-note").textContent = `内訳：PDF ${bytes(u.pdf)}／CSV ${bytes(u.csv)}／公開データ ${bytes(u.data)}／ページ ${bytes(u.site)}${u.other ? "／その他 " + bytes(u.other) : ""}。PDFは30日たつと自動で消えます。Cloudflare R2 の無料枠は10GBまでです。`;
   } catch (e) {
     $("gauges").innerHTML = `<div class="panel muted">容量を読み込めませんでした。</div>`;
@@ -343,6 +348,14 @@ $("table").onclick = (e) => {
 document.querySelectorAll("[data-range]").forEach((b) => (b.onclick = () => setRange(b.dataset.range)));
 ["from", "to", "venue", "race", "week", "prob"].forEach((id) => ($(id).onchange = () => { if (id === "from" || id === "to") document.querySelectorAll("[data-range]").forEach((b) => b.classList.remove("on")); render(); }));
 $("dl").onclick = () => { location.href = "races.csv?dl=1"; };
+$("mail-min").onchange = async (e) => {
+  const v = +e.target.value;
+  if (!confirm(`メールで送る基準を「${v}%を超えたレース」に変えます。よろしいですか？`)) { e.target.value = MAIL_MIN; return; }
+  const r = await fetch("settings", { method: "POST", headers: { "x-boatlab-admin": "settings", "content-type": "application/json" }, body: JSON.stringify({ mailMin: v }) });
+  if (!r.ok) { alert("変更できませんでした。ページを開き直してもう一度試してください。"); e.target.value = MAIL_MIN; return; }
+  await loadUsage();
+  renderMail();
+};
 $("mail-test").onclick = async () => {
   $("mail-test").disabled = true;
   try {

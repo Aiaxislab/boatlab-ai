@@ -75,7 +75,15 @@ async function sendOne(env, to, subject, text) {
   await env.MAIL.send(new EmailMessage(from, to, raw));
 }
 
-const minOf = (env) => (Number(env.MAIL_MIN) || 50) / 100;
+export const SETTINGS_KEY = "admin/settings.json"; // ダッシュボードで変える設定（メールの基準など）
+export const MIN_CHOICES = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80];
+
+// メールの基準（%）。ダッシュボードで選んだ値 → なければ MAIL_MIN → なければ50%
+export async function mailMinPct(env) {
+  const obj = await env.BUCKET.get(SETTINGS_KEY);
+  const saved = obj ? Number((await obj.json()).mailMin) : NaN;
+  return MIN_CHOICES.includes(saved) ? saved : Number(env.MAIL_MIN) || 50;
+}
 
 // force: ダッシュボードの「テスト送信」。送ったかどうかの記録を無視して今すぐ送る
 export async function dailyMail(env, { force = false } = {}) {
@@ -87,13 +95,14 @@ export async function dailyMail(env, { force = false } = {}) {
   if (picks.date !== today && !force) return { ok: false, reason: "今日の予想データがまだありません" };
   const sent = await env.BUCKET.get(SENT_KEY);
   if (!force && sent && (await sent.json()).date === today) return { ok: false, reason: "今日はもう送りました" };
-  const { subject, text, count, keys } = buildMail(picks, minOf(env));
+  const min = (await mailMinPct(env)) / 100;
+  const { subject, text, count, keys } = buildMail(picks, min);
   await sendMail(env, subject, text);
   if (!force) {
     await env.BUCKET.put(SENT_KEY, JSON.stringify({ date: today, count }));
     const old = await env.BUCKET.get(LOG_KEY);
     const log = (old ? await old.json() : []).filter((d) => d.date !== picks.date);
-    log.push({ date: picks.date, min: minOf(env), races: keys });
+    log.push({ date: picks.date, min, races: keys });
     await env.BUCKET.put(LOG_KEY, JSON.stringify(log));
   }
   return { ok: true, count, date: picks.date };
