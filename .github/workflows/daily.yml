@@ -46,7 +46,7 @@ jobs:
           python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
       - run: |
           pip install -q -r requirements.txt
           npm install --no-audit --no-fund
