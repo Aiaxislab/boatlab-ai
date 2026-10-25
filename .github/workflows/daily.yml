@@ -2,7 +2,7 @@ name: 毎朝のPDF作成
 on:
   schedule:
     - cron: "30 20 * * *" # 毎日 5:30（日本時間）。GitHubの都合で数十分遅れることがある
-  pull_request: # 変更の確認用。翌日分を作るだけで、データ保存とアップロードはしない
+  pull_request: # 変更の確認用。今日（日本時間）の分を作るだけで、データ保存とアップロードはしない
     paths: ["boatlab/**", "templates/**", "scripts/**", ".github/workflows/daily.yml"]
   workflow_dispatch:
     inputs:
@@ -71,7 +71,7 @@ jobs:
       - name: PDFを作る
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            python -m boatlab.daily --date "$(TZ=Asia/Tokyo date -d tomorrow +%F)"
+            python -m boatlab.daily --date "$(TZ=Asia/Tokyo date +%F)"
           else
             python -m boatlab.daily ${{ inputs.date && format('--date {0}', inputs.date) || '' }}
           fi
