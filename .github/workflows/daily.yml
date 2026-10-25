@@ -1,0 +1,89 @@
+name: 毎朝のPDF作成
+on:
+  schedule:
+    - cron: "30 20 * * *" # 毎日 5:30（日本時間）。GitHubの都合で数十分遅れることがある
+  pull_request: # 変更の確認用。翌日分を作るだけで、データ保存とアップロードはしない
+    paths: ["boatlab/**", "templates/**", "scripts/**", ".github/workflows/daily.yml"]
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "対象日（YYYY-MM-DD）。空なら今日"
+        required: false
+      upload:
+        description: "Cloudflare R2 にアップロードする"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency: daily
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: これまでのデータ（data ブランチ）を取り出す
+        run: |
+          if git fetch --depth 1 origin data; then
+            git worktree add state FETCH_HEAD
+          else
+            mkdir state
+          fi
+
+      - name: 道具の準備
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lhasa fonts-noto-cjk > /dev/null
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: |
+          pip install -q -r requirements.txt
+          npm install --no-audit --no-fund
+          npx playwright install chromium
+
+      - name: PDFを作る
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            python -m boatlab.daily --date "$(TZ=Asia/Tokyo date -d tomorrow +%F)"
+          else
+            python -m boatlab.daily ${{ inputs.date && format('--date {0}', inputs.date) || '' }}
+          fi
+
+      - name: データを data ブランチに保存
+        if: github.event_name != 'pull_request'
+        run: |
+          cd state
+          if [ -e .git ]; then git checkout -q -B data; else git init -q -b data; fi
+          git add -A
+          git -c user.name="BoatLab AI" -c user.email="actions@users.noreply.github.com" commit -qm "$(date -u +%F) のデータ" || exit 0
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:data
+
+      - name: Cloudflare R2 にアップロード
+        if: env.CLOUDFLARE_API_TOKEN != '' && (github.event_name == 'schedule' || inputs.upload)
+        run: |
+          for f in out/pdf/*/*.pdf; do
+            key="${f#out/}"
+            npx wrangler r2 object put "boatlab/$key" --file "$f" --content-type application/pdf --remote
+          done
+          for f in out/data/*.json; do
+            key="${f#out/}"
+            npx wrangler r2 object put "boatlab/$key" --file "$f" --content-type "application/json; charset=utf-8" --remote
+          done
+
+      - name: 作ったPDFを Actions の画面から落とせるようにする
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf
+          path: out/pdf/
+          retention-days: 3

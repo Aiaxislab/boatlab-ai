@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BoatLab AI ― AI分析 競艇情報 ｜ by AI Axis Lab</title>
+<meta name="description" content="全国のボートレース全場・全レースのAI分析PDFを毎朝無料で公開。">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,800;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+</head><body>
+<header class="band"><div class="in">
+  <div class="kicker">AI分析 ── 競艇情報</div>
+  <a class="logo" href="/">Boat<b>Lab</b><span class="ai">AI</span></a>
+  <nav><a href="/" class="on">本日の予想PDF</a><a href="/stats">的中率・回収率</a><a href="/archive">過去30日</a></nav>
+</div></header>
+<main class="wrap">
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<h1 id="today-title">本日の予想PDF</h1>
+<p class="muted" id="today-meta">読み込み中…</p>
+<div class="grid" id="venues"></div>
+<div class="note" style="margin-top:20px">毎朝5時半ごろ、その日開催の全場について、1場ごとに12レース分をまとめたPDFを作っています。朝の時点の情報（出走表・前日までの成績・気象庁の予報と潮位表）で作るため、展示航走・オッズ・直前の気象は入っていません。</div>
+<script>window.PAGE="today"</script>
+</main>
+<footer>
+  <p>予測はAIによる計算値であり、的中を保証するものではありません。舟券の購入は20歳になってから、ご自身の判断と責任で。</p>
+  <p>出走表・成績：ボートレース振興会の公開データ　天気・潮：気象庁のデータを加工して作成</p>
+  <p>運営：<a href="https://aiaxislab.win/">AI Axis Lab</a>　｜　<a href="https://aiaxislab.win/terms">利用規約</a>　｜　<a href="https://aiaxislab.win/privacy">プライバシーポリシー</a>　｜　<a href="https://aiaxislab.win/contact">お問い合わせ</a></p>
+</footer>
+<script src="/app.js"></script>
+</body></html>

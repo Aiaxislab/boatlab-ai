@@ -1,0 +1,9 @@
+{
+  "name": "boatlab-ai",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "playwright": "1.48.2",
+    "wrangler": "^4.20.0"
+  }
+}
