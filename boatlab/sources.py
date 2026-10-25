@@ -50,7 +50,7 @@ def _extract_lzh(data: bytes) -> str:
         src.write_bytes(data)
         subprocess.run(["lha", "-xqw=" + d, str(src)], check=True)
         txt = [p for p in Path(d).iterdir() if p.suffix.lower() == ".txt"]
-        return txt[0].read_bytes().decode("cp932", errors="replace")
+        return txt[0].read_bytes().decode("cp932", errors="replace").replace("\r\n", "\n")
 
 
 def mbrace_text(kind: str, day: dt.date) -> str | None:

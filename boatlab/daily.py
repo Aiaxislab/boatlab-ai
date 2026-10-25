@@ -118,6 +118,8 @@ def main() -> None:
                         honmei=r["pred"]["order"][0], honmei_name=r["boats"][r["pred"]["order"][0] - 1]["name"],
                         buy_prob=round(r["pred"]["buy_prob"] * 100)) for r in ctx["races"]],
         ))
+    if not listing:
+        raise SystemExit(f"{today} の番組表を読み取れませんでした（開催場が0）")
     if not args.no_pdf:
         render.html_to_pdf(pairs)
     # 予想は結果が出る前に保存する（あとで答え合わせに使う）
