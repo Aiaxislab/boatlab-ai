@@ -1,0 +1,2235 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<title>BoatLab AI 浜名湖 2026-10-26</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:0}
+:root{--ink:#14181b;--muted:#5d666c;--line:#c9d0d4;--soft:#f2f4f5;--accent:#0b5cad;--accent-soft:#e3eefa;--navy:#0a2550;--red:#c8102e;--warm:#b4530a;--warm-soft:#fbeedf;--new:#edf4fc;
+--b1:#fff;--b2:#1b1b1b;--b3:#d93a2b;--b4:#1f5fbf;--b5:#f2c418;--b6:#2f9a4a}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;background:#fff;color:var(--ink);font-family:"Noto Sans JP","Noto Sans CJK JP","IPAGothic",sans-serif;font-size:9.6pt;line-height:1.55}
+.page{page-break-after:always;display:flex;flex-direction:column;gap:7px;height:276mm;overflow:hidden}
+.page:last-child{page-break-after:auto}
+.num{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+small{font-size:.78em;color:var(--muted)}
+h1{font-family:"Noto Serif JP","Noto Serif CJK JP",serif;font-weight:900;font-size:22pt;margin:0;line-height:1.15}
+h2{font-family:"Noto Serif JP","Noto Serif CJK JP",serif;font-size:12.5pt;margin:0 0 4px;display:flex;gap:8px;align-items:baseline}
+h2 .tag{font:700 7.5pt "JetBrains Mono",monospace;color:#fff;background:var(--accent);padding:1px 6px;border-radius:3px;letter-spacing:.06em}
+h2 .tag.w{background:var(--warm)}
+p{margin:0}
+.mast{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px double var(--ink);padding-bottom:5px}
+.mast .brand{font:900 9pt "Noto Sans JP","Noto Sans CJK JP";letter-spacing:.2em;color:var(--accent)}
+.mast .meta{text-align:right;font-size:9pt}
+.mast .meta b{font-size:13pt}
+.cond{display:grid;grid-template-columns:1.1fr 1.3fr 1.1fr 1fr;border:1px solid var(--ink)}
+.cond div{padding:5px 8px;border-left:1px solid var(--line)}
+.cond div:first-child{border-left:0}
+.cond .k{font-size:7.5pt;color:var(--muted);display:block}
+.cond .v{font-weight:700;font-size:10.5pt}
+.cond .s{font-size:7.8pt;color:var(--muted)}
+.flag{border:1.5px solid var(--warm);background:var(--warm-soft);padding:6px 10px;border-radius:4px;font-size:9pt}
+.flag b{color:var(--warm)}
+table{border-collapse:collapse;width:100%}
+.card th{font-size:7.5pt;font-weight:500;color:var(--muted);background:var(--soft);padding:3px 4px;border:1px solid var(--line);line-height:1.25}
+.card th.new{background:var(--accent);color:#fff;font-weight:700}
+.card td{border:1px solid var(--line);padding:2px 5px;vertical-align:middle}
+.card td.num{text-align:right;font-size:10pt}
+.card td.new{background:var(--new)}
+.card td.strong{font-weight:700;font-size:12pt;color:var(--accent)}
+.card .sub{font-size:7.4pt;color:var(--muted);font-family:"Noto Sans JP","Noto Sans CJK JP";line-height:1.3}
+.card td.num small{font-size:6.8pt;margin-left:1px}
+.who b{font-size:11pt}
+.waku{text-align:center;width:34px}
+.mk{font-size:15pt;font-weight:900;line-height:1;margin-top:2px;color:var(--warm)}
+.bt{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:3px;font:700 9.5pt "JetBrains Mono",monospace;border:1px solid #999}
+.bt.lg{width:24px;height:24px;font-size:12pt}
+.n1{background:var(--b1);color:#111}.n2{background:var(--b2);color:#fff}.n3{background:var(--b3);color:#fff}.n4{background:var(--b4);color:#fff}.n5{background:var(--b5);color:#111}.n6{background:var(--b6);color:#fff}
+.combo{display:inline-flex;gap:2px;align-items:center}.combo i{font-style:normal;color:var(--muted);font-size:8pt}
+.runs{white-space:nowrap}
+.run{display:inline-grid;place-items:center;width:15px;height:17px;margin-right:1px;font:700 8.5pt "JetBrains Mono",monospace;border-radius:2px}
+.run.w{background:#d6e9f0;color:#0b4f61}.run.e{background:#eee;color:#555}
+.run.low{outline:1.5px solid var(--warm);outline-offset:-1.5px}
+.legend{font-size:7.6pt;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+.legend span{display:inline-flex;gap:4px;align-items:center}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{border:1px solid var(--line);border-radius:4px;padding:7px 9px}
+.box.main{border:2px solid var(--ink)}
+.pick th{font-size:7.5pt;color:var(--muted);font-weight:500;text-align:left;border-bottom:1px solid var(--line);padding:2px 4px}
+.pick td{padding:2.5px 4px;border-bottom:1px dotted var(--line);font-size:9.5pt}
+.pick td.num{text-align:right}
+.buy{display:flex;flex-direction:column;gap:7px}
+.buy .line{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.buy .lb{font-size:7.8pt;font-weight:700;background:var(--ink);color:#fff;padding:1px 6px;border-radius:2px;min-width:44px;text-align:center}
+.buy .lb.sub{background:var(--muted)}
+.why{display:flex;flex-direction:column;gap:3px;font-size:8.7pt;line-height:1.5}
+.why div{display:grid;grid-template-columns:22px 1fr;gap:6px;align-items:start}
+.chart svg{width:100%;height:auto;display:block}
+.tl{fill:none;stroke:var(--accent);stroke-width:2.4}
+.gl{stroke:#e3e7e9;stroke-width:1}
+.rl{stroke:#d5dadd;stroke-width:1;stroke-dasharray:2 3}.rl.hl{stroke:var(--warm);stroke-width:1.6;stroke-dasharray:none}
+.rt{font:500 10px "JetBrains Mono",monospace;fill:#8a9399}.rt.hl{fill:var(--warm);font-weight:700}
+.ax{font:500 10px "Noto Sans JP","Noto Sans CJK JP";fill:#6b747a}
+.dot{fill:var(--warm)}.lab{font:700 12px "Noto Sans JP","Noto Sans CJK JP";fill:var(--warm)}
+.ctab td{border-bottom:1px solid var(--line);padding:4px 3px;vertical-align:middle}
+.cells{display:flex;gap:3px}
+.cell{flex:1;border-radius:3px;padding:2px 4px;font-size:7.1pt;line-height:1.3;display:flex;flex-direction:column;min-width:0}
+.cell b{font-size:8.6pt}
+.cell.w{background:#d6e9f0}.cell.e{background:#efefef}
+.cell.low{outline:1.5px solid var(--warm);outline-offset:-1.5px}
+.cmp th,.cmp td{border:1px solid var(--line);padding:4px 6px;font-size:8.6pt;vertical-align:top;text-align:left}
+.cmp th{background:var(--soft);font-weight:700;font-size:8pt}
+.cmp td.ours{background:var(--new)}
+.cmp td:first-child{font-weight:700;white-space:nowrap}
+.blank{border:1.5px dashed var(--line);border-radius:4px;padding:6px 9px;color:var(--muted);font-size:8.6pt}
+.src{font-size:7.6pt;color:var(--muted);line-height:1.5}
+.src b{color:var(--ink)}
+ul{margin:0;padding-left:1.2em}li{margin:1px 0}
+.page{height:313mm;gap:7px}
+.who .sub{display:inline}
+.who b{display:block}
+.gloss{display:grid;grid-template-columns:repeat(4,1fr);gap:1px 10px;font-size:7.4pt;line-height:1.36;border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:#fafbfb}
+.gloss .t{grid-column:1/-1;font-weight:700;font-size:8pt;color:var(--accent)}
+.gloss b{color:var(--ink)}
+.gloss div{color:#3d464b}
+.disc{border:1px solid var(--line);padding:4px 10px;font-size:8.6pt;display:flex;gap:10px;align-items:baseline}
+.disc b{font-size:10pt;border-bottom:2px solid var(--ink)}
+.why{font-size:8.3pt;line-height:1.45;gap:2px}
+.card td{padding:0 5px;height:44px}
+.who b{font-size:10.5pt}
+.cond div{padding:3px 8px}
+.cond .s{font-size:7.4pt;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.legend{font-size:7.2pt;gap:3px 12px}
+.pick td{padding:1.5px 4px}
+
+.page{width:238.6mm;height:337.5mm;padding:0 10mm 6mm;gap:7px}
+.band{position:relative;margin:0 -10mm;height:32mm;padding:0 12mm;display:flex;justify-content:space-between;align-items:center;color:#fff;overflow:hidden;
+ background:linear-gradient(115deg,#051a3d 0%,#0a3378 38%,#0d56b3 70%,#2a8fe0 100%)}
+.band::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#7fd3ff,#ffffff 40%,#7fd3ff)}
+.waves{position:absolute;inset:0;width:100%;height:100%}
+.waves path{fill:none;stroke:rgba(255,255,255,.16);stroke-width:1.4}
+.waves path.hi{stroke:rgba(140,215,255,.35);stroke-width:2}
+.bl,.br{position:relative;z-index:1}
+.kicker{display:flex;align-items:center;gap:8px;font:700 10pt "Noto Sans JP","Noto Sans CJK JP";letter-spacing:.35em;color:#cfe6ff}
+.kicker i{display:block;width:26px;height:1.5px;background:#7fd3ff}
+.logo{font:italic 900 40pt/1 "Exo 2",sans-serif;letter-spacing:-.01em;margin:3px 0 2px;display:flex;align-items:flex-start}
+.logo b{font-weight:900;color:#8fd6ff}
+.logo .ai{font:italic 800 14pt/1 "Exo 2";background:#fff;color:#0a3378;padding:3px 7px 3px 6px;border-radius:3px;margin:6px 0 0 8px;text-shadow:none;transform:skewX(-8deg)}
+.en{font:600 7.5pt "Exo 2";letter-spacing:.42em;color:#a9d4ff}
+.br{text-align:right}
+.br .d{font:italic 800 24pt/1 "Exo 2"}
+.br .d span{color:#7fd3ff;margin:0 1px}
+.br .d em{font:800 10pt "Exo 2";font-style:normal;margin-left:8px;padding:2px 6px;border:1.5px solid #fff;border-radius:2px;vertical-align:5px}
+.br .v{font:700 13pt "Noto Sans JP","Noto Sans CJK JP";margin-top:6px;letter-spacing:.1em}
+.br .u{font-size:7.5pt;color:#cfe6ff;margin-top:2px}
+.tagline{color:var(--red);font-weight:700;font-size:9.6pt;margin:3px 0 0;letter-spacing:.02em}
+.race{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--navy);padding-bottom:5px}
+.race .rl{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.venue{font:900 15pt "Noto Serif JP","Noto Serif CJK JP";color:#fff;background:var(--navy);padding:3px 12px 4px;border-radius:2px;letter-spacing:.12em}
+.race h1{font:900 23pt/1 "Noto Serif JP","Noto Serif CJK JP";color:var(--navy);display:flex;align-items:baseline;gap:10px}
+.race h1 span{font-size:15pt;color:var(--accent)}
+.race .rs{font-size:9pt;color:var(--muted)}
+.race .rs i{font-style:normal;margin:0 8px;color:var(--line)}
+.race .rr{text-align:right;color:var(--navy)}
+.race .rr span{display:block;font-size:8.5pt;color:var(--muted)}
+.race .rr b{font-size:24pt;line-height:1}
+.cond{border:0;border-top:3px solid var(--accent);background:var(--accent-soft);border-radius:0 0 4px 4px}
+.cond div{border-left:1px solid #c6d9ef}
+.cond .k{color:var(--accent);font-weight:700}
+.cond .v{color:var(--navy)}
+.card th{background:#eef2f7}
+.card th.new{background:#0b4a9e}
+.card td.strong{color:var(--accent)}
+.run.w{background:#d4e6fa;color:#0a3d8f}
+.gloss{border:1px solid #c6d9ef;background:#f6f9fd}
+.gloss .t{color:var(--navy);font-size:8.5pt;border-bottom:1px solid #c6d9ef;padding-bottom:2px;margin-bottom:2px}
+.gloss b{color:var(--accent)}
+.why{border:1px solid #c6d9ef}
+.disc{border:0;border-top:2px solid var(--navy);padding:6px 0 0;margin-top:2px;align-items:center}
+.disc b{font:900 15pt "Noto Serif JP","Noto Serif CJK JP";color:var(--navy);border-bottom:3px solid var(--accent);padding-bottom:1px}
+.disc span{color:var(--red);font-size:9pt;font-weight:500}
+.box{border-color:#c6d9ef}
+.box.main{border:2px solid var(--navy)}
+h2 .tag{background:var(--accent)}
+.buy .lb{background:var(--navy)}
+.buy .lb.sub{background:#5b7aa3}
+.page>*{flex-shrink:0}
+.foot{font-size:6.9pt;line-height:1.45;border-top:1px solid var(--line);padding-top:4px;margin-top:auto}
+.foot .brand2{float:right;font:italic 800 9pt "Exo 2";color:var(--accent)}
+.race .rs{max-width:150mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.why p b{color:var(--navy)}
+.note{font-size:7.6pt;color:var(--muted)}
+.buy .combos{display:flex;flex-wrap:wrap;gap:4px 10px}
+.cover h1{font:900 26pt "Noto Serif JP","Noto Serif CJK JP";color:var(--navy);margin:8px 0 4px}
+.idx td,.idx th{border-bottom:1px solid var(--line);padding:6px 6px;font-size:10.5pt;text-align:left}
+.idx th{font-size:8pt;color:var(--muted);font-weight:500;background:#eef2f7}
+</style></head><body>
+
+<section class="page cover">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<h1>浜名湖　全12レース</h1>
+<p>SUZUKIスピードカップ　6日目</p>
+<table class="idx">
+  <thead><tr><th>R</th><th>締切予定</th><th>種別</th><th>◎本命</th><th>買い目の的中確率（6点）</th><th>3連単 1番人気予想</th></tr></thead>
+  <tbody>
+  
+  <tr><td><b>1R</b></td><td class="num">10:42</td><td>一般</td>
+  <td><span class="bt n1">1</span> 鈴木智啓</td>
+  <td class="num">約39%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span></td></tr>
+  
+  <tr><td><b>2R</b></td><td class="num">11:10</td><td>一般</td>
+  <td><span class="bt n1">1</span> 富永修一</td>
+  <td class="num">約35%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n5">5</span></span></td></tr>
+  
+  <tr><td><b>3R</b></td><td class="num">11:42</td><td>一般</td>
+  <td><span class="bt n1">1</span> 佐竹太一</td>
+  <td class="num">約28%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td></tr>
+  
+  <tr><td><b>4R</b></td><td class="num">12:11</td><td>一般</td>
+  <td><span class="bt n1">1</span> 金児隆太</td>
+  <td class="num">約30%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td></tr>
+  
+  <tr><td><b>5R</b></td><td class="num">12:38</td><td>ランチタイム</td>
+  <td><span class="bt n1">1</span> 濱本優一</td>
+  <td class="num">約44%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></td></tr>
+  
+  <tr><td><b>6R</b></td><td class="num">13:05</td><td>一般</td>
+  <td><span class="bt n1">1</span> 中島浩哉</td>
+  <td class="num">約39%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td></tr>
+  
+  <tr><td><b>7R</b></td><td class="num">13:32</td><td>一般</td>
+  <td><span class="bt n1">1</span> 池田雄祐</td>
+  <td class="num">約26%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td></tr>
+  
+  <tr><td><b>8R</b></td><td class="num">14:02</td><td>一般</td>
+  <td><span class="bt n1">1</span> 重成一人</td>
+  <td class="num">約38%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span></td></tr>
+  
+  <tr><td><b>9R</b></td><td class="num">14:37</td><td>ブレイクタイ</td>
+  <td><span class="bt n1">1</span> 佐藤大佑</td>
+  <td class="num">約45%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span></td></tr>
+  
+  <tr><td><b>10R</b></td><td class="num">15:11</td><td>選抜戦</td>
+  <td><span class="bt n1">1</span> 宮崎 奨</td>
+  <td class="num">約50%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td></tr>
+  
+  <tr><td><b>11R</b></td><td class="num">15:46</td><td>選抜戦</td>
+  <td><span class="bt n1">1</span> 太田和美</td>
+  <td class="num">約41%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></td></tr>
+  
+  <tr><td><b>12R</b></td><td class="num">16:23</td><td>優勝戦</td>
+  <td><span class="bt n1">1</span> 吉田凌太</td>
+  <td class="num">約34%</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span></td></tr>
+  
+  </tbody>
+</table>
+<div class="cond" style="margin-top:6px">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨</span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  <div><span class="k">前日の水面（公式発表）</span><span class="v">風 無風0m・波0cm</span><div class="s">最終レース時点。前日の風は0〜5m</div></div>
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="src foot"><b>この冊子について</b>　朝の時点の公開情報（出走表・前日までの成績・気象庁の予報と潮位表）から自動で作成しています。展示航走・オッズ・直前の気象は入っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI</span></div>
+</section>
+
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第1R<span>一般</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">10:42</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約56cm・下げ</span><div class="s">干潮11:46（49cm）の約64分前</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>鈴木智啓</b><div class="sub">B1 / 4293 / 愛知 41歳 59kg</div></td>
+    <td class="num">4.97<div class="sub">27.2%</div></td>
+    <td class="num">5.70<div class="sub">40.0%</div></td>
+    <td class="num">#66<div class="sub">36.8%</div></td>
+    <td class="num">#52<div class="sub">40.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">3</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run w" title="風 北西 5m 波 3cm">2</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 北東 2m 波 1cm">3</span><span class="run e" title="風 北東 2m 波 1cm">6</span><span class="run w" title="風 南 4m 波 2cm">4</span><span class="run e" title="風 南 2m 波 1cm">5</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">58%</td>
+    <td class="num new">85%</td>
+    <td class="num new">96%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">△</div></td>
+    <td class="who"><b>井上 茂</b><div class="sub">B1 / 4669 / 福岡 41歳 55kg</div></td>
+    <td class="num">4.19<div class="sub">15.0%</div></td>
+    <td class="num">4.47<div class="sub">23.5%</div></td>
+    <td class="num">#11<div class="sub">38.8%</div></td>
+    <td class="num">#31<div class="sub">44.4%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">4</span><span class="run w" title="風 南 5m 波 2cm">4</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run w" title="風 北東 4m 波 2cm">4</span><span class="run e" title="風 北 3m 波 1cm">3</span><span class="run w" title="風 南 5m 波 3cm">6</span><span class="run e" title="風 南 2m 波 1cm">5</span></td>
+    <td class="num new">0.19</td>
+    <td class="num new strong">8%</td>
+    <td class="num new">22%</td>
+    <td class="num new">41%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">▲</div></td>
+    <td class="who"><b>相原利章</b><div class="sub">A2 / 4540 / 東京 39歳 53kg</div></td>
+    <td class="num">4.87<div class="sub">25.2%</div></td>
+    <td class="num">4.62<div class="sub">7.7%</div></td>
+    <td class="num">#4<div class="sub">28.1%</div></td>
+    <td class="num">#72<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run w" title="風 北西 5m 波 3cm">1</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 東 1m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run e" title="風 南 3m 波 1cm">5</span><span class="run e" title="風 北西 1m 波 1cm">3</span></td>
+    <td class="num new">0.11</td>
+    <td class="num new strong">13%</td>
+    <td class="num new">36%</td>
+    <td class="num new">62%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">○</div></td>
+    <td class="who"><b>小林文彦</b><div class="sub">A2 / 4549 / 福岡 38歳 53kg</div></td>
+    <td class="num">6.12<div class="sub">44.3%</div></td>
+    <td class="num">4.58<div class="sub">25.8%</div></td>
+    <td class="num">#14<div class="sub">36.5%</div></td>
+    <td class="num">#64<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">2</span><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北 6m 波 4cm">5</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 1cm">2</span><span class="run e" title="風 北東 2m 波 1cm">6</span><span class="run e" title="風 北西 2m 波 1cm">6</span><span class="run e" title="風 南 3m 波 1cm">3</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">15%</td>
+    <td class="num new">39%</td>
+    <td class="num new">65%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>栗原直也</b><div class="sub">B1 / 4973 / 埼玉 34歳 53kg</div></td>
+    <td class="num">5.09<div class="sub">33.8%</div></td>
+    <td class="num">5.00<div class="sub">26.3%</div></td>
+    <td class="num">#7<div class="sub">32.1%</div></td>
+    <td class="num">#38<div class="sub">30.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">5</span><span class="run w" title="風 南 5m 波 3cm">5</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 北西 2m 波 1cm">1</span><span class="run w" title="風 南 4m 波 2cm">3</span></td>
+    <td class="num new">0.19</td>
+    <td class="num new strong">5%</td>
+    <td class="num new">14%</td>
+    <td class="num new">28%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>川上聡介</b><div class="sub">B1 / 3848 / 愛知 49歳 56kg</div></td>
+    <td class="num">4.46<div class="sub">27.0%</div></td>
+    <td class="num">5.79<div class="sub">36.2%</div></td>
+    <td class="num">#53<div class="sub">32.3%</div></td>
+    <td class="num">#68<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">4</span><span class="run w" title="風 北 6m 波 4cm">1</span><span class="run w" title="風 北西 5m 波 3cm">4</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 1m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run w" title="風 南 5m 波 3cm">1</span><span class="run e" title="風 北西 1m 波 1cm">6</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">1%</td>
+    <td class="num new">4%</td>
+    <td class="num new">8%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>鈴木智啓：全国勝率4.97。</b>一番有利な1コース（浜名湖の1着率54%）に入る予定。1着確率は約58%、3着以内は約96%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>小林文彦：全国勝率6.12はメンバー最上位。</b>A2で地力は一番。当地は苦手。当地勝率4.58は全国（6.12）より低い。1着確率は約15%、3着以内は約65%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>相原利章：今節のスタートはメンバー最速（平均0.11秒）。</b>1着確率は約13%、3着以内は約62%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>井上 茂：全国勝率4.19はメンバー下位。</b>モーターは今回一番（2連38.8%）。今節のスタートは遅め（平均0.19秒）。1着確率は約8%、3着以内は約41%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>栗原直也：全国勝率5.09。</b>外の5コースは1着率7%と不利。1着確率は約5%、3着以内は約28%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>川上聡介：全国勝率4.46はメンバー下位。</b>当地は得意。当地勝率5.79は全国（4.46）より高い。外の6コースは1着率2%と不利。1着確率は約1%、3着以内は約8%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約39%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n4">4</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span></div><small>3点で約64%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">9.6%</td><td class="num">10倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">9.2%</td><td class="num">11倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.7%</td><td class="num">18倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.0%</td><td class="num">20倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n4">4</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">4.7%</td><td class="num">21倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第2R<span>一般</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">11:10</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約52cm・下げ</span><div class="s">干潮11:46（49cm）の約36分前</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>富永修一</b><div class="sub">A2 / 4121 / 福岡 44歳 52kg</div></td>
+    <td class="num">6.01<div class="sub">43.5%</div></td>
+    <td class="num">5.73<div class="sub">33.3%</div></td>
+    <td class="num">#44<div class="sub">36.3%</div></td>
+    <td class="num">#58<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">3</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run w" title="風 北西 5m 波 3cm">5</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 北 2m 波 1cm">2</span><span class="run e" title="風 北東 2m 波 1cm">5</span><span class="run e" title="風 南 3m 波 1cm">2</span><span class="run e" title="風 北西 1m 波 1cm">2</span></td>
+    <td class="num new">0.14</td>
+    <td class="num new strong">59%</td>
+    <td class="num new">86%</td>
+    <td class="num new">96%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">○</div></td>
+    <td class="who"><b>佐藤大佑</b><div class="sub">A1 / 4610 / 東京 36歳 54kg</div></td>
+    <td class="num">6.14<div class="sub">48.6%</div></td>
+    <td class="num">6.73<div class="sub">36.4%</div></td>
+    <td class="num">#29<div class="sub">29.2%</div></td>
+    <td class="num">#57<div class="sub">33.3%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">5</span><span class="run w" title="風 南 5m 波 3cm">2</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run w" title="風 北西 5m 波 3cm">4</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北東 3m 波 1cm">5</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run w" title="風 南 4m 波 2cm">6</span></td>
+    <td class="num new">0.19</td>
+    <td class="num new strong">14%</td>
+    <td class="num new">40%</td>
+    <td class="num new">65%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">△</div></td>
+    <td class="who"><b>山川雄大</b><div class="sub">B1 / 4902 / 兵庫 33歳 52kg</div></td>
+    <td class="num">4.51<div class="sub">32.2%</div></td>
+    <td class="num">6.07<div class="sub">46.4%</div></td>
+    <td class="num">#61<div class="sub">42.5%</div></td>
+    <td class="num">#75<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">1</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北東 3m 波 1cm">3</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run w" title="風 南 4m 波 2cm">6</span><span class="run e" title="風 南 2m 波 1cm">3</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">8%</td>
+    <td class="num new">23%</td>
+    <td class="num new">43%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">△</div></td>
+    <td class="who"><b>澤崎雄哉</b><div class="sub">B1 / 4880 / 東京 31歳 53kg</div></td>
+    <td class="num">4.87<div class="sub">27.0%</div></td>
+    <td class="num">6.65<div class="sub">54.8%</div></td>
+    <td class="num">#26<div class="sub">38.4%</div></td>
+    <td class="num">#34<div class="sub">45.5%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">6</span><span class="run w" title="風 北 6m 波 4cm">4</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 北 3m 波 1cm">6</span><span class="run e" title="風 南 2m 波 1cm">4</span></td>
+    <td class="num new">0.17</td>
+    <td class="num new strong">7%</td>
+    <td class="num new">20%</td>
+    <td class="num new">38%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">▲</div></td>
+    <td class="who"><b>太田和美</b><div class="sub">A1 / 3557 / 大阪 53歳 55kg</div></td>
+    <td class="num">6.45<div class="sub">49.3%</div></td>
+    <td class="num">6.69<div class="sub">48.6%</div></td>
+    <td class="num">#3<div class="sub">35.0%</div></td>
+    <td class="num">#60<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">5</span><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run w" title="風 北西 5m 波 3cm">3</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北 3m 波 1cm">1</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run e" title="風 南 2m 波 1cm">3</span></td>
+    <td class="num new">0.18</td>
+    <td class="num new strong">9%</td>
+    <td class="num new">25%</td>
+    <td class="num new">46%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>宮崎 奨</b><div class="sub">A2 / 4348 / 香川 41歳 55kg</div></td>
+    <td class="num">6.18<div class="sub">46.6%</div></td>
+    <td class="num">5.93<div class="sub">33.3%</div></td>
+    <td class="num">#38<div class="sub">45.5%</div></td>
+    <td class="num">#45<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">3</span><span class="run w" title="風 南 5m 波 3cm">1</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 北東 3m 波 1cm">4</span><span class="run e" title="風 北東 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">2</span><span class="run e" title="風 南 2m 波 1cm">3</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">2%</td>
+    <td class="num new">6%</td>
+    <td class="num new">12%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>富永修一：今節のスタートはメンバー最速（平均0.14秒）。</b>一番有利な1コース（浜名湖の1着率54%）に入る予定。1着確率は約59%、3着以内は約96%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>佐藤大佑：全国勝率6.14。</b>今節のスタートは遅め（平均0.19秒）。1着確率は約14%、3着以内は約65%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>太田和美：全国勝率6.45はメンバー最上位。</b>A1で地力は一番。外の5コースは1着率7%と不利。1着確率は約9%、3着以内は約46%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>山川雄大：全国勝率4.51はメンバー下位。</b>当地は得意。当地勝率6.07は全国（4.51）より高い。1着確率は約8%、3着以内は約43%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>澤崎雄哉：全国勝率4.87はメンバー下位。</b>当地は得意。当地勝率6.65は全国（4.87）より高い。今節は7走して2着以内なし。1着確率は約7%、3着以内は約38%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>宮崎 奨：モーターは今回一番（2連45.5%）。</b>外の6コースは1着率2%と不利。1着確率は約2%、3着以内は約12%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約35%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n4">4</span></span></div><small>3点で約57%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n5">5</span></span></td><td class="num">7.2%</td><td class="num">14倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">6.5%</td><td class="num">15倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.9%</td><td class="num">17倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">5.7%</td><td class="num">18倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.3%</td><td class="num">19倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第3R<span>一般</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">11:42</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約50cm・下げ</span><div class="s">干潮11:46（49cm）の約4分前</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>佐竹太一</b><div class="sub">B1 / 4725 / 兵庫 40歳 53kg</div></td>
+    <td class="num">4.93<div class="sub">23.1%</div></td>
+    <td class="num">4.05<div class="sub">15.8%</div></td>
+    <td class="num">#9<div class="sub">30.2%</div></td>
+    <td class="num">#54<div class="sub">45.5%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run w" title="風 北西 5m 波 3cm">2</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 北東 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">3</span><span class="run w" title="風 南 4m 波 2cm">2</span><span class="run e" title="風 無風 0m 波 0cm">5</span></td>
+    <td class="num new">0.14</td>
+    <td class="num new strong">39%</td>
+    <td class="num new">67%</td>
+    <td class="num new">86%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">▲</div></td>
+    <td class="who"><b>長谷川雅</b><div class="sub">B1 / 4580 / 岡山 37歳 53kg</div></td>
+    <td class="num">5.62<div class="sub">35.1%</div></td>
+    <td class="num">6.60<div class="sub">50.0%</div></td>
+    <td class="num">#15<div class="sub">34.8%</div></td>
+    <td class="num">#43<div class="sub">33.3%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">3</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run w" title="風 北西 5m 波 3cm">6</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北 3m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">3</span><span class="run e" title="風 北西 1m 波 1cm">1</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">18%</td>
+    <td class="num new">38%</td>
+    <td class="num new">60%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">○</div></td>
+    <td class="who"><b>大場 敏</b><div class="sub">A2 / 3489 / 静岡 59歳 54kg</div></td>
+    <td class="num">5.99<div class="sub">41.4%</div></td>
+    <td class="num">6.11<div class="sub">41.3%</div></td>
+    <td class="num">#63<div class="sub">40.8%</div></td>
+    <td class="num">#16<div class="sub">40.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">2</span><span class="run w" title="風 北 6m 波 4cm">2</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run e" title="風 東 1m 波 1cm">6</span><span class="run w" title="風 北東 4m 波 2cm">3</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 南 3m 波 1cm">4</span><span class="run e" title="風 南 2m 波 1cm">1</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">19%</td>
+    <td class="num new">41%</td>
+    <td class="num new">63%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">△</div></td>
+    <td class="who"><b>松尾 拓</b><div class="sub">A2 / 4808 / 三重 38歳 50kg</div></td>
+    <td class="num">6.34<div class="sub">46.1%</div></td>
+    <td class="num">7.22<div class="sub">51.9%</div></td>
+    <td class="num">#54<div class="sub">32.8%</div></td>
+    <td class="num">#40<div class="sub">54.5%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">2</span><span class="run w" title="風 南 5m 波 2cm">3</span><span class="run w" title="風 北西 5m 波 3cm">2</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">2</span><span class="run e" title="風 東 1m 波 0cm">6</span><span class="run e" title="風 北西 2m 波 1cm">1</span></td>
+    <td class="num new">0.18</td>
+    <td class="num new strong">17%</td>
+    <td class="num new">36%</td>
+    <td class="num new">58%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>伯母芳恒</b><div class="sub">B1 / 3656 / 東京 53歳 55kg</div></td>
+    <td class="num">4.72<div class="sub">24.4%</div></td>
+    <td class="num">4.90<div class="sub">35.0%</div></td>
+    <td class="num">#17<div class="sub">42.0%</div></td>
+    <td class="num">#73<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">4</span><span class="run w" title="風 北 6m 波 4cm">6</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">3</span></td>
+    <td class="num new">0.18</td>
+    <td class="num new strong">5%</td>
+    <td class="num new">11%</td>
+    <td class="num new">20%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>村上 遼</b><div class="sub">A1 / 4715 / 長崎 34歳 51kg</div></td>
+    <td class="num">6.77<div class="sub">46.9%</div></td>
+    <td class="num">3.88<div class="sub">0.0%</div></td>
+    <td class="num">#46<div class="sub">43.8%</div></td>
+    <td class="num">#63<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">3</span><span class="run w" title="風 北 6m 波 4cm">3</span><span class="run w" title="風 北西 5m 波 3cm">6</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 1cm">5</span><span class="run e" title="風 北 2m 波 1cm">3</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 北西 1m 波 1cm">1</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">3%</td>
+    <td class="num new">7%</td>
+    <td class="num new">13%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>佐竹太一：今節は8走で2着以内が4回と好調。</b>全国勝率4.93はメンバー下位。当地は苦手。当地勝率4.05は全国（4.93）より低い。1着確率は約39%、3着以内は約86%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>大場 敏：全国勝率5.99。</b>1着確率は約19%、3着以内は約63%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>長谷川雅：当地は得意。</b>当地勝率6.60は全国（5.62）より高い。1着確率は約18%、3着以内は約60%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>松尾 拓：今節は8走で2着以内が4回と好調。</b>当地は得意。当地勝率7.22は全国（6.34）より高い。1着確率は約17%、3着以内は約58%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>伯母芳恒：全国勝率4.72はメンバー下位。</b>今節のスタートは遅め（平均0.18秒）。外の5コースは1着率7%と不利。1着確率は約5%、3着以内は約20%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>村上 遼：全国勝率6.77はメンバー最上位。</b>A1で地力は一番。当地は苦手。当地勝率3.88は全国（6.77）より低い。モーターは今回一番（2連43.8%）。1着確率は約3%、3着以内は約13%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約28%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n4">4</span></span></div><small>3点で約62%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.0%</td><td class="num">20倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">4.9%</td><td class="num">20倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">4.8%</td><td class="num">21倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">4.5%</td><td class="num">22倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">4.3%</td><td class="num">23倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第4R<span>一般</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">12:11</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約51cm・上げ</span><div class="s">干潮11:46（49cm）の約25分後</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>金児隆太</b><div class="sub">B1 / 4888 / 群馬 39歳 52kg</div></td>
+    <td class="num">6.12<div class="sub">47.9%</div></td>
+    <td class="num">5.55<div class="sub">38.8%</div></td>
+    <td class="num">#52<div class="sub">36.5%</div></td>
+    <td class="num">#32<div class="sub">50.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">6</span><span class="run w" title="風 南 5m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 1m 波 1cm">2</span><span class="run e" title="風 北東 2m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">1</span><span class="run w" title="風 南 4m 波 2cm">2</span><span class="run e" title="風 無風 0m 波 0cm">4</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">57%</td>
+    <td class="num new">84%</td>
+    <td class="num new">95%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">▲</div></td>
+    <td class="who"><b>長尾京志</b><div class="sub">B1 / 4632 / 福岡 37歳 52kg</div></td>
+    <td class="num">4.67<div class="sub">25.7%</div></td>
+    <td class="num">4.18<div class="sub">23.5%</div></td>
+    <td class="num">#5<div class="sub">45.3%</div></td>
+    <td class="num">#67<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">5</span><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 2m 波 1cm">S</span><span class="run e" title="風 北 2m 波 1cm">4</span><span class="run e" title="風 南 3m 波 1cm">6</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">9%</td>
+    <td class="num new">26%</td>
+    <td class="num new">46%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">○</div></td>
+    <td class="who"><b>繁野谷圭</b><div class="sub">A2 / 3915 / 大阪 52歳 52kg</div></td>
+    <td class="num">6.37<div class="sub">47.5%</div></td>
+    <td class="num">6.14<div class="sub">35.7%</div></td>
+    <td class="num">#10<div class="sub">35.2%</div></td>
+    <td class="num">#47<div class="sub">33.3%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">4</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run w" title="風 北西 5m 波 3cm">3</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run w" title="風 北東 4m 波 2cm">5</span><span class="run e" title="風 北西 2m 波 1cm">2</span><span class="run w" title="風 南 4m 波 2cm">5</span><span class="run e" title="風 北西 1m 波 1cm">2</span></td>
+    <td class="num new">0.19</td>
+    <td class="num new strong">14%</td>
+    <td class="num new">38%</td>
+    <td class="num new">62%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk"></div></td>
+    <td class="who"><b>萩原知哉</b><div class="sub">B1 / 4440 / 東京 40歳 56kg</div></td>
+    <td class="num">4.26<div class="sub">23.9%</div></td>
+    <td class="num">4.00<div class="sub">18.2%</div></td>
+    <td class="num">#34<div class="sub">31.6%</div></td>
+    <td class="num">#27<div class="sub">41.7%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">3</span><span class="run w" title="風 南 5m 波 2cm">3</span><span class="run w" title="風 北西 5m 波 3cm">5</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run w" title="風 北東 4m 波 2cm">6</span><span class="run e" title="風 北西 2m 波 1cm">6</span><span class="run e" title="風 南 3m 波 1cm">6</span></td>
+    <td class="num new">0.17</td>
+    <td class="num new strong">4%</td>
+    <td class="num new">12%</td>
+    <td class="num new">23%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>重成一人</b><div class="sub">A1 / 3908 / 香川 48歳 57kg</div></td>
+    <td class="num">5.78<div class="sub">38.4%</div></td>
+    <td class="num">5.05<div class="sub">31.6%</div></td>
+    <td class="num">#45<div class="sub">41.9%</div></td>
+    <td class="num">#17<div class="sub">30.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">6</span><span class="run w" title="風 南 5m 波 2cm">4</span><span class="run w" title="風 北西 5m 波 3cm">3</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 1cm">6</span><span class="run e" title="風 北東 2m 波 1cm">5</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run e" title="風 南 2m 波 1cm">2</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">9%</td>
+    <td class="num new">24%</td>
+    <td class="num new">43%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk">△</div></td>
+    <td class="who"><b>尾嶋一広</b><div class="sub">A1 / 4472 / 兵庫 39歳 56kg</div></td>
+    <td class="num">6.60<div class="sub">50.4%</div></td>
+    <td class="num">10.00<div class="sub">100.0%</div></td>
+    <td class="num">#21<div class="sub">34.7%</div></td>
+    <td class="num">#15<div class="sub">44.4%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">6</span><span class="run w" title="風 南 5m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run w" title="風 北西 5m 波 3cm">1</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 北 2m 波 1cm">1</span><span class="run w" title="風 南 4m 波 2cm">1</span><span class="run e" title="風 南 2m 波 1cm">4</span></td>
+    <td class="num new">0.12</td>
+    <td class="num new strong">6%</td>
+    <td class="num new">17%</td>
+    <td class="num new">31%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>金児隆太：今節は9走で2着以内が5回と好調。</b>一番有利な1コース（浜名湖の1着率54%）に入る予定。1着確率は約57%、3着以内は約95%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>繁野谷圭：全国勝率6.37。</b>今節のスタートは遅め（平均0.19秒）。1着確率は約14%、3着以内は約62%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>長尾京志：全国勝率4.67はメンバー下位。</b>モーターは今回一番（2連45.3%）。1着確率は約9%、3着以内は約46%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>重成一人：全国勝率5.78。</b>外の5コースは1着率7%と不利。1着確率は約9%、3着以内は約43%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>尾嶋一広：全国勝率6.60はメンバー最上位。</b>A1で地力は一番。当地は得意。当地勝率10.00は全国（6.60）より高い。今節のスタートはメンバー最速（平均0.12秒）。1着確率は約6%、3着以内は約31%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>萩原知哉：全国勝率4.26はメンバー下位。</b>今節は7走して2着以内なし。1着確率は約4%、3着以内は約23%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約30%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n6">6</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n5">5</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n6">6</span></span></div><small>3点で約50%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">6.3%</td><td class="num">16倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n5">5</span></span></td><td class="num">5.8%</td><td class="num">17倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">5.4%</td><td class="num">19倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">4.8%</td><td class="num">21倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n6">6</span></span></td><td class="num">4.0%</td><td class="num">25倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第5R<span>ランチタイム</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">12:38</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約55cm・上げ</span><div class="s">干潮11:46（49cm）の約52分後</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>濱本優一</b><div class="sub">A1 / 4377 / 大阪 42歳 49kg</div></td>
+    <td class="num">5.66<div class="sub">38.0%</div></td>
+    <td class="num">4.85<div class="sub">38.5%</div></td>
+    <td class="num">#23<div class="sub">36.5%</div></td>
+    <td class="num">#39<div class="sub">30.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">5</span><span class="run w" title="風 南 5m 波 2cm">2</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 東 1m 波 1cm">3</span><span class="run e" title="風 北西 2m 波 1cm">1</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 北西 2m 波 1cm">5</span><span class="run e" title="風 無風 0m 波 0cm">6</span></td>
+    <td class="num new">0.11</td>
+    <td class="num new strong">73%</td>
+    <td class="num new">94%</td>
+    <td class="num new">99%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">○</div></td>
+    <td class="who"><b>杉田篤光</b><div class="sub">B1 / 4076 / 静岡 48歳 52kg</div></td>
+    <td class="num">4.97<div class="sub">25.0%</div></td>
+    <td class="num">5.27<div class="sub">33.9%</div></td>
+    <td class="num">#57<div class="sub">34.2%</div></td>
+    <td class="num">#61<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">2</span><span class="run w" title="風 南 5m 波 3cm">2</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 東 1m 波 1cm">6</span><span class="run e" title="風 北 3m 波 1cm">2</span><span class="run e" title="風 南 3m 波 1cm">1</span><span class="run e" title="風 南 2m 波 1cm">6</span></td>
+    <td class="num new">0.19</td>
+    <td class="num new strong">8%</td>
+    <td class="num new">30%</td>
+    <td class="num new">55%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">△</div></td>
+    <td class="who"><b>楠原正剛</b><div class="sub">B1 / 4485 / 福岡 40歳 54kg</div></td>
+    <td class="num">4.71<div class="sub">26.0%</div></td>
+    <td class="num">5.21<div class="sub">36.8%</div></td>
+    <td class="num">#30<div class="sub">29.3%</div></td>
+    <td class="num">#29<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">4</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run w" title="風 北西 5m 波 3cm">6</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北東 2m 波 1cm">4</span><span class="run w" title="風 南 5m 波 3cm">2</span></td>
+    <td class="num new">0.17</td>
+    <td class="num new strong">7%</td>
+    <td class="num new">26%</td>
+    <td class="num new">50%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">▲</div></td>
+    <td class="who"><b>表 憲一</b><div class="sub">B1 / 4003 / 福井 48歳 55kg</div></td>
+    <td class="num">5.42<div class="sub">33.0%</div></td>
+    <td class="num">4.96<div class="sub">24.0%</div></td>
+    <td class="num">#19<div class="sub">35.9%</div></td>
+    <td class="num">#18<div class="sub">40.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">6</span><span class="run w" title="風 南 5m 波 2cm">4</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 東 1m 波 1cm">1</span><span class="run w" title="風 北東 4m 波 2cm">2</span><span class="run e" title="風 南 3m 波 1cm">5</span><span class="run e" title="風 北西 2m 波 1cm">6</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">8%</td>
+    <td class="num new">30%</td>
+    <td class="num new">55%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>川上聡介</b><div class="sub">B1 / 3848 / 愛知 49歳 56kg</div></td>
+    <td class="num">4.46<div class="sub">27.0%</div></td>
+    <td class="num">5.79<div class="sub">36.2%</div></td>
+    <td class="num">#53<div class="sub">32.3%</div></td>
+    <td class="num">#68<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">4</span><span class="run w" title="風 北 6m 波 4cm">1</span><span class="run w" title="風 北西 5m 波 3cm">4</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 1m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run w" title="風 南 5m 波 3cm">1</span><span class="run e" title="風 北西 1m 波 1cm">6</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">4%</td>
+    <td class="num new">17%</td>
+    <td class="num new">35%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>三木晴斗</b><div class="sub">B1 / 5249 / 徳島 24歳 54kg</div></td>
+    <td class="num">4.84<div class="sub">27.1%</div></td>
+    <td class="num">3.00<div class="sub">11.1%</div></td>
+    <td class="num">#16<div class="sub">34.1%</div></td>
+    <td class="num">#62<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">4</span><span class="run w" title="風 南 5m 波 2cm">4</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 東 1m 波 1cm">3</span><span class="run e" title="風 北 3m 波 1cm">5</span><span class="run e" title="風 南 3m 波 1cm">3</span><span class="run e" title="風 北西 1m 波 1cm">3</span></td>
+    <td class="num new">0.18</td>
+    <td class="num new strong">1%</td>
+    <td class="num new">3%</td>
+    <td class="num new">6%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>濱本優一：全国勝率5.66はメンバー最上位。</b>A1で地力は一番。当地は苦手。当地勝率4.85は全国（5.66）より低い。モーターは今回一番（2連36.5%）。1着確率は約73%、3着以内は約99%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>杉田篤光：今節は8走で2着以内が5回と好調。</b>今節のスタートは遅め（平均0.19秒）。1着確率は約8%、3着以内は約55%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>表 憲一：全国勝率5.42。</b>1着確率は約8%、3着以内は約55%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>楠原正剛：全国勝率4.71はメンバー下位。</b>1着確率は約7%、3着以内は約50%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>川上聡介：全国勝率4.46はメンバー下位。</b>当地は得意。当地勝率5.79は全国（4.46）より高い。外の5コースは1着率7%と不利。1着確率は約4%、3着以内は約35%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>三木晴斗：当地は苦手。</b>当地勝率3.00は全国（4.84）より低い。外の6コースは1着率2%と不利。1着確率は約1%、3着以内は約6%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約44%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n4">4</span></span></div><small>3点で約60%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">8.0%</td><td class="num">12倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">8.0%</td><td class="num">12倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">7.2%</td><td class="num">14倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">7.1%</td><td class="num">14倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">6.9%</td><td class="num">15倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第6R<span>一般</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">13:05</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約60cm・上げ</span><div class="s">干潮11:46（49cm）の約79分後</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>中島浩哉</b><div class="sub">B1 / 4299 / 長崎 43歳 56kg</div></td>
+    <td class="num">4.71<div class="sub">28.8%</div></td>
+    <td class="num">3.08<div class="sub">11.5%</div></td>
+    <td class="num">#59<div class="sub">34.4%</div></td>
+    <td class="num">#25<div class="sub">63.6%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">1</span><span class="run w" title="風 南 5m 波 2cm">6</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 北東 3m 波 1cm">1</span><span class="run e" title="風 東 1m 波 0cm">3</span><span class="run w" title="風 南 4m 波 2cm">5</span><span class="run e" title="風 南 2m 波 1cm">4</span></td>
+    <td class="num new">0.12</td>
+    <td class="num new strong">39%</td>
+    <td class="num new">70%</td>
+    <td class="num new">89%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">○</div></td>
+    <td class="who"><b>河合佑樹</b><div class="sub">A1 / 4494 / 静岡 39歳 52kg</div></td>
+    <td class="num">6.52<div class="sub">43.0%</div></td>
+    <td class="num">7.31<div class="sub">59.2%</div></td>
+    <td class="num">#2<div class="sub">41.0%</div></td>
+    <td class="num">#76<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">2</span><span class="run w" title="風 南 5m 波 2cm">6</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">3</span><span class="run e" title="風 東 1m 波 0cm">1</span><span class="run e" title="風 南 3m 波 1cm">2</span><span class="run e" title="風 南 2m 波 1cm">6</span></td>
+    <td class="num new">0.18</td>
+    <td class="num new strong">32%</td>
+    <td class="num new">63%</td>
+    <td class="num new">85%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">▲</div></td>
+    <td class="who"><b>澤崎雄哉</b><div class="sub">B1 / 4880 / 東京 31歳 53kg</div></td>
+    <td class="num">4.87<div class="sub">27.0%</div></td>
+    <td class="num">6.65<div class="sub">54.8%</div></td>
+    <td class="num">#26<div class="sub">38.4%</div></td>
+    <td class="num">#34<div class="sub">45.5%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">6</span><span class="run w" title="風 北 6m 波 4cm">4</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 北 3m 波 1cm">6</span><span class="run e" title="風 南 2m 波 1cm">4</span></td>
+    <td class="num new">0.17</td>
+    <td class="num new strong">13%</td>
+    <td class="num new">30%</td>
+    <td class="num new">55%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">△</div></td>
+    <td class="who"><b>中渡修作</b><div class="sub">B1 / 3804 / 福岡 52歳 52kg</div></td>
+    <td class="num">5.12<div class="sub">32.1%</div></td>
+    <td class="num">4.25<div class="sub">20.0%</div></td>
+    <td class="num">#62<div class="sub">41.5%</div></td>
+    <td class="num">#74<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run w" title="風 北西 5m 波 3cm">4</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 北東 3m 波 1cm">6</span><span class="run e" title="風 北西 2m 波 1cm">6</span><span class="run w" title="風 南 4m 波 2cm">1</span><span class="run e" title="風 北西 1m 波 1cm">5</span></td>
+    <td class="num new">0.17</td>
+    <td class="num new strong">8%</td>
+    <td class="num new">20%</td>
+    <td class="num new">37%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>相原利章</b><div class="sub">A2 / 4540 / 東京 39歳 53kg</div></td>
+    <td class="num">4.87<div class="sub">25.2%</div></td>
+    <td class="num">4.62<div class="sub">7.7%</div></td>
+    <td class="num">#4<div class="sub">28.1%</div></td>
+    <td class="num">#72<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run w" title="風 北西 5m 波 3cm">1</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 東 1m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run e" title="風 南 3m 波 1cm">5</span><span class="run e" title="風 北西 1m 波 1cm">3</span></td>
+    <td class="num new">0.11</td>
+    <td class="num new strong">7%</td>
+    <td class="num new">16%</td>
+    <td class="num new">31%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>中北将史</b><div class="sub">B1 / 4623 / 三重 41歳 53kg</div></td>
+    <td class="num">5.09<div class="sub">34.0%</div></td>
+    <td class="num">4.17<div class="sub">17.2%</div></td>
+    <td class="num">#1<div class="sub">39.7%</div></td>
+    <td class="num">#19<div class="sub">33.3%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">5</span><span class="run w" title="風 南 5m 波 2cm">6</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run e" title="風 北西 2m 波 1cm">5</span><span class="run e" title="風 南 2m 波 1cm">6</span></td>
+    <td class="num new">0.27</td>
+    <td class="num new strong">1%</td>
+    <td class="num new">2%</td>
+    <td class="num new">3%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>中島浩哉：全国勝率4.71はメンバー下位。</b>当地は苦手。当地勝率3.08は全国（4.71）より低い。一番有利な1コース（浜名湖の1着率54%）に入る予定。1着確率は約39%、3着以内は約89%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>河合佑樹：全国勝率6.52はメンバー最上位。</b>A1で地力は一番。今節は9走で2着以内が5回と好調。1着確率は約32%、3着以内は約85%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>澤崎雄哉：当地は得意。</b>当地勝率6.65は全国（4.87）より高い。今節は7走して2着以内なし。1着確率は約13%、3着以内は約55%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>中渡修作：当地は苦手。</b>当地勝率4.25は全国（5.12）より低い。モーターは今回一番（2連41.5%）。1着確率は約8%、3着以内は約37%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>相原利章：全国勝率4.87はメンバー下位。</b>今節のスタートはメンバー最速（平均0.11秒）。外の5コースは1着率7%と不利。1着確率は約7%、3着以内は約31%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>中北将史：当地は苦手。</b>当地勝率4.17は全国（5.09）より低い。今節は5走して2着以内なし。今節のスタートは遅め（平均0.27秒）。1着確率は約1%、3着以内は約3%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約39%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n2">2</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n2">2</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n5">5</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n5">5</span></span></div><small>3点で約73%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">9.3%</td><td class="num">11倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n2">2</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">8.3%</td><td class="num">12倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">5.9%</td><td class="num">17倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.6%</td><td class="num">18倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n2">2</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">5.3%</td><td class="num">19倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第7R<span>一般</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">13:32</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約68cm・上げ</span><div class="s">干潮11:46（49cm）の約106分後</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>池田雄祐</b><div class="sub">A2 / 4526 / 愛知 38歳 51kg</div></td>
+    <td class="num">5.11<div class="sub">29.4%</div></td>
+    <td class="num">5.59<div class="sub">41.2%</div></td>
+    <td class="num">#48<div class="sub">40.5%</div></td>
+    <td class="num">#49<div class="sub">90.9%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">2</span><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 0cm">5</span><span class="run w" title="風 南 5m 波 3cm">5</span><span class="run e" title="風 南 2m 波 1cm">5</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">51%</td>
+    <td class="num new">79%</td>
+    <td class="num new">93%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">▲</div></td>
+    <td class="who"><b>山川雄大</b><div class="sub">B1 / 4902 / 兵庫 33歳 52kg</div></td>
+    <td class="num">4.51<div class="sub">32.2%</div></td>
+    <td class="num">6.07<div class="sub">46.4%</div></td>
+    <td class="num">#61<div class="sub">42.5%</div></td>
+    <td class="num">#75<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">1</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北東 3m 波 1cm">3</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run w" title="風 南 4m 波 2cm">6</span><span class="run e" title="風 南 2m 波 1cm">3</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">11%</td>
+    <td class="num new">27%</td>
+    <td class="num new">47%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">○</div></td>
+    <td class="who"><b>小林文彦</b><div class="sub">A2 / 4549 / 福岡 38歳 53kg</div></td>
+    <td class="num">6.12<div class="sub">44.3%</div></td>
+    <td class="num">4.58<div class="sub">25.8%</div></td>
+    <td class="num">#14<div class="sub">36.5%</div></td>
+    <td class="num">#64<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">2</span><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北 6m 波 4cm">5</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 1cm">2</span><span class="run e" title="風 北東 2m 波 1cm">6</span><span class="run e" title="風 北西 2m 波 1cm">6</span><span class="run e" title="風 南 3m 波 1cm">3</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">14%</td>
+    <td class="num new">35%</td>
+    <td class="num new">57%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">△</div></td>
+    <td class="who"><b>石田政吾</b><div class="sub">B1 / 3635 / 福井 55歳 53kg</div></td>
+    <td class="num">5.20<div class="sub">34.4%</div></td>
+    <td class="num">5.90<div class="sub">41.0%</div></td>
+    <td class="num">#13<div class="sub">38.4%</div></td>
+    <td class="num">#36<div class="sub">33.3%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">2</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run w" title="風 北西 5m 波 3cm">4</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北 2m 波 1cm">5</span><span class="run e" title="風 北西 2m 波 1cm">5</span><span class="run e" title="風 南 3m 波 1cm">1</span><span class="run e" title="風 無風 0m 波 0cm">3</span></td>
+    <td class="num new">0.13</td>
+    <td class="num new strong">11%</td>
+    <td class="num new">27%</td>
+    <td class="num new">46%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>村上 遼</b><div class="sub">A1 / 4715 / 長崎 34歳 51kg</div></td>
+    <td class="num">6.77<div class="sub">46.9%</div></td>
+    <td class="num">3.88<div class="sub">0.0%</div></td>
+    <td class="num">#46<div class="sub">43.8%</div></td>
+    <td class="num">#63<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">3</span><span class="run w" title="風 北 6m 波 4cm">3</span><span class="run w" title="風 北西 5m 波 3cm">6</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 1cm">5</span><span class="run e" title="風 北 2m 波 1cm">3</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 北西 1m 波 1cm">1</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">11%</td>
+    <td class="num new">26%</td>
+    <td class="num new">46%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>松尾 拓</b><div class="sub">A2 / 4808 / 三重 38歳 50kg</div></td>
+    <td class="num">6.34<div class="sub">46.1%</div></td>
+    <td class="num">7.22<div class="sub">51.9%</div></td>
+    <td class="num">#54<div class="sub">32.8%</div></td>
+    <td class="num">#40<div class="sub">54.5%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">2</span><span class="run w" title="風 南 5m 波 2cm">3</span><span class="run w" title="風 北西 5m 波 3cm">2</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">2</span><span class="run e" title="風 東 1m 波 0cm">6</span><span class="run e" title="風 北西 2m 波 1cm">1</span></td>
+    <td class="num new">0.18</td>
+    <td class="num new strong">2%</td>
+    <td class="num new">6%</td>
+    <td class="num new">11%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>池田雄祐：全国勝率5.11はメンバー下位。</b>一番有利な1コース（浜名湖の1着率54%）に入る予定。1着確率は約51%、3着以内は約93%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>小林文彦：当地は苦手。</b>当地勝率4.58は全国（6.12）より低い。1着確率は約14%、3着以内は約57%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>山川雄大：全国勝率4.51はメンバー下位。</b>当地は得意。当地勝率6.07は全国（4.51）より高い。1着確率は約11%、3着以内は約47%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>石田政吾：今節のスタートはメンバー最速（平均0.13秒）。</b>1着確率は約11%、3着以内は約46%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>村上 遼：全国勝率6.77はメンバー最上位。</b>A1で地力は一番。当地は苦手。当地勝率3.88は全国（6.77）より低い。モーターは今回一番（2連43.8%）。1着確率は約11%、3着以内は約46%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>松尾 拓：今節は8走で2着以内が4回と好調。</b>当地は得意。当地勝率7.22は全国（6.34）より高い。今節のスタートは遅め（平均0.18秒）。1着確率は約2%、3着以内は約11%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約26%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span><i>-</i><span class="bt n3">3</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n5">5</span></span></div><small>3点で約48%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">4.7%</td><td class="num">21倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">4.5%</td><td class="num">22倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n5">5</span></span></td><td class="num">4.5%</td><td class="num">22倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">4.3%</td><td class="num">23倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">4.1%</td><td class="num">24倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第8R<span>一般</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">14:02</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約77cm・上げ</span><div class="s">干潮11:46（49cm）の約136分後</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>重成一人</b><div class="sub">A1 / 3908 / 香川 48歳 57kg</div></td>
+    <td class="num">5.78<div class="sub">38.4%</div></td>
+    <td class="num">5.05<div class="sub">31.6%</div></td>
+    <td class="num">#45<div class="sub">41.9%</div></td>
+    <td class="num">#17<div class="sub">30.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">6</span><span class="run w" title="風 南 5m 波 2cm">4</span><span class="run w" title="風 北西 5m 波 3cm">3</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 1cm">6</span><span class="run e" title="風 北東 2m 波 1cm">5</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run e" title="風 南 2m 波 1cm">2</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">63%</td>
+    <td class="num new">89%</td>
+    <td class="num new">97%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">△</div></td>
+    <td class="who"><b>萩原知哉</b><div class="sub">B1 / 4440 / 東京 40歳 56kg</div></td>
+    <td class="num">4.26<div class="sub">23.9%</div></td>
+    <td class="num">4.00<div class="sub">18.2%</div></td>
+    <td class="num">#34<div class="sub">31.6%</div></td>
+    <td class="num">#27<div class="sub">41.7%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">3</span><span class="run w" title="風 南 5m 波 2cm">3</span><span class="run w" title="風 北西 5m 波 3cm">5</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run w" title="風 北東 4m 波 2cm">6</span><span class="run e" title="風 北西 2m 波 1cm">6</span><span class="run e" title="風 南 3m 波 1cm">6</span></td>
+    <td class="num new">0.17</td>
+    <td class="num new strong">6%</td>
+    <td class="num new">17%</td>
+    <td class="num new">33%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">○</div></td>
+    <td class="who"><b>横川聖志</b><div class="sub">A2 / 4359 / 徳島 42歳 58kg</div></td>
+    <td class="num">5.34<div class="sub">36.2%</div></td>
+    <td class="num">5.73<div class="sub">36.4%</div></td>
+    <td class="num">#22<div class="sub">40.3%</div></td>
+    <td class="num">#70<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">3</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 1m 波 1cm">5</span><span class="run e" title="風 北西 2m 波 1cm">6</span><span class="run e" title="風 東 1m 波 0cm">4</span><span class="run e" title="風 南 3m 波 1cm">4</span><span class="run e" title="風 北西 1m 波 1cm">5</span></td>
+    <td class="num new">0.14</td>
+    <td class="num new strong">13%</td>
+    <td class="num new">39%</td>
+    <td class="num new">65%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">▲</div></td>
+    <td class="who"><b>和田操拓</b><div class="sub">B1 / 4649 / 滋賀 42歳 53kg</div></td>
+    <td class="num">5.87<div class="sub">40.1%</div></td>
+    <td class="num">4.87<div class="sub">26.1%</div></td>
+    <td class="num">#65<div class="sub">25.9%</div></td>
+    <td class="num">#65<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run w" title="風 北西 5m 波 3cm">2</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 北 2m 波 1cm">S</span><span class="run e" title="風 北西 2m 波 1cm">5</span><span class="run w" title="風 南 4m 波 2cm">4</span></td>
+    <td class="num new">0.11</td>
+    <td class="num new strong">10%</td>
+    <td class="num new">29%</td>
+    <td class="num new">52%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>長谷川雅</b><div class="sub">B1 / 4580 / 岡山 37歳 53kg</div></td>
+    <td class="num">5.62<div class="sub">35.1%</div></td>
+    <td class="num">6.60<div class="sub">50.0%</div></td>
+    <td class="num">#15<div class="sub">34.8%</div></td>
+    <td class="num">#43<div class="sub">33.3%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">3</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run w" title="風 北西 5m 波 3cm">6</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北 3m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">3</span><span class="run e" title="風 北西 1m 波 1cm">1</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">7%</td>
+    <td class="num new">20%</td>
+    <td class="num new">39%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>大場 敏</b><div class="sub">A2 / 3489 / 静岡 59歳 54kg</div></td>
+    <td class="num">5.99<div class="sub">41.4%</div></td>
+    <td class="num">6.11<div class="sub">41.3%</div></td>
+    <td class="num">#63<div class="sub">40.8%</div></td>
+    <td class="num">#16<div class="sub">40.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">2</span><span class="run w" title="風 北 6m 波 4cm">2</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run e" title="風 東 1m 波 1cm">6</span><span class="run w" title="風 北東 4m 波 2cm">3</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 南 3m 波 1cm">4</span><span class="run e" title="風 南 2m 波 1cm">1</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">2%</td>
+    <td class="num new">6%</td>
+    <td class="num new">12%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>重成一人：モーターは今回一番（2連41.9%）。</b>一番有利な1コース（浜名湖の1着率54%）に入る予定。1着確率は約63%、3着以内は約97%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>横川聖志：全国勝率5.34はメンバー下位。</b>1着確率は約13%、3着以内は約65%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>和田操拓：当地は苦手。</b>当地勝率4.87は全国（5.87）より低い。今節のスタートはメンバー最速（平均0.11秒）。1着確率は約10%、3着以内は約52%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>長谷川雅：当地は得意。</b>当地勝率6.60は全国（5.62）より高い。外の5コースは1着率7%と不利。1着確率は約7%、3着以内は約39%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>萩原知哉：全国勝率4.26はメンバー下位。</b>今節は7走して2着以内なし。今節のスタートは遅め（平均0.17秒）。1着確率は約6%、3着以内は約33%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>大場 敏：全国勝率5.99はメンバー最上位。</b>A2で地力は一番。外の6コースは1着率2%と不利。1着確率は約2%、3着以内は約12%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約38%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span></div><small>3点で約59%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">9.1%</td><td class="num">11倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">7.8%</td><td class="num">13倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n5">5</span></span></td><td class="num">6.4%</td><td class="num">16倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.3%</td><td class="num">19倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">5.0%</td><td class="num">20倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第9R<span>ブレイクタイ</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">14:37</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約90cm・上げ</span><div class="s">満潮17:21（128cm）の約164分前</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>佐藤大佑</b><div class="sub">A1 / 4610 / 東京 36歳 54kg</div></td>
+    <td class="num">6.14<div class="sub">48.6%</div></td>
+    <td class="num">6.73<div class="sub">36.4%</div></td>
+    <td class="num">#29<div class="sub">29.2%</div></td>
+    <td class="num">#57<div class="sub">33.3%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">5</span><span class="run w" title="風 南 5m 波 3cm">2</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run w" title="風 北西 5m 波 3cm">4</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北東 3m 波 1cm">5</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run w" title="風 南 4m 波 2cm">6</span></td>
+    <td class="num new">0.19</td>
+    <td class="num new strong">65%</td>
+    <td class="num new">90%</td>
+    <td class="num new">98%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">△</div></td>
+    <td class="who"><b>伯母芳恒</b><div class="sub">B1 / 3656 / 東京 53歳 55kg</div></td>
+    <td class="num">4.72<div class="sub">24.4%</div></td>
+    <td class="num">4.90<div class="sub">35.0%</div></td>
+    <td class="num">#17<div class="sub">42.0%</div></td>
+    <td class="num">#73<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">4</span><span class="run w" title="風 北 6m 波 4cm">6</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">3</span></td>
+    <td class="num new">0.18</td>
+    <td class="num new strong">8%</td>
+    <td class="num new">26%</td>
+    <td class="num new">50%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">▲</div></td>
+    <td class="who"><b>長尾京志</b><div class="sub">B1 / 4632 / 福岡 37歳 52kg</div></td>
+    <td class="num">4.67<div class="sub">25.7%</div></td>
+    <td class="num">4.18<div class="sub">23.5%</div></td>
+    <td class="num">#5<div class="sub">45.3%</div></td>
+    <td class="num">#67<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">5</span><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 2m 波 1cm">S</span><span class="run e" title="風 北 2m 波 1cm">4</span><span class="run e" title="風 南 3m 波 1cm">6</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">8%</td>
+    <td class="num new">27%</td>
+    <td class="num new">51%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">○</div></td>
+    <td class="who"><b>富永修一</b><div class="sub">A2 / 4121 / 福岡 44歳 52kg</div></td>
+    <td class="num">6.01<div class="sub">43.5%</div></td>
+    <td class="num">5.73<div class="sub">33.3%</div></td>
+    <td class="num">#44<div class="sub">36.3%</div></td>
+    <td class="num">#58<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">3</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run w" title="風 北西 5m 波 3cm">5</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 北 2m 波 1cm">2</span><span class="run e" title="風 北東 2m 波 1cm">5</span><span class="run e" title="風 南 3m 波 1cm">2</span><span class="run e" title="風 北西 1m 波 1cm">2</span></td>
+    <td class="num new">0.14</td>
+    <td class="num new strong">13%</td>
+    <td class="num new">41%</td>
+    <td class="num new">69%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>楠原正剛</b><div class="sub">B1 / 4485 / 福岡 40歳 54kg</div></td>
+    <td class="num">4.71<div class="sub">26.0%</div></td>
+    <td class="num">5.21<div class="sub">36.8%</div></td>
+    <td class="num">#30<div class="sub">29.3%</div></td>
+    <td class="num">#29<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">4</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run w" title="風 北西 5m 波 3cm">6</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北東 2m 波 1cm">4</span><span class="run w" title="風 南 5m 波 3cm">2</span></td>
+    <td class="num new">0.17</td>
+    <td class="num new strong">4%</td>
+    <td class="num new">12%</td>
+    <td class="num new">25%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>栗原直也</b><div class="sub">B1 / 4973 / 埼玉 34歳 53kg</div></td>
+    <td class="num">5.09<div class="sub">33.8%</div></td>
+    <td class="num">5.00<div class="sub">26.3%</div></td>
+    <td class="num">#7<div class="sub">32.1%</div></td>
+    <td class="num">#38<div class="sub">30.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">5</span><span class="run w" title="風 南 5m 波 3cm">5</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 北西 2m 波 1cm">1</span><span class="run w" title="風 南 4m 波 2cm">3</span></td>
+    <td class="num new">0.19</td>
+    <td class="num new strong">1%</td>
+    <td class="num new">3%</td>
+    <td class="num new">6%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>佐藤大佑：全国勝率6.14はメンバー最上位。</b>A1で地力は一番。今節のスタートは遅め（平均0.19秒）。一番有利な1コース（浜名湖の1着率54%）に入る予定。1着確率は約65%、3着以内は約98%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>富永修一：今節のスタートはメンバー最速（平均0.14秒）。</b>1着確率は約13%、3着以内は約69%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>長尾京志：全国勝率4.67はメンバー下位。</b>モーターは今回一番（2連45.3%）。1着確率は約8%、3着以内は約51%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>伯母芳恒：全国勝率4.72。</b>1着確率は約8%、3着以内は約50%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>楠原正剛：全国勝率4.71はメンバー下位。</b>外の5コースは1着率7%と不利。1着確率は約4%、3着以内は約25%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>栗原直也：全国勝率5.09。</b>外の6コースは1着率2%と不利。1着確率は約1%、3着以内は約6%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約45%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span></div><small>3点で約68%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">9.9%</td><td class="num">10倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">9.6%</td><td class="num">10倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">8.1%</td><td class="num">12倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">7.7%</td><td class="num">13倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.0%</td><td class="num">20倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第10R<span>選抜戦</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">15:11</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約102cm・上げ</span><div class="s">満潮17:21（128cm）の約130分前</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>宮崎 奨</b><div class="sub">A2 / 4348 / 香川 41歳 55kg</div></td>
+    <td class="num">6.18<div class="sub">46.6%</div></td>
+    <td class="num">5.93<div class="sub">33.3%</div></td>
+    <td class="num">#38<div class="sub">45.5%</div></td>
+    <td class="num">#45<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">3</span><span class="run w" title="風 南 5m 波 3cm">1</span><span class="run w" title="風 北西 6m 波 4cm">6</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 北東 3m 波 1cm">4</span><span class="run e" title="風 北東 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">2</span><span class="run e" title="風 南 2m 波 1cm">3</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">49%</td>
+    <td class="num new">81%</td>
+    <td class="num new">95%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">▲</div></td>
+    <td class="who"><b>金児隆太</b><div class="sub">B1 / 4888 / 群馬 39歳 52kg</div></td>
+    <td class="num">6.12<div class="sub">47.9%</div></td>
+    <td class="num">5.55<div class="sub">38.8%</div></td>
+    <td class="num">#52<div class="sub">36.5%</div></td>
+    <td class="num">#32<div class="sub">50.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">6</span><span class="run w" title="風 南 5m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 1m 波 1cm">2</span><span class="run e" title="風 北東 2m 波 1cm">4</span><span class="run e" title="風 北西 2m 波 1cm">1</span><span class="run w" title="風 南 4m 波 2cm">2</span><span class="run e" title="風 無風 0m 波 0cm">4</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">9%</td>
+    <td class="num new">23%</td>
+    <td class="num new">49%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">○</div></td>
+    <td class="who"><b>尾嶋一広</b><div class="sub">A1 / 4472 / 兵庫 39歳 56kg</div></td>
+    <td class="num">6.60<div class="sub">50.4%</div></td>
+    <td class="num">10.00<div class="sub">100.0%</div></td>
+    <td class="num">#21<div class="sub">34.7%</div></td>
+    <td class="num">#15<div class="sub">44.4%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">6</span><span class="run w" title="風 南 5m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run w" title="風 北西 5m 波 3cm">1</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 北 2m 波 1cm">1</span><span class="run w" title="風 南 4m 波 2cm">1</span><span class="run e" title="風 南 2m 波 1cm">4</span></td>
+    <td class="num new">0.12</td>
+    <td class="num new strong">29%</td>
+    <td class="num new">64%</td>
+    <td class="num new">87%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">△</div></td>
+    <td class="who"><b>佐竹太一</b><div class="sub">B1 / 4725 / 兵庫 40歳 53kg</div></td>
+    <td class="num">4.93<div class="sub">23.1%</div></td>
+    <td class="num">4.05<div class="sub">15.8%</div></td>
+    <td class="num">#9<div class="sub">30.2%</div></td>
+    <td class="num">#54<div class="sub">45.5%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run w" title="風 北西 5m 波 3cm">2</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 北東 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">3</span><span class="run w" title="風 南 4m 波 2cm">2</span><span class="run e" title="風 無風 0m 波 0cm">5</span></td>
+    <td class="num new">0.14</td>
+    <td class="num new strong">4%</td>
+    <td class="num new">10%</td>
+    <td class="num new">22%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>河合佑樹</b><div class="sub">A1 / 4494 / 静岡 39歳 52kg</div></td>
+    <td class="num">6.52<div class="sub">43.0%</div></td>
+    <td class="num">7.31<div class="sub">59.2%</div></td>
+    <td class="num">#2<div class="sub">41.0%</div></td>
+    <td class="num">#76<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">2</span><span class="run w" title="風 南 5m 波 2cm">6</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">3</span><span class="run e" title="風 東 1m 波 0cm">1</span><span class="run e" title="風 南 3m 波 1cm">2</span><span class="run e" title="風 南 2m 波 1cm">6</span></td>
+    <td class="num new">0.18</td>
+    <td class="num new strong">8%</td>
+    <td class="num new">20%</td>
+    <td class="num new">43%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>杉田篤光</b><div class="sub">B1 / 4076 / 静岡 48歳 52kg</div></td>
+    <td class="num">4.97<div class="sub">25.0%</div></td>
+    <td class="num">5.27<div class="sub">33.9%</div></td>
+    <td class="num">#57<div class="sub">34.2%</div></td>
+    <td class="num">#61<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">2</span><span class="run w" title="風 南 5m 波 3cm">2</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 東 1m 波 1cm">6</span><span class="run e" title="風 北 3m 波 1cm">2</span><span class="run e" title="風 南 3m 波 1cm">1</span><span class="run e" title="風 南 2m 波 1cm">6</span></td>
+    <td class="num new">0.19</td>
+    <td class="num new strong">1%</td>
+    <td class="num new">2%</td>
+    <td class="num new">3%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>宮崎 奨：モーターは今回一番（2連45.5%）。</b>一番有利な1コース（浜名湖の1着率54%）に入る予定。1着確率は約49%、3着以内は約95%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>尾嶋一広：全国勝率6.60はメンバー最上位。</b>A1で地力は一番。当地は得意。当地勝率10.00は全国（6.60）より高い。今節のスタートはメンバー最速（平均0.12秒）。1着確率は約29%、3着以内は約87%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>金児隆太：今節は9走で2着以内が5回と好調。</b>1着確率は約9%、3着以内は約49%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>河合佑樹：今節は9走で2着以内が5回と好調。</b>外の5コースは1着率7%と不利。1着確率は約8%、3着以内は約43%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>佐竹太一：今節は8走で2着以内が4回と好調。</b>全国勝率4.93はメンバー下位。当地は苦手。当地勝率4.05は全国（4.93）より低い。1着確率は約4%、3着以内は約22%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>杉田篤光：今節は8走で2着以内が5回と好調。</b>全国勝率4.97はメンバー下位。今節のスタートは遅め（平均0.19秒）。1着確率は約1%、3着以内は約3%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約50%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n3">3</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n3">3</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span><i>-</i><span class="bt n3">3</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n4">4</span></span></div><small>3点で約81%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">12.1%</td><td class="num">8倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n5">5</span></span></td><td class="num">10.3%</td><td class="num">10倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n3">3</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">8.7%</td><td class="num">12倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n3">3</span><i>-</i><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span></span></td><td class="num">7.4%</td><td class="num">13倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">6.3%</td><td class="num">16倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第11R<span>選抜戦</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">15:46</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約113cm・上げ</span><div class="s">満潮17:21（128cm）の約95分前</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>太田和美</b><div class="sub">A1 / 3557 / 大阪 53歳 55kg</div></td>
+    <td class="num">6.45<div class="sub">49.3%</div></td>
+    <td class="num">6.69<div class="sub">48.6%</div></td>
+    <td class="num">#3<div class="sub">35.0%</div></td>
+    <td class="num">#60<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">5</span><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run w" title="風 北西 5m 波 3cm">3</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北 3m 波 1cm">1</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">4</span><span class="run e" title="風 南 2m 波 1cm">3</span></td>
+    <td class="num new">0.18</td>
+    <td class="num new strong">68%</td>
+    <td class="num new">92%</td>
+    <td class="num new">98%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">○</div></td>
+    <td class="who"><b>石田政吾</b><div class="sub">B1 / 3635 / 福井 55歳 53kg</div></td>
+    <td class="num">5.20<div class="sub">34.4%</div></td>
+    <td class="num">5.90<div class="sub">41.0%</div></td>
+    <td class="num">#13<div class="sub">38.4%</div></td>
+    <td class="num">#36<div class="sub">33.3%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">2</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run w" title="風 北西 5m 波 3cm">4</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 北 2m 波 1cm">5</span><span class="run e" title="風 北西 2m 波 1cm">5</span><span class="run e" title="風 南 3m 波 1cm">1</span><span class="run e" title="風 無風 0m 波 0cm">3</span></td>
+    <td class="num new">0.13</td>
+    <td class="num new strong">12%</td>
+    <td class="num new">39%</td>
+    <td class="num new">66%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">△</div></td>
+    <td class="who"><b>中島浩哉</b><div class="sub">B1 / 4299 / 長崎 43歳 56kg</div></td>
+    <td class="num">4.71<div class="sub">28.8%</div></td>
+    <td class="num">3.08<div class="sub">11.5%</div></td>
+    <td class="num">#59<div class="sub">34.4%</div></td>
+    <td class="num">#25<div class="sub">63.6%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">1</span><span class="run w" title="風 南 5m 波 2cm">6</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 北東 3m 波 1cm">1</span><span class="run e" title="風 東 1m 波 0cm">3</span><span class="run w" title="風 南 4m 波 2cm">5</span><span class="run e" title="風 南 2m 波 1cm">4</span></td>
+    <td class="num new">0.12</td>
+    <td class="num new strong">6%</td>
+    <td class="num new">21%</td>
+    <td class="num new">41%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">▲</div></td>
+    <td class="who"><b>池田雄祐</b><div class="sub">A2 / 4526 / 愛知 38歳 51kg</div></td>
+    <td class="num">5.11<div class="sub">29.4%</div></td>
+    <td class="num">5.59<div class="sub">41.2%</div></td>
+    <td class="num">#48<div class="sub">40.5%</div></td>
+    <td class="num">#49<div class="sub">90.9%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">2</span><span class="run w" title="風 南 5m 波 2cm">5</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 2m 波 1cm">4</span><span class="run e" title="風 北東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 0cm">5</span><span class="run w" title="風 南 5m 波 3cm">5</span><span class="run e" title="風 南 2m 波 1cm">5</span></td>
+    <td class="num new">0.16</td>
+    <td class="num new strong">8%</td>
+    <td class="num new">26%</td>
+    <td class="num new">49%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>鈴木智啓</b><div class="sub">B1 / 4293 / 愛知 41歳 59kg</div></td>
+    <td class="num">4.97<div class="sub">27.2%</div></td>
+    <td class="num">5.70<div class="sub">40.0%</div></td>
+    <td class="num">#66<div class="sub">36.8%</div></td>
+    <td class="num">#52<div class="sub">40.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">3</span><span class="run w" title="風 北西 6m 波 4cm">3</span><span class="run w" title="風 北西 5m 波 3cm">2</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 北東 2m 波 1cm">3</span><span class="run e" title="風 北東 2m 波 1cm">6</span><span class="run w" title="風 南 4m 波 2cm">4</span><span class="run e" title="風 南 2m 波 1cm">5</span></td>
+    <td class="num new">0.15</td>
+    <td class="num new strong">5%</td>
+    <td class="num new">16%</td>
+    <td class="num new">32%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>濱本優一</b><div class="sub">A1 / 4377 / 大阪 42歳 49kg</div></td>
+    <td class="num">5.66<div class="sub">38.0%</div></td>
+    <td class="num">4.85<div class="sub">38.5%</div></td>
+    <td class="num">#23<div class="sub">36.5%</div></td>
+    <td class="num">#39<div class="sub">30.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">5</span><span class="run w" title="風 南 5m 波 2cm">2</span><span class="run w" title="風 北西 6m 波 4cm">5</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 東 1m 波 1cm">3</span><span class="run e" title="風 北西 2m 波 1cm">1</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 北西 2m 波 1cm">5</span><span class="run e" title="風 無風 0m 波 0cm">6</span></td>
+    <td class="num new">0.11</td>
+    <td class="num new strong">2%</td>
+    <td class="num new">7%</td>
+    <td class="num new">14%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>太田和美：全国勝率6.45はメンバー最上位。</b>A1で地力は一番。今節のスタートは遅め（平均0.18秒）。一番有利な1コース（浜名湖の1着率54%）に入る予定。1着確率は約68%、3着以内は約98%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>石田政吾：全国勝率5.20。</b>1着確率は約12%、3着以内は約66%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>池田雄祐：モーターは今回一番（2連40.5%）。</b>1着確率は約8%、3着以内は約49%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>中島浩哉：全国勝率4.71はメンバー下位。</b>当地は苦手。当地勝率3.08は全国（4.71）より低い。1着確率は約6%、3着以内は約41%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>鈴木智啓：全国勝率4.97はメンバー下位。</b>外の5コースは1着率7%と不利。1着確率は約5%、3着以内は約32%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>濱本優一：当地は苦手。</b>当地勝率4.85は全国（5.66）より低い。今節のスタートはメンバー最速（平均0.11秒）。外の6コースは1着率2%と不利。1着確率は約2%、3着以内は約14%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約41%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n5">5</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n5">5</span><i>-</i><span class="bt n2">2</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n5">5</span></span></div><small>3点で約59%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">9.4%</td><td class="num">11倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">7.8%</td><td class="num">13倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">7.6%</td><td class="num">13倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.9%</td><td class="num">17倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n5">5</span></span></td><td class="num">5.7%</td><td class="num">17倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+<section class="page">
+
+<header class="band">
+  <svg class="waves" viewBox="0 0 800 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,92 C120,60 220,118 360,86 C500,54 600,104 800,70" />
+    <path d="M0,104 C140,80 250,128 390,98 C530,68 640,112 800,86" />
+    <path d="M0,116 C150,98 270,134 420,110 C560,88 660,120 800,102" />
+    <path class="hi" d="M420,40 C520,20 640,64 800,30" />
+  </svg>
+  <div class="bl">
+    <div class="kicker"><span>AI分析</span><i></i><span>競艇情報</span></div>
+    <div class="logo">Boat<b>Lab</b><span class="ai">AI</span></div>
+    <div class="en">BOAT RACE DATA &amp; AI ANALYSIS</div>
+  </div>
+  <div class="br">
+    <div class="d">2026<span>.</span>10<span>.</span>26<em>MON</em></div>
+    <div class="v">浜名湖　6日目</div>
+    <div class="u">データ基準 10/25 22:27（展示・オッズ発表前）</div>
+  </div>
+</header>
+<p class="tagline">※本誌はユーザー様の予想をサポートすることを主眼にした情報誌です。（予測はオマケです）</p>
+<div class="race">
+  <div class="rl">
+    <span class="venue">浜名湖</span>
+    <h1>第12R<span>優勝戦</span></h1>
+    <div class="rs">SUZUKIスピードカップ 6日目<i>｜</i>1800m</div>
+  </div>
+  <div class="rr"><span>締切予定</span><b class="num">16:23</b></div>
+</div>
+<div class="cond">
+  <div><span class="k">天気（気象庁予報・西部）</span><span class="v">雨<small> 降水確率80%</small></span><div class="s">雨所により昼前から雷を伴い激しく降る</div></div>
+  <div><span class="k">風（気象庁予報）</span><span class="v">東の風</span><div class="s">東の風後北東の風やや強く海上では北東の風強く</div></div>
+  
+  <div><span class="k">潮（気象庁 舞阪の潮位表）</span><span class="v">約121cm・上げ</span><div class="s">満潮17:21（128cm）の約58分前</div></div>
+  
+  <div><span class="k">浜名湖1コース1着率</span><span class="v num">54.2%</span><div class="s">直近60レース＋全国平均で補正</div></div>
+</div>
+<table class="card">
+  <thead><tr>
+    <th>枠<br>印</th><th>選手<br>級別/登録/支部/年齢/体重</th><th>全国<br>勝率/2連</th><th>当地<br>勝率/2連</th><th>モーター<br>No/2連</th><th>ボート<br>No/2連</th><th>今節の着順<br>（色＝その時の風）</th>
+    <th class="new">今節<br>平均ST</th><th class="new">1着<br>確率</th><th class="new">2着<br>以内</th><th class="new">3着<br>以内</th>
+  </tr></thead>
+  <tbody>
+  
+  <tr>
+    <td class="waku"><span class="bt n1 lg">1</span><div class="mk">◎</div></td>
+    <td class="who"><b>吉田凌太</b><div class="sub">A1 / 4903 / 愛知 33歳 52kg</div></td>
+    <td class="num">6.32<div class="sub">46.1%</div></td>
+    <td class="num">6.60<div class="sub">55.0%</div></td>
+    <td class="num">#55<div class="sub">50.0%</div></td>
+    <td class="num">#37<div class="sub">60.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">2</span><span class="run w" title="風 南 5m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 1cm">1</span><span class="run e" title="風 北西 2m 波 1cm">5</span><span class="run e" title="風 北東 2m 波 1cm">1</span><span class="run e" title="風 北西 1m 波 1cm">4</span><span class="run e" title="風 無風 0m 波 0cm">1</span></td>
+    <td class="num new">0.13</td>
+    <td class="num new strong">59%</td>
+    <td class="num new">86%</td>
+    <td class="num new">96%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n2 lg">2</span><div class="mk">△</div></td>
+    <td class="who"><b>深井利寿</b><div class="sub">A1 / 3918 / 滋賀 52歳 51kg</div></td>
+    <td class="num">6.72<div class="sub">43.8%</div></td>
+    <td class="num">6.10<div class="sub">41.4%</div></td>
+    <td class="num">#58<div class="sub">31.3%</div></td>
+    <td class="num">#71<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">4</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run w" title="風 北西 5m 波 3cm">1</span><span class="run e" title="風 東 2m 波 1cm">5</span><span class="run e" title="風 東 1m 波 1cm">1</span><span class="run w" title="風 北東 4m 波 2cm">1</span><span class="run e" title="風 北東 2m 波 1cm">3</span><span class="run w" title="風 南 5m 波 3cm">4</span><span class="run e" title="風 南 2m 波 1cm">1</span></td>
+    <td class="num new">0.17</td>
+    <td class="num new strong">10%</td>
+    <td class="num new">28%</td>
+    <td class="num new">50%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n3 lg">3</span><div class="mk">○</div></td>
+    <td class="who"><b>谷野錬志</b><div class="sub">A2 / 4342 / 静岡 42歳 54kg</div></td>
+    <td class="num">6.91<div class="sub">50.5%</div></td>
+    <td class="num">6.93<div class="sub">52.6%</div></td>
+    <td class="num">#49<div class="sub">32.1%</div></td>
+    <td class="num">#51<div class="sub">50.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 4m 波 2cm">3</span><span class="run w" title="風 南 5m 波 2cm">2</span><span class="run w" title="風 北西 6m 波 4cm">1</span><span class="run w" title="風 北西 5m 波 3cm">5</span><span class="run e" title="風 東 2m 波 1cm">6</span><span class="run e" title="風 東 1m 波 1cm">5</span><span class="run e" title="風 北西 2m 波 1cm">2</span><span class="run w" title="風 南 5m 波 3cm">3</span><span class="run e" title="風 南 2m 波 1cm">1</span></td>
+    <td class="num new">0.13</td>
+    <td class="num new strong">12%</td>
+    <td class="num new">33%</td>
+    <td class="num new">57%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n4 lg">4</span><div class="mk">▲</div></td>
+    <td class="who"><b>山下大輝</b><div class="sub">A1 / 5126 / 兵庫 30歳 52kg</div></td>
+    <td class="num">6.97<div class="sub">56.0%</div></td>
+    <td class="num">6.73<div class="sub">45.5%</div></td>
+    <td class="num">#36<div class="sub">32.2%</div></td>
+    <td class="num">#59<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 3cm">1</span><span class="run w" title="風 南 5m 波 2cm">3</span><span class="run w" title="風 北西 6m 波 4cm">2</span><span class="run w" title="風 北西 5m 波 3cm">1</span><span class="run e" title="風 東 2m 波 1cm">2</span><span class="run e" title="風 東 1m 波 1cm">2</span><span class="run e" title="風 東 1m 波 0cm">2</span><span class="run e" title="風 北西 1m 波 1cm">4</span><span class="run e" title="風 南 2m 波 1cm">2</span></td>
+    <td class="num new">0.14</td>
+    <td class="num new strong">10%</td>
+    <td class="num new">29%</td>
+    <td class="num new">52%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n5 lg">5</span><div class="mk">△</div></td>
+    <td class="who"><b>末永由楽</b><div class="sub">A2 / 4441 / 岡山 40歳 55kg</div></td>
+    <td class="num">6.01<div class="sub">38.5%</div></td>
+    <td class="num">7.00<div class="sub">50.0%</div></td>
+    <td class="num">#37<div class="sub">47.1%</div></td>
+    <td class="num">#66<div class="sub">0.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 6m 波 4cm">1</span><span class="run w" title="風 南 5m 波 2cm">3</span><span class="run w" title="風 北西 5m 波 3cm">3</span><span class="run e" title="風 東 2m 波 1cm">3</span><span class="run e" title="風 東 1m 波 1cm">3</span><span class="run e" title="風 北西 2m 波 1cm">3</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run w" title="風 南 4m 波 2cm">3</span><span class="run e" title="風 南 2m 波 1cm">2</span></td>
+    <td class="num new">0.12</td>
+    <td class="num new strong">6%</td>
+    <td class="num new">18%</td>
+    <td class="num new">35%</td>
+  </tr>
+  
+  <tr>
+    <td class="waku"><span class="bt n6 lg">6</span><div class="mk"></div></td>
+    <td class="who"><b>上村純一</b><div class="sub">A1 / 4645 / 群馬 46歳 54kg</div></td>
+    <td class="num">6.59<div class="sub">46.6%</div></td>
+    <td class="num">6.26<div class="sub">42.1%</div></td>
+    <td class="num">#20<div class="sub">40.9%</div></td>
+    <td class="num">#33<div class="sub">80.0%</div></td>
+    <td class="runs"><span class="run w" title="風 南 5m 波 2cm">1</span><span class="run w" title="風 北西 6m 波 4cm">4</span><span class="run w" title="風 北西 5m 波 3cm">6</span><span class="run e" title="風 東 2m 波 1cm">1</span><span class="run e" title="風 東 1m 波 1cm">4</span><span class="run e" title="風 北東 3m 波 1cm">2</span><span class="run e" title="風 北西 2m 波 1cm">1</span><span class="run e" title="風 北西 1m 波 1cm">6</span><span class="run e" title="風 無風 0m 波 0cm">2</span></td>
+    <td class="num new">0.12</td>
+    <td class="num new strong">2%</td>
+    <td class="num new">5%</td>
+    <td class="num new">10%</td>
+  </tr>
+  
+  </tbody>
+</table>
+<div class="legend">
+  <span><span class="run w">2</span>風4m以上の日</span>
+  <span><span class="run e">2</span>風3m以下の日</span>
+  <span>風は各レースの公式発表。青い列＝本誌独自の計算</span>
+</div>
+<div class="gloss"><div class="t">初めての方へ：表の見方</div><div><b>印</b>　◎本命 ○対抗 ▲穴 △押さえ。本誌の評価順。</div><div><b>級別</b>　選手のランク。上からA1・A2・B1・B2の4段階。</div><div><b>勝率</b>　1走の平均点（1着10点〜6着1点）。6点台は上位、4点台は下位。</div><div><b>2連（2連対率）</b>　2着以内に入った割合。高いほど安定して上位に来る。</div><div><b>全国／当地</b>　全国すべての場での成績／このレース場（浜名湖）だけの成績。</div><div><b>モーター</b>　抽選で配られるエンジン。2連はその使用者の2着以内率で、性能の目安。</div><div><b>ST</b>　スタートの速さ（秒）。0に近いほど速い。0より前はフライング（F）。</div><div><b>コース</b>　スタート時の並び。1コース（最も内側）が有利で、浜名湖は1着率54%。</div><div><b>今節</b>　今回の開催での成績。四角の数字が各レースの着順。</div><div><b>3連単／3連複</b>　1〜3着を着順どおり当てる／順番は問わず当てる舟券。</div><div><b>必要オッズ</b>　その倍率以上なら長い目で見て得になる目安（＝1÷確率）。</div><div><b>確率</b>　本誌の計算による目安。展示・オッズ・直前の気象は入っていない。</div></div>
+<div class="why box">
+<div><span class="bt n1">1</span><p><b>吉田凌太：今節は9走で2着以内が7回と好調。</b>全国勝率6.32はメンバー下位。モーターは今回一番（2連50.0%）。1着確率は約59%、3着以内は約96%と見る。</p></div>
+<div><span class="bt n3">3</span><p><b>谷野錬志：全国勝率6.91。</b>1着確率は約12%、3着以内は約57%と見る。</p></div>
+<div><span class="bt n4">4</span><p><b>山下大輝：全国勝率6.97はメンバー最上位。</b>A1で地力は一番。今節は9走で2着以内が7回と好調。1着確率は約10%、3着以内は約52%と見る。</p></div>
+<div><span class="bt n2">2</span><p><b>深井利寿：今節は9走で2着以内が5回と好調。</b>今節のスタートは遅め（平均0.17秒）。1着確率は約10%、3着以内は約50%と見る。</p></div>
+<div><span class="bt n5">5</span><p><b>末永由楽：全国勝率6.01はメンバー下位。</b>当地は得意。当地勝率7.00は全国（6.01）より高い。今節のスタートはメンバー最速（平均0.12秒）。1着確率は約6%、3着以内は約35%と見る。</p></div>
+<div><span class="bt n6">6</span><p><b>上村純一：今節は9走で2着以内が5回と好調。</b>今節のスタートはメンバー最速（平均0.12秒）。外の6コースは1着率2%と不利。1着確率は約2%、3着以内は約10%と見る。</p></div>
+
+</div>
+<div class="disc"><b>簡易予想</b><span>※これはAIによる予測値であり、的中、および的中確率を保証するものではありません。</span></div>
+<div class="cols">
+  <div class="box main">
+    <h2><span class="tag">買い目</span>6点で的中確率 約34%</h2>
+    <div class="buy">
+      <div class="line"><span class="lb">3連単</span><div class="combos"><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n4">4</span></span></div></div>
+      <div class="line"><span class="lb sub">安定策</span><small>3連複</small><div class="combos"><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n3">3</span><i>=</i><span class="bt n4">4</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n3">3</span></span><span class="combo"><span class="bt n1">1</span><i>=</i><span class="bt n2">2</span><i>=</i><span class="bt n4">4</span></span></div><small>3点で約56%</small></div>
+    </div>
+    <p style="margin-top:4px;font-size:8pt">「必要オッズ」より高い倍率なら買う価値あり。締切前のオッズと見比べて、低すぎる目は外す。</p>
+  </div>
+  <div class="box">
+    <h2><span class="tag">確率</span>3連単 上位5</h2>
+    <table class="pick"><thead><tr><th>#</th><th>組番</th><th style="text-align:right">確率</th><th style="text-align:right">必要オッズ</th></tr></thead><tbody>
+    <tr><td>1</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n4">4</span></span></td><td class="num">6.4%</td><td class="num">16倍</td></tr><tr><td>2</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">6.1%</td><td class="num">16倍</td></tr><tr><td>3</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n3">3</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">6.1%</td><td class="num">17倍</td></tr><tr><td>4</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n2">2</span><i>-</i><span class="bt n3">3</span></span></td><td class="num">5.7%</td><td class="num">18倍</td></tr><tr><td>5</td><td><span class="combo"><span class="bt n1">1</span><i>-</i><span class="bt n4">4</span><i>-</i><span class="bt n2">2</span></span></td><td class="num">5.1%</td><td class="num">20倍</td></tr>
+    </tbody></table>
+  </div>
+</div>
+<div class="src foot"><b>出典</b>　出走表・成績：ボートレース振興会の公開データ。天気・風・潮：気象庁「天気予報（静岡・西部）」「潮位表（舞阪）」をもとにBoatLab AIが加工して作成。風の記載は気象庁予報の引用で、独自の予報ではありません。予測は勝率・当地勝率・モーター・コース別1着率・今節のスタートから計算し、風・潮は使っていません。舟券は20歳になってから。<span class="brand2">BoatLab AI ｜ by AI Axis Lab</span></div>
+</section>
+
+</body></html>
