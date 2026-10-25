@@ -18,11 +18,16 @@ jobs:
         with:
           node-version: "22"
       - run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq lhasa fonts-noto-cjk > /dev/null
-          pip install -q -r requirements.txt
-          npm install --no-audit --no-fund && npx playwright install chromium
-          python -m boatlab.daily --date "$(TZ=Asia/Tokyo date -d tomorrow +%F)" --venues 06,24 --backfill 10
-          mkdir pub && cp -r out/pdf out/data pub/ && cp out/html/06.html pub/
+          mkdir -p pub
+          ( set -x
+            sudo apt-get update -qq && sudo apt-get install -y -qq lhasa fonts-noto-cjk > /dev/null
+            pip install -q -r requirements.txt
+            npm install --no-audit --no-fund && npx playwright install chromium
+            python -m boatlab.daily --date "$(TZ=Asia/Tokyo date -d tomorrow +%F)" --venues 06,24 --backfill 10
+          ) > pub/log.txt 2>&1 || echo FAILED >> pub/log.txt
+          cp -r out/pdf out/data pub/ || true
+          cp out/html/06.html pub/ || true
+          fc-list | grep -i cjk | head >> pub/log.txt || true
           cd pub && git init -q -b probe-out && git add -A
           git -c user.name=bot -c user.email=bot@example.com commit -qm probe
           git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" probe-out
