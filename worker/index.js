@@ -4,6 +4,7 @@
 
 import { handleAdmin } from "./admin.js";
 import { dailyMail } from "./mail.js";
+import { cached, checkUsage, isPaused, pausedResponse, rateLimited, tooMany } from "./guard.js";
 
 const VENUE_NAMES = { "01": "桐生", "02": "戸田", "03": "江戸川", "04": "平和島", "05": "多摩川", "06": "浜名湖", "07": "蒲郡", "08": "常滑", "09": "津", "10": "三国", "11": "びわこ", "12": "住之江", "13": "尼崎", "14": "鳴門", "15": "丸亀", "16": "児島", "17": "宮島", "18": "徳山", "19": "下関", "20": "若松", "21": "芦屋", "22": "福岡", "23": "唐津", "24": "大村" };
 
@@ -27,22 +28,29 @@ async function fromBucket(env, key) {
 }
 
 export default {
-  // 毎朝 6:00〜8:30（日本時間）に30分おき。今日の予想ができていれば、高確率のレースをメールする（1日1回）
+  // 30分おき。使用量を見て、無料枠に近づいていたらサイトを一時停止する（guard.js）。
+  // 朝 6:00〜8:30（日本時間）は、今日の予想ができていれば高確率のレースをメールする（1日1回）
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(dailyMail(env).then((r) => console.log(JSON.stringify(r))));
+    ctx.waitUntil(checkUsage(env).then((r) => console.log("guard", JSON.stringify(r))));
+    const h = new Date(event.scheduledTime).getUTCHours();
+    if (h >= 21 && h <= 23) ctx.waitUntil(dailyMail(env).then((r) => console.log("mail", JSON.stringify(r))));
   },
 
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     // workers.dev のURLで確認するときは BoatLab AI 側を表示する
     const boat = url.hostname.startsWith("boat.") || url.hostname.endsWith(".workers.dev");
 
+    // 管理者ダッシュボードは一時停止中でも開ける（再開ボタンを押すため）
     const admin = await handleAdmin(request, env, url);
     if (admin) return admin;
 
+    if (await isPaused(env)) return pausedResponse();
+
     // 公開するのは本日分と過去30日の一覧だけ（成績の集計は管理者ダッシュボードへ移した）
     if (boat && /^\/(pdf\/\d{4}-\d{2}-\d{2}\/\d{2}\.pdf|data\/(today|archive)\.json)$/.test(url.pathname)) {
-      return fromBucket(env, url.pathname.slice(1));
+      if (await rateLimited(env, request)) return tooMany();
+      return cached(request, ctx, () => fromBucket(env, url.pathname.slice(1)));
     }
 
     let path = url.pathname;

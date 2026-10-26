@@ -49,6 +49,7 @@ jobs:
           ACCESS_TEAM: ${{ secrets.ACCESS_TEAM }}
           ACCESS_AUD: ${{ secrets.ACCESS_AUD }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
+          CF_ANALYTICS_TOKEN: ${{ secrets.CF_ANALYTICS_TOKEN }}
         run: |
           args=(--var "SITE_BYTES:$(du -sb site | cut -f1)")
           if [ -n "$ADMIN_PATH" ] && [ -n "$ACCESS_TEAM" ]; then
@@ -58,4 +59,12 @@ jobs:
             echo "::warning::ADMIN_PATH・ACCESS_TEAM が未登録なので、管理者ダッシュボードは表示されません（README参照）"
           fi
           [ -n "$MAIL_TO" ] && args+=(--var "MAIL_TO:$MAIL_TO")
+          # 使用量のチェック（サイトの自動一時停止）に使う。アカウントIDは同じものを渡す
+          args+=(--var "CF_ACCOUNT_ID:$CLOUDFLARE_ACCOUNT_ID")
           npx wrangler deploy "${args[@]}"
+          if [ -n "$CF_ANALYTICS_TOKEN" ]; then
+            # トークンは画面に出ない「シークレット」として渡す
+            echo "$CF_ANALYTICS_TOKEN" | npx wrangler secret put CF_ANALYTICS_TOKEN
+          else
+            echo "::warning::CF_ANALYTICS_TOKEN が未登録なので、使用量による自動一時停止は動きません（README参照）"
+          fi

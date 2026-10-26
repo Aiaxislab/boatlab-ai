@@ -54,6 +54,9 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 <header><div class="in"><h1>BoatLab AI 管理者ダッシュボード</h1><p>このページはあなた専用です。公開ページからはリンクしていません。</p></div></header>
 <main>
 
+<h2>サイトの守り（一時停止）</h2>
+<div class="panel" id="guard">読み込み中…</div>
+
 <h2>容量</h2>
 <div class="gauges" id="gauges"><div class="panel muted">読み込み中…</div></div>
 <p class="muted" id="usage-note"></p>
@@ -86,6 +89,14 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 <div class="kpis" id="mail-kpis"></div>
 <div class="scroll" id="mail-table" style="margin-top:10px;max-height:520px;overflow-y:auto"></div>
 <p class="muted" id="mail-note"></p>
+
+<h2>直近1か月の収支（100円あたり）</h2>
+<p class="muted" style="margin-top:0">上の切り替え（メールで送ったレース／基準を超えたレースすべて）と同じレースを、今日から30日前までで集計します。1レースは3連単6点を100円ずつ（600円）買った場合です。「100円あたり」は、100円賭けて平均いくら増えたか（減ったか）です。</p>
+<div class="kpis" id="report-kpis"></div>
+<h3 style="font-size:14px;margin:14px 0 6px">的中確率の帯ごと</h3>
+<div class="scroll" id="report-band"></div>
+<h3 style="font-size:14px;margin:14px 0 6px">日ごと（数字は100円あたりの収支）</h3>
+<div class="scroll" id="report-day" style="max-height:520px;overflow-y:auto"></div>
 
 <h2>AI学習モデル</h2>
 <div class="panel" id="model">読み込み中…</div>
@@ -265,7 +276,87 @@ function renderMail() {
     ${rows.map((r) => `<tr><td>${r.date}（${r.week}）</td><td>${esc(r.venue)}</td><td>${r.no}R</td><td>${esc(r.deadline)}</td><td class="n">${pct(r.prob)}</td><td class="muted">${esc(r.buy)}</td><td><b>${esc(r.result)}</b></td><td>${mark(r.buy_hit)}</td><td class="n">${r.buy_return.toLocaleString()}円</td>${cell("yen", r.buy_return - r.buy_cost)}<td>${mark(r.trio_hit)}</td></tr>`).join("")}</table>`
     : `<div class="empty">まだ結果の出たレースはありません。</div>`;
   $("mail-note").textContent = note;
+  renderReport(rs);
 }
+
+// 直近30日の収支。100円あたりの収支 = (払戻 − 購入額) ÷ 購入額 × 100
+function renderReport(all) {
+  const from = addDays(jst(), -30);
+  const rs = all.filter((r) => r.date >= from && r.prob != null);
+  const per100 = (ret, cost) => (cost ? ((ret - cost) / cost) * 100 : null);
+  const fmt100 = (v) => (v == null ? "―" : `${v > 0 ? "+" : ""}${v.toFixed(1)}円`);
+  const cls = (v) => (v == null ? "" : v > 0 ? "plus" : v < 0 ? "minus" : "");
+  const agg = (xs) => {
+    const cost = xs.reduce((a, r) => a + r.buy_cost, 0), ret = xs.reduce((a, r) => a + r.buy_return, 0);
+    return { n: xs.length, hit: xs.filter((r) => r.buy_hit).length, cost, ret, profit: ret - cost, p100: per100(ret, cost), roi: cost ? ret / cost : null };
+  };
+  if (!rs.length) {
+    $("report-kpis").innerHTML = "";
+    $("report-band").innerHTML = `<div class="empty">直近30日に結果の出たレースはまだありません。</div>`;
+    $("report-day").innerHTML = "";
+    return;
+  }
+  const t = agg(rs);
+  const k = (label, v, sub, c = "") => `<div class="kpi"><div class="k">${label}</div><div class="v ${c}">${v}</div><div class="s">${sub}</div></div>`;
+  $("report-kpis").innerHTML = [
+    k("収支（30日）", yen(t.profit), `購入 ${t.cost.toLocaleString()}円／払戻 ${t.ret.toLocaleString()}円`, cls(t.profit)),
+    k("回収率", pct(t.roi), `${t.n}レース中 ${t.hit}レース的中`),
+    k("100円あたり", fmt100(t.p100), "100円賭けたときの平均の増減", cls(t.p100)),
+  ].join("");
+  const bandOf = (r) => Math.min(90, Math.floor(r.prob * 10) * 10);
+  const bands = [...new Set(rs.map(bandOf))].sort((a, b) => a - b);
+  const head = `<tr><th>確率帯</th><th class="n">レース数</th><th class="n">的中</th><th class="n">購入額</th><th class="n">払戻</th><th class="n">収支</th><th class="n">100円あたり</th><th class="n">回収率</th></tr>`;
+  const line = (label, a) => `<tr class="${a.n < 10 ? "few" : ""}"><td>${label}</td><td class="n">${a.n}</td><td class="n">${a.hit}</td><td class="n">${a.cost.toLocaleString()}円</td><td class="n">${a.ret.toLocaleString()}円</td>${cell("yen", a.profit)}<td class="n ${cls(a.p100)}">${fmt100(a.p100)}</td><td class="n">${pct(a.roi)}</td></tr>`;
+  $("report-band").innerHTML = `<table style="min-width:0">${head}${bands.map((b) => line(b === 90 ? "90%以上" : `${b}%台`, agg(rs.filter((r) => bandOf(r) === b)))).join("")}${line("<b>合計</b>", t)}</table>`;
+  const days = [...new Set(rs.map((r) => r.date))].sort().reverse();
+  $("report-day").innerHTML = `<table style="min-width:0"><tr><th>日付</th>${bands.map((b) => `<th class="n">${b === 90 ? "90%以上" : b + "%台"}</th>`).join("")}<th class="n">その日の合計</th><th class="n">収支</th></tr>
+    ${days.map((d) => {
+      const dr = rs.filter((r) => r.date === d), a = agg(dr);
+      return `<tr><td>${d}（${dr[0].week}）</td>${bands.map((b) => {
+        const x = agg(dr.filter((r) => bandOf(r) === b));
+        return x.n ? `<td class="n ${cls(x.p100)}" title="${x.n}レース・${x.hit}的中">${fmt100(x.p100)}</td>` : `<td class="n muted">―</td>`;
+      }).join("")}<td class="n ${cls(a.p100)}"><b>${fmt100(a.p100)}</b></td>${cell("yen", a.profit)}</tr>`;
+    }).join("")}</table>`;
+}
+
+// サイトの守り：今の状態、今月の使用量、一時停止・再開
+let GUARD = null;
+async function loadGuard() {
+  try { GUARD = await (await fetch("guard", { cache: "no-store" })).json(); } catch (e) { $("guard").innerHTML = `<p class="muted" style="margin:0">読み込めませんでした。</p>`; return; }
+  const g = GUARD, u = g.usage, L = g.limits;
+  const bar = (n, free, stop) => {
+    const p = n / free, c = n >= stop ? "bad" : p > 0.5 ? "warn" : "";
+    return `<div class="meter"><i class="${c}" style="width:${Math.min(100, p * 100)}%"></i></div><div class="muted">${n.toLocaleString()}回／無料枠 ${free.toLocaleString()}回（${(p * 100).toFixed(p < 0.01 ? 3 : 1)}%）・${stop.toLocaleString()}回で自動停止</div>`;
+  };
+  const status = g.paused
+    ? `<p style="margin-top:0"><b style="color:var(--red)">一時停止中</b>（${esc(g.paused_at || "")}）：${esc(g.reason || "")}。お客様には「一時停止中」のページが出ています。</p>`
+    : `<p style="margin-top:0"><b style="color:var(--good)">公開中</b></p>`;
+  const usage = !g.analytics
+    ? `<p class="muted">使用量による自動停止は、まだ動いていません（GitHub の Secrets に CF_ANALYTICS_TOKEN を登録すると始まります）。キャッシュとアクセス回数の制限は動いています。</p>`
+    : u
+      ? `<div class="gauges" style="margin:10px 0"><div class="panel gauge"><div class="k">今月のR2読み出し（Class B）</div><div class="v">${u.month_classB.toLocaleString()}</div>${bar(u.month_classB, L.classB.free, L.classB.stopAt)}</div>
+         <div class="panel gauge"><div class="k">今月のR2書き込み（Class A）</div><div class="v">${u.month_classA.toLocaleString()}</div>${bar(u.month_classA, L.classA.free, L.classA.stopAt)}</div>
+         <div class="panel gauge"><div class="k">直近30分</div><div class="v">${u.recent_requests.toLocaleString()}</div><div class="muted">サイトへのアクセス数。R2読み出しは${u.recent_classB.toLocaleString()}回（${L.burstB.toLocaleString()}回で自動停止）</div></div></div>
+         <p class="muted">最終チェック：${new Date(u.checked_at).toLocaleString("ja-JP")}（30分ごと）${g.error ? `。前回のチェックで使用量を読めませんでした：${esc(g.error)}` : ""}</p>`
+      : `<p class="muted">まだ使用量をチェックしていません（30分以内に始まります）。${g.error ? `前回のチェックで使用量を読めませんでした：${esc(g.error)}` : ""}</p>`;
+  $("guard").innerHTML = `${status}${usage}
+    <div class="row">${g.paused ? `<button class="primary" data-guard="resume">サイトを再開する</button>` : `<button class="danger" data-guard="pause">サイトを一時停止する</button>`}${g.analytics ? `<button data-guard="check">使用量をいま確認する</button>` : ""}</div>
+    <p class="muted" style="margin-bottom:0">守り方：PDFはCloudflareの一時保存から返すので、同じPDFを何度開かれてもR2の読み出しは増えません。1つのIPから60秒に${g.rate.limit}回を超えて取りに来たら、しばらく断ります（ふつうの人は届かない回数）。自動で止まったときは、ここから再開するまで止まったままです。</p>`;
+}
+$("guard").onclick = async (e) => {
+  const b = e.target.closest("[data-guard]"); if (!b) return;
+  const action = b.dataset.guard;
+  if (action === "pause" && !confirm("サイトを一時停止します。お客様には「一時停止中」のページが出ます。よろしいですか？")) return;
+  if (action === "resume" && !confirm("サイトを再開します。よろしいですか？")) return;
+  b.disabled = true;
+  try {
+    const r = await fetch("guard", { method: "POST", headers: { "x-boatlab-admin": "guard", "content-type": "application/json" }, body: JSON.stringify({ action }) });
+    if (!r.ok) throw new Error(r.status);
+    if (action !== "check") alert(action === "pause" ? "一時停止しました（1分ほどで全体に反映されます）。" : "再開しました（1分ほどで全体に反映されます）。");
+  } catch (err) { alert("できませんでした。ページを開き直してもう一度試してください。"); }
+  await loadGuard();
+};
+loadGuard();
 
 function render() {
   renderMail();

@@ -7,6 +7,7 @@
 // （チームの Access アプリがこれ1つなら守りは同じ。アプリを増やすなら AUD も登録すること）。
 
 import PAGE from "./admin.html";
+import { checkUsage, LIMITS, RATE, readGuard, writeGuard } from "./guard.js";
 import { dailyMail, LOG_KEY, SETTINGS_KEY, MIN_CHOICES, mailMinPct } from "./mail.js";
 
 const CSV_KEY = "admin/races.csv";
@@ -102,6 +103,21 @@ export async function handleAdmin(request, env, url) {
       body = JSON.stringify(m);
     }
     return new Response(body, { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+  }
+  if (sub === "/guard" && request.method === "GET") {
+    const state = await readGuard(env);
+    return new Response(JSON.stringify({ ...state, limits: LIMITS, rate: RATE, analytics: !!(env.CF_ANALYTICS_TOKEN && env.CF_ACCOUNT_ID) }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+  }
+  if (sub === "/guard" && request.method === "POST") {
+    if (request.headers.get("origin") !== url.origin || request.headers.get("x-boatlab-admin") !== "guard") return NOT_FOUND();
+    const { action } = await request.json().catch(() => ({}));
+    const now = new Date(Date.now() + 9 * 3600e3).toISOString().replace("Z", "+09:00");
+    const state = await readGuard(env);
+    if (action === "pause") await writeGuard(env, { ...state, paused: true, paused_at: now, reason: "管理者ダッシュボードから止めました", by: "admin" });
+    else if (action === "resume") await writeGuard(env, { ...state, paused: false, resumed_at: now, reason: null, by: null });
+    else if (action === "check") await checkUsage(env);
+    else return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+    return new Response(JSON.stringify({ ok: true, ...(await readGuard(env)) }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
   if (sub === "/mail-log" && request.method === "GET") {
     const obj = await env.BUCKET.get(LOG_KEY);
