@@ -7,6 +7,7 @@
 // （チームの Access アプリがこれ1つなら守りは同じ。アプリを増やすなら AUD も登録すること）。
 
 import PAGE from "./admin.html";
+import { BUY_LIMIT_CHOICES, BUY_MIN_CHOICES, buildBuyList, buySettings } from "./buy.js";
 import { checkUsage, LIMITS, RATE, readGuard, writeGuard } from "./guard.js";
 import { dailyMail, LOG_KEY, SETTINGS_KEY, MIN_CHOICES, mailMinPct } from "./mail.js";
 
@@ -119,19 +120,37 @@ export async function handleAdmin(request, env, url) {
     else return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
     return new Response(JSON.stringify({ ok: true, ...(await readGuard(env)) }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
+  if (sub === "/buy" && request.method === "GET") {
+    // 今日買う舟券の一覧（ダッシュボードの「今日の買い目」と、パソコンの拡張機能が読む）
+    const settings = await buySettings(env);
+    const obj = await env.BUCKET.get("admin/picks.json");
+    const picks = obj ? await obj.json() : null;
+    const body = picks && picks.date === jstDate()
+      ? { ready: true, ...buildBuyList(picks, settings) }
+      : { ready: false, date: jstDate(), ...settings, reason: "今日の予想がまだできていません（毎朝5:30ごろから作ります）" };
+    return new Response(JSON.stringify({ ...body, minChoices: BUY_MIN_CHOICES, limitChoices: BUY_LIMIT_CHOICES }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+  }
   if (sub === "/mail-log" && request.method === "GET") {
     const obj = await env.BUCKET.get(LOG_KEY);
     return new Response(obj ? obj.body : "[]", { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
   if (sub === "/settings" && request.method === "POST") {
     if (request.headers.get("origin") !== url.origin || request.headers.get("x-boatlab-admin") !== "settings") return NOT_FOUND();
+    // 送られてきた項目だけ変える（メールの基準・購入の基準・1日の上限）
     const body = await request.json().catch(() => ({}));
-    const mailMin = Number(body.mailMin);
-    if (!MIN_CHOICES.includes(mailMin)) return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+    const allowed = { mailMin: MIN_CHOICES, buyMin: BUY_MIN_CHOICES, buyLimit: BUY_LIMIT_CHOICES };
+    const change = {};
+    for (const [k, choices] of Object.entries(allowed)) {
+      if (!(k in body)) continue;
+      const v = Number(body[k]);
+      if (!choices.includes(v)) return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+      change[k] = v;
+    }
+    if (!Object.keys(change).length) return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
     const old = await env.BUCKET.get(SETTINGS_KEY);
-    const settings = { ...(old ? await old.json() : {}), mailMin, updated_at: new Date(Date.now() + 9 * 3600e3).toISOString().replace("Z", "+09:00") };
+    const settings = { ...(old ? await old.json() : {}), ...change, updated_at: new Date(Date.now() + 9 * 3600e3).toISOString().replace("Z", "+09:00") };
     await env.BUCKET.put(SETTINGS_KEY, JSON.stringify(settings), { httpMetadata: { contentType: "application/json" } });
-    return new Response(JSON.stringify({ ok: true, mailMin }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+    return new Response(JSON.stringify({ ok: true, ...change }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
   if (sub === "/mail-test" && request.method === "POST") {
     if (request.headers.get("origin") !== url.origin || request.headers.get("x-boatlab-admin") !== "mail") return NOT_FOUND();
