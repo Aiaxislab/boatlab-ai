@@ -81,6 +81,18 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
   <p class="muted" style="margin-bottom:0">基準を変えると、次の朝のメールから変わります（「いま送ってみる」はすぐ新しい基準で送ります）。</p>
 </div>
 
+<h2>今日の買い目（購入用）</h2>
+<div class="panel">
+  <div class="row">
+    <label>買う基準：的中確率が <select id="buy-min"></select> 以上</label>
+    <label>1日の上限 <select id="buy-limit"></select></label>
+  </div>
+  <p id="buy-meta" class="muted">読み込み中…</p>
+  <div class="scroll" id="buy-table"></div>
+  <p class="muted" id="buy-skip"></p>
+  <p class="muted" style="margin-bottom:0">基準を超えたレースを確率の高い順に、上限に収まるだけ選び、締切の早い順に並べています（1レース＝3連単6点×100円＝600円）。購入はテレボートでご自身が行います。「入力した」の印は、このブラウザにだけ記録されます。</p>
+</div>
+
 <h2>メールで送ったレースの結果</h2>
 <div class="tabs">
   <button class="chip on" data-mail="sent">メールで送ったレース</button>
@@ -318,6 +330,42 @@ function renderReport(all) {
       }).join("")}<td class="n ${cls(a.p100)}"><b>${fmt100(a.p100)}</b></td>${cell("yen", a.profit)}</tr>`;
     }).join("")}</table>`;
 }
+
+// 今日の買い目（購入用）。どれを買うかはサーバーで決め、ここでは表示と「入力した」の印だけ
+let BUY = null;
+const doneKey = (d) => "boatlab-buy-done-" + d;
+const readDone = (d) => { try { return new Set(JSON.parse(localStorage.getItem(doneKey(d)) || "[]")); } catch (e) { return new Set(); } };
+const saveDone = (d, set) => { try { localStorage.setItem(doneKey(d), JSON.stringify([...set])); } catch (e) {} };
+async function loadBuy() {
+  try { BUY = await (await fetch("buy", { cache: "no-store" })).json(); } catch (e) { $("buy-meta").textContent = "読み込めませんでした。"; return; }
+  const b = BUY;
+  $("buy-min").innerHTML = b.minChoices.map((p) => `<option value="${p}" ${p === b.buyMin ? "selected" : ""}>${p}%</option>`).join("");
+  $("buy-limit").innerHTML = b.limitChoices.map((y) => `<option value="${y}" ${y === b.buyLimit ? "selected" : ""}>${y ? y.toLocaleString() + "円（" + y / 600 + "レースまで）" : "買わない"}</option>`).join("");
+  if (!b.ready) { $("buy-meta").textContent = b.reason; $("buy-table").innerHTML = ""; $("buy-skip").textContent = ""; return; }
+  const done = readDone(b.date);
+  $("buy-meta").innerHTML = b.count
+    ? `<b>${b.date}</b>：${b.count}レース・合計 <b>${b.total.toLocaleString()}円</b>（上限 ${b.buyLimit.toLocaleString()}円）。入力済み ${b.races.filter((r) => done.has(r.jcd + "-" + r.no)).length}／${b.count}`
+    : `<b>${b.date}</b>：的中確率${b.buyMin}%以上のレースはありません（全${b.all}レース）。今日は買いません。`;
+  $("buy-table").innerHTML = b.count ? `<table><tr><th>入力した</th><th>締切</th><th>会場</th><th>R</th><th class="n">的中確率</th><th>式別</th><th>組番（各100円）</th><th class="n">金額</th></tr>
+    ${b.races.map((r) => { const k = r.jcd + "-" + r.no; return `<tr class="${done.has(k) ? "few" : ""}"><td><input type="checkbox" data-buy="${k}" ${done.has(k) ? "checked" : ""} aria-label="${esc(r.venue)}${r.no}Rを入力した"></td><td>${esc(r.deadline)}</td><td>${esc(r.venue)}</td><td>${r.no}R</td><td class="n">${pct(r.prob)}</td><td>3連単</td><td><b>${r.bets.map((x) => x.combo.join("-")).join("　")}</b></td><td class="n">${r.cost.toLocaleString()}円</td></tr>`; }).join("")}</table>` : "";
+  $("buy-skip").textContent = b.skipped.length ? `上限のため見送り：${b.skipped.map((r) => `${r.venue}${r.no}R（${pct(r.prob)}）`).join("、")}` : "";
+}
+$("buy-table").onchange = (e) => {
+  const c = e.target.closest("[data-buy]"); if (!c || !BUY) return;
+  const done = readDone(BUY.date);
+  c.checked ? done.add(c.dataset.buy) : done.delete(c.dataset.buy);
+  saveDone(BUY.date, done);
+  loadBuy();
+};
+const saveBuy = async (key, v, msg, el, back) => {
+  if (!confirm(msg)) { el.value = back; return; }
+  const r = await fetch("settings", { method: "POST", headers: { "x-boatlab-admin": "settings", "content-type": "application/json" }, body: JSON.stringify({ [key]: v }) });
+  if (!r.ok) alert("変更できませんでした。ページを開き直してもう一度試してください。");
+  await loadBuy();
+};
+$("buy-min").onchange = (e) => saveBuy("buyMin", +e.target.value, `買う基準を「的中確率${e.target.value}%以上」に変えます。よろしいですか？`, e.target, BUY.buyMin);
+$("buy-limit").onchange = (e) => saveBuy("buyLimit", +e.target.value, `1日の上限を${(+e.target.value).toLocaleString()}円に変えます。よろしいですか？`, e.target, BUY.buyLimit);
+loadBuy();
 
 // サイトの守り：今の状態、今月の使用量、一時停止・再開
 let GUARD = null;
