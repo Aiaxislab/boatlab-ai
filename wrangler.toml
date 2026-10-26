@@ -19,9 +19,18 @@ html_handling = "none"
 binding = "BUCKET"
 bucket_name = "boatlab"
 
-# 毎朝のメール（worker/mail.js）。6:00〜8:30（日本時間）に30分おき
+# 30分おき：使用量のチェック（worker/guard.js）と、6:00〜8:30（日本時間）の毎朝のメール（worker/mail.js）
 [triggers]
-crons = ["0,30 21-23 * * *"]
+crons = ["*/30 * * * *"]
+
+# PDF・公開データの取りすぎ防止（1つのIPあたり60秒で120回まで。worker/guard.js の RATE と同じ値にする）
+[[ratelimits]]
+name = "RATE_LIMIT"
+namespace_id = "1001"
+
+  [ratelimits.simple]
+  limit = 120
+  period = 60
 
 # Cloudflare Email Routing で確認済みのアドレスにだけ送れる。送り先は Secrets の MAIL_TO
 [[send_email]]

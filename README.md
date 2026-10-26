@@ -34,6 +34,8 @@
 - 容量ゲージ（サイト全体・CSV・PDF。R2 無料枠10GBに対する割合）
 - 予想的中確率別（10%台〜）の実際の的中率・回収率。確率の高いレースほど本当に当たるかを確かめる
 - 毎朝のメール：買い目の的中確率が基準（初期値50%。ダッシュボードで20〜80%から選べる。R2 の `admin/settings.json`）を超えたレースだけを、買い方つきで送る（`worker/mail.js`。Worker の Cron が 6:00〜8:30 に30分おきに見て、その日の予想ができていれば1回だけ送る）
+- 直近1か月の収支：メールで送ったレースの、確率帯別・日別の「100円あたりの収支」、30日の合計収支と回収率
+- サイトの守り（一時停止）：今の状態、今月の R2 の使用量、一時停止・再開のボタン（下の「サイトの守り」）
 
 守り方：
 1. Cloudflare Access（Zero Trust の無料プラン）で、そのURLを自分のメールアドレスだけがログインできるようにする
@@ -48,8 +50,19 @@ GitHub Secrets に登録するもの（ADMIN_PATH と ACCESS_TEAM がそろう�
 | `ACCESS_TEAM` | Zero Trust のチーム名（`xxxx.cloudflareaccess.com` の `xxxx`） |
 | `ACCESS_AUD` | 任意。Access アプリケーションの「Application Audience (AUD) Tag」（一覧の「…」→ Copy as JSON の `aud`）。Access アプリを2つ以上作るときは必ず登録 |
 | `MAIL_TO` | 毎朝のメールの送り先。カンマ区切りで複数可（空白なし）。Cloudflare の Email Routing →「Destination addresses」で確認済みのアドレスだけに届く |
+| `CF_ANALYTICS_TOKEN` | 使用量による自動一時停止に使う。Cloudflare の「My Profile → API Tokens → Create Token → Custom token」で、権限を「Account / Account Analytics / Read」だけにして作ったトークン |
 
 登録・変更したら Actions →「サイトを公開」→ Run workflow で反映します。
+
+### サイトの守り（`worker/guard.js`）
+
+従量課金になる前に止める・嫌がらせ対策。ふつうのお客様は止めないよう、上限は普段の使われ方の数百倍に置いています。
+
+1. **一時保存（キャッシュ）**：PDF（1日）と公開データ（5分）は Cloudflare の一時保存から返す。同じPDFが何度開かれても R2 の読み出しは増えない（URLの `?` 以降は無視）
+2. **アクセス回数の制限**：PDF・公開データは1つのIPあたり60秒で120回まで（超えたら60秒お断り）。携帯回線は大勢で1つのIPを共有するので多めにしてある。変えるときは `wrangler.toml` と `guard.js` の `RATE` を両方直す
+3. **自動一時停止**：30分ごとに Cloudflare の使用量を見て、今月の R2 読み出しが700万回（無料枠1,000万回の70%）、書き込みが70万回（同100万回の70%）、または直近30分の読み出しが20万回を超えたら、サイト全体を「一時停止中」のページにする。管理者ダッシュボードは止まらない。再開はダッシュボードのボタンだけ。使用量が読めないときは止めない
+
+Workers の無料プランは1日10万リクエストで頭打ち（超えた分はエラーになるだけで請求されない）なので、お金がかかりうるのは主に R2 です。
 
 ## 手元で動かす
 
@@ -71,6 +84,7 @@ python -m boatlab.daily --date 2026-10-26 --venues 06   # 浜名湖だけ作る
 | `site/boat/`, `site/main/` | サイトのページ |
 | `worker/index.js`, `wrangler.toml` | Cloudflare Workers の設定 |
 | `worker/admin.js`, `worker/admin.html` | 管理者ダッシュボード |
+| `worker/guard.js` | サイトの守り（一時保存・アクセス回数の制限・自動一時停止） |
 | `boatlab/ledger.py` | ダッシュボード用CSVへの追記 |
 | `boatlab/ml.py`, `boatlab/train.py` | AI学習モデル（特徴量・学習・検証） |
 | `.github/workflows/` | 毎朝の自動実行とサイト公開 |
