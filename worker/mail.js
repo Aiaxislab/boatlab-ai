@@ -10,16 +10,19 @@ const combo = (c, sep = "-") => c.join(sep);
 const pct = (p) => (p * 100).toFixed(1) + "%";
 const jstDate = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
 
-export function buildMail(picks, min) {
+// 的中確率の範囲の言い方（max が 1 なら上限なし）
+export const rangeText = (min, max = 1) => `${Math.round(min * 100)}%超え${max < 1 ? `${Math.round(max * 100)}%未満` : ""}`;
+
+export function buildMail(picks, min, max = 1) {
   // Worker は UTC で動くので、日付の文字列から直接つくる
   const [y, m, dd] = picks.date.split("-").map(Number);
   const day = `${m}/${dd}（${WEEK[new Date(Date.UTC(y, m - 1, dd)).getUTCDay()]}）`;
-  const races = picks.races.filter((r) => r.buy_prob > min).sort((a, b) => (a.deadline < b.deadline ? -1 : 1));
+  const races = picks.races.filter((r) => r.buy_prob > min && (max >= 1 || r.buy_prob < max)).sort((a, b) => (a.deadline < b.deadline ? -1 : 1));
   const subject = races.length
-    ? `【BoatLab AI】${day} 的中確率${Math.round(min * 100)}%超え ${races.length}レース`
-    : `【BoatLab AI】${day} 的中確率${Math.round(min * 100)}%超えのレースはありません`;
+    ? `【BoatLab AI】${day} 的中確率${rangeText(min, max)} ${races.length}レース`
+    : `【BoatLab AI】${day} 的中確率${rangeText(min, max)}のレースはありません`;
   const lines = [
-    `${day}の予想で、買い目（3連単6点）の的中確率が${Math.round(min * 100)}%を超えたレースです。`,
+    `${day}の予想で、買い目（3連単6点）の的中確率が${Math.round(min * 100)}%を超え${max < 1 ? `、${Math.round(max * 100)}%未満の` : "た"}レースです。`,
     races.length ? `全${picks.races.length}レース中 ${races.length}レース。締切が早い順に並べています。` : `今日は該当するレースがありませんでした（全${picks.races.length}レース）。`,
     "",
   ];
@@ -77,12 +80,20 @@ async function sendOne(env, to, subject, text) {
 
 export const SETTINGS_KEY = "admin/settings.json"; // ダッシュボードで変える設定（メールの基準など）
 export const MIN_CHOICES = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80];
+export const MAX_CHOICES = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100]; // 上限（未満）。100 は上限なし
 
 // メールの基準（%）。ダッシュボードで選んだ値 → なければ MAIL_MIN → なければ50%
 export async function mailMinPct(env) {
   const obj = await env.BUCKET.get(SETTINGS_KEY);
   const saved = obj ? Number((await obj.json()).mailMin) : NaN;
   return MIN_CHOICES.includes(saved) ? saved : Number(env.MAIL_MIN) || 50;
+}
+
+// メールの上限（%、未満）。選んでいなければ100（上限なし）
+export async function mailMaxPct(env) {
+  const obj = await env.BUCKET.get(SETTINGS_KEY);
+  const saved = obj ? Number((await obj.json()).mailMax) : NaN;
+  return MAX_CHOICES.includes(saved) ? saved : 100;
 }
 
 // force: ダッシュボードの「テスト送信」。送ったかどうかの記録を無視して今すぐ送る
@@ -95,14 +106,14 @@ export async function dailyMail(env, { force = false } = {}) {
   if (picks.date !== today && !force) return { ok: false, reason: "今日の予想データがまだありません" };
   const sent = await env.BUCKET.get(SENT_KEY);
   if (!force && sent && (await sent.json()).date === today) return { ok: false, reason: "今日はもう送りました" };
-  const min = (await mailMinPct(env)) / 100;
-  const { subject, text, count, keys } = buildMail(picks, min);
+  const min = (await mailMinPct(env)) / 100, max = (await mailMaxPct(env)) / 100;
+  const { subject, text, count, keys } = buildMail(picks, min, max);
   await sendMail(env, subject, text);
   if (!force) {
     await env.BUCKET.put(SENT_KEY, JSON.stringify({ date: today, count }));
     const old = await env.BUCKET.get(LOG_KEY);
     const log = (old ? await old.json() : []).filter((d) => d.date !== picks.date);
-    log.push({ date: picks.date, min, races: keys });
+    log.push({ date: picks.date, min, max, races: keys });
     await env.BUCKET.put(LOG_KEY, JSON.stringify(log));
   }
   return { ok: true, count, date: picks.date };

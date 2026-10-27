@@ -75,7 +75,7 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 <div class="panel">
   <p id="mail-meta" class="muted" style="margin-top:0">読み込み中…</p>
   <div class="row">
-    <label>メールで送る基準：買い目の的中確率が <select id="mail-min"></select> を超えたレース</label>
+    <label>メールで送る基準：買い目の的中確率が <select id="mail-min"></select> を超え、<select id="mail-max"></select> のレース</label>
     <button id="mail-test">今日の分をいま送ってみる</button>
   </div>
   <p class="muted" style="margin-bottom:0">基準を変えると、次の朝のメールから変わります（「いま送ってみる」はすぐ新しい基準で送ります）。</p>
@@ -84,19 +84,19 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 <h2>今日の買い目（購入用）</h2>
 <div class="panel">
   <div class="row">
-    <label>買う基準：的中確率が <select id="buy-min"></select> 以上</label>
+    <label>買う基準：的中確率が <select id="buy-min"></select> 以上、<select id="buy-max"></select></label>
     <label>1日の上限 <select id="buy-limit"></select></label>
   </div>
   <p id="buy-meta" class="muted">読み込み中…</p>
   <div class="scroll" id="buy-table"></div>
   <p class="muted" id="buy-skip"></p>
-  <p class="muted" style="margin-bottom:0">基準を超えたレースを確率の高い順に、上限に収まるだけ選び、締切の早い順に並べています（1レース＝3連単6点×100円＝600円）。購入はテレボートでご自身が行います。「入力した」の印は、このブラウザにだけ記録されます。</p>
+  <p class="muted" style="margin-bottom:0">基準に合うレースを確率の高い順に、1日の上限金額に収まるだけ選び、締切の早い順に並べています（1レース＝3連単6点×100円＝600円）。購入はテレボートでご自身が行います。「入力した」の印は、このブラウザにだけ記録されます。</p>
 </div>
 
 <h2>メールで送ったレースの結果</h2>
 <div class="tabs">
   <button class="chip on" data-mail="sent">メールで送ったレース</button>
-  <button class="chip" data-mail="all">確率が基準を超えたレースすべて（過去分も）</button>
+  <button class="chip" data-mail="all">確率が基準に合うレースすべて（過去分も）</button>
 </div>
 <div class="kpis" id="mail-kpis"></div>
 <div class="scroll" id="mail-table" style="margin-top:10px;max-height:520px;overflow-y:auto"></div>
@@ -147,6 +147,9 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// 上限（未満）の選択肢。100 は上限なし
+const maxOptions = (choices, cur, min) => choices.map((p) => `<option value="${p}" ${p === cur ? "selected" : ""} ${p !== 100 && p <= min ? "disabled" : ""}>${p === 100 ? "上限なし" : p + "%未満"}</option>`).join("");
+const rangePct = (min, max) => `${min}%を超え${max < 100 ? `${max}%未満の` : "た"}`;
 const pct = (x) => (x == null || isNaN(x) ? "―" : (x * 100).toFixed(1) + "%");
 const yen = (x) => (x > 0 ? "+" : "") + Math.round(x).toLocaleString() + "円";
 const WEEK = ["月", "火", "水", "木", "金", "土", "日"];
@@ -176,7 +179,7 @@ function parseCSV(text) {
   return rows.filter((r) => r.length > 1);
 }
 
-let RACES = [], TAB = "prob", SORT = null, MAIL_LOG = [], MAIL_MIN = 50, MAIL_VIEW = "sent";
+let RACES = [], TAB = "prob", SORT = null, MAIL_LOG = [], MAIL_MIN = 50, MAIL_MAX = 100, MAIL_VIEW = "sent";
 
 function toRaces(rows) {
   const [head, ...body] = rows;
@@ -271,8 +274,8 @@ function renderMail() {
       ? `${MAIL_LOG[0].date} から ${MAIL_LOG.length}日分、${MAIL_LOG.reduce((a, d) => a + d.races.length, 0)}レースを送りました。${pending > 0 ? `うち${pending}レースは結果の答え合わせ待ち（翌朝に入ります）。` : ""}`
       : "まだメールを送っていません。送ったレースは翌朝の答え合わせのあと、ここに結果が出ます。";
   } else {
-    rs = RACES.filter((r) => r.prob != null && r.prob * 100 > MAIL_MIN);
-    note = `メールを始める前の分も含めて、買い目の的中確率が${MAIL_MIN}%を超えたレースすべてです。`;
+    rs = RACES.filter((r) => r.prob != null && r.prob * 100 > MAIL_MIN && (MAIL_MAX >= 100 || r.prob * 100 < MAIL_MAX));
+    note = `メールを始める前の分も含めて、買い目の的中確率が${rangePct(MAIL_MIN, MAIL_MAX)}レースすべてです。`;
   }
   const s = summary(rs);
   const k = (label, v, sub) => `<div class="kpi"><div class="k">${label}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`;
@@ -339,13 +342,14 @@ const saveDone = (d, set) => { try { localStorage.setItem(doneKey(d), JSON.strin
 async function loadBuy() {
   try { BUY = await (await fetch("buy", { cache: "no-store" })).json(); } catch (e) { $("buy-meta").textContent = "読み込めませんでした。"; return; }
   const b = BUY;
-  $("buy-min").innerHTML = b.minChoices.map((p) => `<option value="${p}" ${p === b.buyMin ? "selected" : ""}>${p}%</option>`).join("");
+  $("buy-min").innerHTML = b.minChoices.map((p) => `<option value="${p}" ${p === b.buyMin ? "selected" : ""} ${p >= b.buyMax ? "disabled" : ""}>${p}%</option>`).join("");
+  $("buy-max").innerHTML = maxOptions(b.maxChoices, b.buyMax, b.buyMin);
   $("buy-limit").innerHTML = b.limitChoices.map((y) => `<option value="${y}" ${y === b.buyLimit ? "selected" : ""}>${y ? y.toLocaleString() + "円（" + y / 600 + "レースまで）" : "買わない"}</option>`).join("");
   if (!b.ready) { $("buy-meta").textContent = b.reason; $("buy-table").innerHTML = ""; $("buy-skip").textContent = ""; return; }
   const done = readDone(b.date);
   $("buy-meta").innerHTML = b.count
     ? `<b>${b.date}</b>：${b.count}レース・合計 <b>${b.total.toLocaleString()}円</b>（上限 ${b.buyLimit.toLocaleString()}円）。入力済み ${b.races.filter((r) => done.has(r.jcd + "-" + r.no)).length}／${b.count}`
-    : `<b>${b.date}</b>：的中確率${b.buyMin}%以上のレースはありません（全${b.all}レース）。今日は買いません。`;
+    : `<b>${b.date}</b>：的中確率${b.buyMin}%以上${b.buyMax < 100 ? `${b.buyMax}%未満` : ""}のレースはありません（全${b.all}レース）。今日は買いません。`;
   $("buy-table").innerHTML = b.count ? `<table><tr><th>入力した</th><th>締切</th><th>会場</th><th>R</th><th class="n">的中確率</th><th>式別</th><th>組番（各100円）</th><th class="n">金額</th></tr>
     ${b.races.map((r) => { const k = r.jcd + "-" + r.no; return `<tr class="${done.has(k) ? "few" : ""}"><td><input type="checkbox" data-buy="${k}" ${done.has(k) ? "checked" : ""} aria-label="${esc(r.venue)}${r.no}Rを入力した"></td><td>${esc(r.deadline)}</td><td>${esc(r.venue)}</td><td>${r.no}R</td><td class="n">${pct(r.prob)}</td><td>3連単</td><td><b>${r.bets.map((x) => x.combo.join("-")).join("　")}</b></td><td class="n">${r.cost.toLocaleString()}円</td></tr>`; }).join("")}</table>` : "";
   $("buy-skip").textContent = b.skipped.length ? `上限のため見送り：${b.skipped.map((r) => `${r.venue}${r.no}R（${pct(r.prob)}）`).join("、")}` : "";
@@ -360,10 +364,11 @@ $("buy-table").onchange = (e) => {
 const saveBuy = async (key, v, msg, el, back) => {
   if (!confirm(msg)) { el.value = back; return; }
   const r = await fetch("settings", { method: "POST", headers: { "x-boatlab-admin": "settings", "content-type": "application/json" }, body: JSON.stringify({ [key]: v }) });
-  if (!r.ok) alert("変更できませんでした。ページを開き直してもう一度試してください。");
+  if (!r.ok) alert("変更できませんでした。上限は基準より大きくしてください。");
   await loadBuy();
 };
 $("buy-min").onchange = (e) => saveBuy("buyMin", +e.target.value, `買う基準を「的中確率${e.target.value}%以上」に変えます。よろしいですか？`, e.target, BUY.buyMin);
+$("buy-max").onchange = (e) => saveBuy("buyMax", +e.target.value, `買う基準の上限を「${+e.target.value === 100 ? "上限なし" : e.target.value + "%未満"}」に変えます。よろしいですか？`, e.target, BUY.buyMax);
 $("buy-limit").onchange = (e) => saveBuy("buyLimit", +e.target.value, `1日の上限を${(+e.target.value).toLocaleString()}円に変えます。よろしいですか？`, e.target, BUY.buyLimit);
 loadBuy();
 
@@ -443,11 +448,12 @@ async function loadUsage() {
       g("PDF", u.pdf, `${u.pdfFiles}ファイル${u.oldestPdf ? "・" + u.oldestPdf + "から" : ""}`),
     ].join("");
     $("mail-meta").textContent = u.mail
-      ? `毎朝6時〜8時半に、買い目の的中確率が${u.mailMin}%を超えたレースだけをメールで送ります（予想ができしだい1日1回）。`
+      ? `毎朝6時〜8時半に、買い目の的中確率が${rangePct(u.mailMin, u.mailMax)}レースだけをメールで送ります（予想ができしだい1日1回）。`
       : "まだ送り先が設定されていません（GitHub の Secrets に MAIL_TO を登録すると始まります）。";
     $("mail-test").disabled = !u.mail;
-    MAIL_MIN = u.mailMin;
-    $("mail-min").innerHTML = u.mailChoices.map((p) => `<option value="${p}" ${p === u.mailMin ? "selected" : ""}>${p}%</option>`).join("");
+    MAIL_MIN = u.mailMin; MAIL_MAX = u.mailMax;
+    $("mail-min").innerHTML = u.mailChoices.map((p) => `<option value="${p}" ${p === u.mailMin ? "selected" : ""} ${p >= u.mailMax ? "disabled" : ""}>${p}%</option>`).join("");
+    $("mail-max").innerHTML = maxOptions(u.mailMaxChoices, u.mailMax, u.mailMin);
     $("usage-note").textContent = `内訳：PDF ${bytes(u.pdf)}／CSV ${bytes(u.csv)}／公開データ ${bytes(u.data)}／ページ ${bytes(u.site)}${u.ml ? "／AI学習データ " + bytes(u.ml) : ""}${u.other ? "／その他 " + bytes(u.other) : ""}。PDFは30日たつと自動で消えます。Cloudflare R2 の無料枠は10GBまでです。`;
   } catch (e) {
     $("gauges").innerHTML = `<div class="panel muted">容量を読み込めませんでした。</div>`;
@@ -492,14 +498,16 @@ $("table").onclick = (e) => {
 document.querySelectorAll("[data-range]").forEach((b) => (b.onclick = () => setRange(b.dataset.range)));
 ["from", "to", "venue", "race", "week", "prob"].forEach((id) => ($(id).onchange = () => { if (id === "from" || id === "to") document.querySelectorAll("[data-range]").forEach((b) => b.classList.remove("on")); render(); }));
 $("dl").onclick = () => { location.href = "races.csv?dl=1"; };
-$("mail-min").onchange = async (e) => {
-  const v = +e.target.value;
-  if (!confirm(`メールで送る基準を「${v}%を超えたレース」に変えます。よろしいですか？`)) { e.target.value = MAIL_MIN; return; }
-  const r = await fetch("settings", { method: "POST", headers: { "x-boatlab-admin": "settings", "content-type": "application/json" }, body: JSON.stringify({ mailMin: v }) });
-  if (!r.ok) { alert("変更できませんでした。ページを開き直してもう一度試してください。"); e.target.value = MAIL_MIN; return; }
+const saveMail = async (e, key) => {
+  const v = +e.target.value, min = key === "mailMin" ? v : MAIL_MIN, max = key === "mailMax" ? v : MAIL_MAX, back = key === "mailMin" ? MAIL_MIN : MAIL_MAX;
+  if (!confirm(`メールで送る基準を「${rangePct(min, max)}レース」に変えます。よろしいですか？`)) { e.target.value = back; return; }
+  const r = await fetch("settings", { method: "POST", headers: { "x-boatlab-admin": "settings", "content-type": "application/json" }, body: JSON.stringify({ [key]: v }) });
+  if (!r.ok) { alert("変更できませんでした。上限は基準より大きくしてください。"); e.target.value = back; return; }
   await loadUsage();
   renderMail();
 };
+$("mail-min").onchange = (e) => saveMail(e, "mailMin");
+$("mail-max").onchange = (e) => saveMail(e, "mailMax");
 $("mail-test").onclick = async () => {
   $("mail-test").disabled = true;
   try {
