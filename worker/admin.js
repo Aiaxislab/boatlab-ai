@@ -7,9 +7,9 @@
 // （チームの Access アプリがこれ1つなら守りは同じ。アプリを増やすなら AUD も登録すること）。
 
 import PAGE from "./admin.html";
-import { BUY_LIMIT_CHOICES, BUY_MIN_CHOICES, buildBuyList, buySettings } from "./buy.js";
+import { BUY_LIMIT_CHOICES, BUY_MAX_CHOICES, BUY_MIN_CHOICES, buildBuyList, buySettings } from "./buy.js";
 import { checkUsage, LIMITS, RATE, readGuard, writeGuard } from "./guard.js";
-import { dailyMail, LOG_KEY, SETTINGS_KEY, MIN_CHOICES, mailMinPct } from "./mail.js";
+import { dailyMail, LOG_KEY, SETTINGS_KEY, MIN_CHOICES, MAX_CHOICES, mailMinPct, mailMaxPct } from "./mail.js";
 
 const CSV_KEY = "admin/races.csv";
 const META_KEY = "admin/meta.json";
@@ -65,7 +65,7 @@ async function usage(env) {
     cursor = page.truncated ? page.cursor : undefined;
   } while (cursor);
   const site = Number(env.SITE_BYTES) || 0;
-  return { ...sum, site, total: sum.pdf + sum.csv + sum.data + sum.ml + sum.other + site, limit: 10 * 1024 ** 3, mail: !!env.MAIL_TO, mailMin: await mailMinPct(env), mailChoices: MIN_CHOICES };
+  return { ...sum, site, total: sum.pdf + sum.csv + sum.data + sum.ml + sum.other + site, limit: 10 * 1024 ** 3, mail: !!env.MAIL_TO, mailMin: await mailMinPct(env), mailMax: await mailMaxPct(env), mailChoices: MIN_CHOICES, mailMaxChoices: MAX_CHOICES };
 }
 
 const jstDate = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
@@ -128,7 +128,7 @@ export async function handleAdmin(request, env, url) {
     const body = picks && picks.date === jstDate()
       ? { ready: true, ...buildBuyList(picks, settings) }
       : { ready: false, date: jstDate(), ...settings, reason: "今日の予想がまだできていません（毎朝5:30ごろから作ります）" };
-    return new Response(JSON.stringify({ ...body, minChoices: BUY_MIN_CHOICES, limitChoices: BUY_LIMIT_CHOICES }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+    return new Response(JSON.stringify({ ...body, minChoices: BUY_MIN_CHOICES, maxChoices: BUY_MAX_CHOICES, limitChoices: BUY_LIMIT_CHOICES }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
   if (sub === "/mail-log" && request.method === "GET") {
     const obj = await env.BUCKET.get(LOG_KEY);
@@ -138,7 +138,7 @@ export async function handleAdmin(request, env, url) {
     if (request.headers.get("origin") !== url.origin || request.headers.get("x-boatlab-admin") !== "settings") return NOT_FOUND();
     // 送られてきた項目だけ変える（メールの基準・購入の基準・1日の上限）
     const body = await request.json().catch(() => ({}));
-    const allowed = { mailMin: MIN_CHOICES, buyMin: BUY_MIN_CHOICES, buyLimit: BUY_LIMIT_CHOICES };
+    const allowed = { mailMin: MIN_CHOICES, mailMax: MAX_CHOICES, buyMin: BUY_MIN_CHOICES, buyMax: BUY_MAX_CHOICES, buyLimit: BUY_LIMIT_CHOICES };
     const change = {};
     for (const [k, choices] of Object.entries(allowed)) {
       if (!(k in body)) continue;
@@ -148,7 +148,11 @@ export async function handleAdmin(request, env, url) {
     }
     if (!Object.keys(change).length) return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
     const old = await env.BUCKET.get(SETTINGS_KEY);
-    const settings = { ...(old ? await old.json() : {}), ...change, updated_at: new Date(Date.now() + 9 * 3600e3).toISOString().replace("Z", "+09:00") };
+    const prev = old ? await old.json() : {};
+    // 上限は基準より大きくないといけない（100 は上限なし）
+    const next = { mailMin: await mailMinPct(env), mailMax: await mailMaxPct(env), ...(await buySettings(env)), ...change };
+    if (next.mailMax <= next.mailMin || next.buyMax <= next.buyMin) return new Response(JSON.stringify({ ok: false, reason: "上限は基準より大きくしてください" }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+    const settings = { ...prev, ...change, updated_at: new Date(Date.now() + 9 * 3600e3).toISOString().replace("Z", "+09:00") };
     await env.BUCKET.put(SETTINGS_KEY, JSON.stringify(settings), { httpMetadata: { contentType: "application/json" } });
     return new Response(JSON.stringify({ ok: true, ...change }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
