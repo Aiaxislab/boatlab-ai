@@ -1,0 +1,102 @@
+{
+  "version": "1.0",
+  "checked_at": "2026-10-28",
+  "description": "入力ごとの無料データソースと利用条件メモ。すべて個人の自分用ダッシュボード（ログイン必須・非公開）で使う前提。公開サイトでの再配布や商用利用は、どのソースも原則NG。規約は変わるので運用前に再確認する。",
+  "important_findings": [
+    "OANDA証券（日本）のREST APIは、デモ口座だけでは使えない。本番口座で残高25万円以上・Goldステータス・プロコースが条件（oanda.jp/fxproduct/api）。このため『OANDAデモAPIを主軸』という当初案は、日本居住者には無料の条件を満たさない。足データの主軸は Twelve Data 無料枠に変更する。",
+    "1分足さえ取れれば、5分・10分・15分・1時間・4時間・日足はすべて自前で合成できる。取得回数を節約する一番の方法。",
+    "Twelve Data 無料（Basic）は1日800回・1分8回。5ペアを10分ごとに1分足で更新すると1日約720回で収まる。",
+    "大衆のポジション比率は Myfxbook の無料APIが最も使いやすい（1回の呼び出しで全ペア、平均取得価格つき）。"
+  ],
+  "inputs": [
+    {"input": "足データ（1分足〜日足）", "sources": [
+      {"name": "Twelve Data（Basic 無料プラン）", "role": "主軸", "url": "https://twelvedata.com/pricing",
+       "what": "FXの1分足〜月足（time_series）。リアルタイム。1リクエスト最大5000本。",
+       "limits": "1分8回・1日800回。",
+       "terms": "Individual Basic は個人・内部・非商用。『internal non-display usage』と書かれており、画面表示の扱いはグレー。自分だけが見る非公開ダッシュボードに限定し、他人に見せる場合は有料プランが必要と考える。",
+       "plan": "1分足を5ペア×10分ごと（約720回/日）。日足・4時間足の長い履歴は1日1回だけ別取得。"},
+      {"name": "Yahoo!ファイナンス（非公式のチャートエンドポイント）", "role": "予備", "url": "https://finance.yahoo.com/",
+       "what": "USDJPY=X などで1分足を直近7日分取得できる。",
+       "limits": "公式の上限なし。ただし頻繁なアクセスはブロックされる。",
+       "terms": "公式APIではなく、利用規約上は自動取得が認められていない。止まる前提の予備扱い。",
+       "plan": "Twelve Data が失敗した時だけ使う。"},
+      {"name": "Dukascopy ヒストリカルデータ", "role": "過去検証用", "url": "https://www.dukascopy.com/swiss/english/marketwatch/historical/",
+       "what": "ティック・1分足の長期履歴（無料ダウンロード）。",
+       "limits": "リアルタイムには不向き。",
+       "terms": "個人の分析用。再配布不可。",
+       "plan": "テーブルの点数を検証するバックテスト用。"},
+      {"name": "HistData.com", "role": "過去検証用", "url": "https://www.histdata.com/",
+       "what": "1分足の年単位CSV（無料）。",
+       "limits": "月次更新。",
+       "terms": "個人利用。再配布不可。",
+       "plan": "Dukascopyの補完。"},
+      {"name": "OANDA証券 REST API", "role": "条件を満たせば最良（現状は対象外）", "url": "https://www.oanda.jp/fxproduct/api",
+       "what": "全時間足、オーダーブック・ポジションブック。",
+       "limits": "本番口座・残高25万円以上・Gold・プロコースが条件。",
+       "terms": "口座保有者本人の利用。",
+       "plan": "無料の条件に合わないのでv1では使わない。"}
+    ]},
+    {"input": "大衆のポジション比率", "sources": [
+      {"name": "Myfxbook Community Outlook API", "role": "主軸", "url": "https://www.myfxbook.com/api",
+       "what": "ペアごとの買い/売り比率、建玉数、買い・売りそれぞれの平均取得価格。",
+       "limits": "無料版は24時間で100リクエスト。ログインで得たセッションはIP固定・1か月有効。",
+       "terms": "APIの利用は利用規約への同意が前提。Myfxbookはサービスが無料なので、作ったソフトも無料にするよう求めている。自分用なら問題なし。",
+       "plan": "1時間に1回（24回/日）。1回で全ペアが取れる。サーバーのIPからログインする。"},
+      {"name": "IG クライアントセンチメント（IG REST API、デモ口座）", "role": "予備・照合用", "url": "https://labs.ig.com/",
+       "what": "IG顧客の買い/売り比率（clientsentiment エンドポイント）。",
+       "limits": "デモ口座のAPIキーが必要。履歴データの取得量に週ごとの上限がある。",
+       "terms": "口座保有者本人の利用。日本居住者がデモ口座を作れるかは要確認。",
+       "plan": "Myfxbookと方向が一致するかの照合に使う（任意）。"},
+      {"name": "CFTC 建玉明細（COT、Traders in Financial Futures）", "role": "週次の中長期指標", "url": "https://publicreporting.cftc.gov/",
+       "what": "通貨先物の投機筋（レバレッジドファンド等）のネットポジション。",
+       "limits": "毎週金曜（米東部15:30）に火曜時点のデータを公表。",
+       "terms": "米政府の公開データで自由に利用可。",
+       "plan": "週1回取得し、過去3年のパーセンタイルを計算。"}
+    ]},
+    {"input": "経済指標カレンダー", "sources": [
+      {"name": "Forex Factory カレンダーのJSONフィード（nfs.faireconomy.media の ff_calendar_thisweek.json）", "role": "主軸", "url": "https://www.forexfactory.com/calendar",
+       "what": "今週の指標名・時刻・重要度・予想・前回。",
+       "limits": "非公式の公開フィード。短時間に何度も取ると止められる。",
+       "terms": "Forex Factoryの内容は著作物。自分用に表示する範囲にとどめ、再配布しない。",
+       "plan": "1時間に1回取得してキャッシュ。重要度 High だけを使う。"},
+      {"name": "各中央銀行・統計局の公式日程", "role": "予備・確定用", "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+       "what": "FOMC、日銀金融政策決定会合、ECB、BOE、米雇用統計・CPI（BLSの公表予定）など。",
+       "limits": "年に数回の更新。",
+       "terms": "公的機関の公開情報。",
+       "plan": "年初に手作業で一覧化しておき、Forex Factoryが取れない時の保険にする。"}
+    ]},
+    {"input": "ニュース・要人発言（v1は見出し表示のみ）", "sources": [
+      {"name": "中央銀行のRSS（FRB、日銀、ECB、BOE）", "role": "主軸", "url": "https://www.federalreserve.gov/feeds/feeds.htm",
+       "what": "声明、議事要旨、講演の見出し。",
+       "limits": "なし。",
+       "terms": "公的機関の公開情報。",
+       "plan": "1時間に1回取得し、見出しだけ表示。点数には入れない。"}
+    ]},
+    {"input": "金利（参考表示）", "sources": [
+      {"name": "FRED API（米セントルイス連銀）", "role": "米金利", "url": "https://fred.stlouisfed.org/docs/api/fred/",
+       "what": "米2年・10年金利など（日次）。",
+       "limits": "無料APIキー。",
+       "terms": "FREDの規約に従う。データによっては出所の権利表示が必要。",
+       "plan": "1日1回。"},
+      {"name": "財務省 国債金利情報", "role": "日本金利", "url": "https://www.mof.go.jp/jgbs/reference/interest_rate/",
+       "what": "国債の利回り（日次CSV）。",
+       "limits": "なし。",
+       "terms": "政府の公開情報。",
+       "plan": "1日1回。v1では表示のみ。"}
+    ]},
+    {"input": "時間帯・五十日・フィキシング・夏時間", "sources": [
+      {"name": "自前計算（データ不要）", "role": "主軸", "url": "",
+       "what": "東京仲値9:55、ロンドンフィキシング、米英それぞれの夏時間、五十日（日本の祝日カレンダーで前営業日に調整）。",
+       "limits": "なし。",
+       "terms": "なし。",
+       "plan": "日本の祝日は内閣府の祝日CSVを年1回取り込む。"}
+    ]}
+  ],
+  "budget_example": {
+    "pairs": ["USDJPY", "EURUSD", "GBPUSD", "EURJPY", "GBPJPY"],
+    "twelve_data_calls_per_day": "1分足 5ペア×144回（10分ごと）=720 ＋ 日足・4時間足の履歴 5ペア×2 =10 ＋ 手動更新の余裕 約70 = 800",
+    "myfxbook_calls_per_day": 24,
+    "forexfactory_calls_per_day": 24,
+    "note": "1分ごとの更新が必要なら、対象を1〜2ペアに絞るか、Yahooを予備として併用する。ダッシュボードを開いた時と、7時のメールの直前には必ず最新化する。"
+  }
+}

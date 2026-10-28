@@ -16,6 +16,7 @@ header h1{margin:0 0 8px;font-size:18px}
 .board{padding:6px 14px;border-radius:6px 6px 0 0;font-size:13px;background:rgba(255,255,255,.12);color:#b9cdea}
 .board.on{background:var(--bg);color:var(--navy);font-weight:700}
 .board.off{cursor:not-allowed}
+a.board{text-decoration:none}a.board:hover{background:rgba(255,255,255,.22);color:#fff}
 main{padding:16px}
 h2{font-size:17px;margin:26px 0 10px;color:var(--navy);border-left:4px solid var(--accent);padding-left:8px}
 .muted{color:var(--muted);font-size:12px}
@@ -64,7 +65,7 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 </style>
 </head><body>
 <header><div class="in"><h1>管理者ダッシュボード</h1>
-  <nav class="boards" aria-label="ダッシュボードの切り替え"><span class="board on" aria-current="page">競艇（BoatLab AI）</span><span class="board off" title="準備中">オートレース（準備中）</span><span class="board off" title="準備中">FX（準備中）</span></nav>
+  <nav class="boards" aria-label="ダッシュボードの切り替え"><span class="board on" aria-current="page">競艇（BoatLab AI）</span><span class="board off" title="準備中">オートレース（準備中）</span><a class="board" href="fx/">FX</a></nav>
 </div></header>
 <main>
 

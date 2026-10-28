@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "checked_at": "2026-10-28",
+  "description": "v1で同時に見る銘柄と、それぞれの無料データの取り先。status: ok=無料で取得できることを確認済み / verify=無料枠で取れる見込みだが、APIキー取得後に実データで要確認。",
+  "symbols": [
+    {"symbol": "USDJPY", "group": "主要", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.5, "notes": "五十日・仲値ルールあり"},
+    {"symbol": "EURUSD", "group": "主要", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.005},
+    {"symbol": "GBPUSD", "group": "主要", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.005},
+    {"symbol": "AUDUSD", "group": "主要", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.005},
+    {"symbol": "NZDUSD", "group": "主要", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.005},
+    {"symbol": "USDCHF", "group": "主要", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.005},
+    {"symbol": "USDCAD", "group": "主要", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.005},
+    {"symbol": "EURJPY", "group": "クロス円", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.5},
+    {"symbol": "GBPJPY", "group": "クロス円", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.5},
+    {"symbol": "AUDJPY", "group": "クロス円", "candles": "Twelve Data", "crowd": "Myfxbook", "status": "ok", "round_step": 0.5},
+    {"symbol": "XAUUSD", "group": "ゴールド", "candles": "Twelve Data（XAU/USD）。無料枠で取れなければ Yahoo の金先物 GC=F で代用（先物なので現物と数ドル差がある）", "crowd": "Myfxbook（XAUUSD対応を確認）", "status": "verify", "round_step": 10, "notes": "米国の指標と実質金利に強く反応。五十日ルールは使わない"},
+    {"symbol": "BTCUSD", "group": "暗号資産", "candles": "Coinbase Exchange の公開API（BTC-USD、キー不要・無料・1分足あり）", "crowd": "Myfxbookに無い場合は Binance先物の公開ロング/ショート比率（globalLongShortAccountRatio）。Binanceが使えなければ Bybit の同等データ", "status": "verify", "round_step": 1000, "notes": "24時間365日動く。土日も判定対象。セッションと五十日のルールは使わない"}
+  ],
+  "optional_later": ["EURGBP", "EURAUD", "GBPAUD", "CHFJPY", "NZDJPY", "XAGUSD", "ETHUSD"],
+  "fetch_budget": {
+    "per_snapshot": "Twelve Dataの11銘柄 × 3回（1分足5000本・1時間足5000本・日足300本）= 33回。1分8回の上限があるので約5分かかる → 8:24に取得開始、8:30に判定確定",
+    "per_day": "8:30の定時判定 33回 ＋ ダッシュボードを開いた時の更新（1回33回）× 最大20回程度 = 800回以内",
+    "note": "定時判定方式なら、常時1分更新しなくても全銘柄を無料枠で回せる。5分足〜4時間足はすべて1分足・1時間足から合成する。"
+  },
+  "differences_for_rules": [
+    "ATR単位で判定しているので、テーブルは金・BTCにもそのまま使える。キリ番の刻み（round_step）だけ銘柄ごとに変える。",
+    "BTCは土日も動くので、日足の区切りはUTC 0時（日本時間9時）にする。",
+    "時間帯ルール（SE01〜SE10）のうち、仲値・五十日はUSDJPYのみ、フィキシングは為替と金のみ、BTCは対象外。"
+  ]
+}
