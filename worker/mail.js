@@ -56,16 +56,16 @@ function b64(str) {
 
 const recipients = (env) => String(env.MAIL_TO || "").split(/[,\s]+/).filter(Boolean);
 
-// 1通に1人ずつ送る（お互いのアドレスが見えないように）
-export async function sendMail(env, subject, text) {
-  for (const to of recipients(env)) await sendOne(env, to, subject, text);
+// 1通に1人ずつ送る（お互いのアドレスが見えないように）。to・name を渡すと宛先と差出人名を変えられる（FXのメール）
+export async function sendMail(env, subject, text, { to = recipients(env), name = "BoatLab AI" } = {}) {
+  for (const addr of to) await sendOne(env, addr, subject, text, name);
 }
 
-async function sendOne(env, to, subject, text) {
+async function sendOne(env, to, subject, text, name) {
   const { EmailMessage } = await import("cloudflare:email");
   const from = env.MAIL_FROM || "noreply@aiaxislab.win";
   const raw = [
-    `From: BoatLab AI <${from}>`,
+    `From: =?UTF-8?B?${b64(name)}?= <${from}>`,
     `To: <${to}>`,
     `Subject: =?UTF-8?B?${b64(subject)}?=`,
     `Date: ${new Date().toUTCString()}`,

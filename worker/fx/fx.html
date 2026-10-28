@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>FX｜管理者ダッシュボード</title>
+<style>
+:root{--ink:#14181b;--muted:#5d666c;--line:#d5dce3;--bg:#f5f7fa;--card:#fff;--accent:#0b5cad;--navy:#0a2550;--red:#c8102e;--good:#1d7f45;--soft:#e3eefa;--track:#e6ebf0;--warn:#d98a00;--up:#1d7f45;--dn:#c8102e}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#e8edf2;--muted:#9aa6b1;--line:#2b3540;--bg:#0e141b;--card:#161e27;--accent:#5aa9f0;--navy:#cfe2ff;--red:#ff6b7d;--good:#4cc27e;--soft:#1b2a3c;--track:#243040;--warn:#f0b44c;--up:#4cc27e;--dn:#ff6b7d}}
+:root[data-theme="dark"]{--ink:#e8edf2;--muted:#9aa6b1;--line:#2b3540;--bg:#0e141b;--card:#161e27;--accent:#5aa9f0;--navy:#cfe2ff;--red:#ff6b7d;--good:#4cc27e;--soft:#1b2a3c;--track:#243040;--warn:#f0b44c;--up:#4cc27e;--dn:#ff6b7d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,-apple-system,"Hiragino Sans",sans-serif;line-height:1.6;font-size:14px}
+header{background:linear-gradient(115deg,#051a3d,#0a3378 45%,#0d56b3);color:#fff;padding:12px 16px 0}
+header .in,main{max-width:1100px;margin:0 auto}
+header h1{margin:0 0 8px;font-size:18px}
+.boards{display:flex;gap:4px;flex-wrap:wrap}
+.board{padding:6px 14px;border-radius:6px 6px 0 0;font-size:13px;background:rgba(255,255,255,.12);color:#b9cdea;text-decoration:none}
+a.board:hover{background:rgba(255,255,255,.22);color:#fff}
+.board.on{background:var(--bg);color:var(--navy);font-weight:700}
+.board.off{cursor:not-allowed}
+main{padding:16px}
+h2{font-size:17px;margin:26px 0 10px;color:var(--navy);border-left:4px solid var(--accent);padding-left:8px}
+.muted{color:var(--muted);font-size:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:inherit;font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+button:disabled{opacity:.5;cursor:default}
+a{color:var(--accent)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
+.kpi .k{font-size:12px;color:var(--muted)}
+.kpi .v{font-size:24px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--accent);border-radius:8px;overflow:hidden}
+.seg button{border:0;border-radius:0;background:transparent;color:var(--accent);padding:6px 14px}
+.seg button.on{background:var(--accent);color:#fff;font-weight:700}
+.scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%}
+td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;white-space:nowrap}
+th{color:var(--muted);font-weight:500;font-size:12px;background:var(--card)}
+.n{text-align:right;font-variant-numeric:tabular-nums}
+.up{color:var(--up);font-weight:700}.dn{color:var(--dn);font-weight:700}.flat{color:var(--muted);font-weight:700}
+.mr-o{color:var(--good);font-weight:700}.mr-t{color:var(--warn);font-weight:700}.mr-x{color:var(--muted)}
+tr.pick{cursor:pointer}tr.pick:hover td{background:var(--soft)}
+details{background:var(--card);border:1px solid var(--line);border-radius:8px;margin-top:8px}
+details summary{cursor:pointer;padding:10px 14px;font-weight:700}
+details .in{padding:0 14px 14px}
+pre.msg{white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:13px;line-height:1.7;margin:0}
+.tfbars{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px 14px;margin:10px 0}
+.tfb{display:grid;grid-template-columns:52px 1fr 34px;gap:6px;align-items:center;font-size:12px}
+.tfb .bar{position:relative;height:8px;background:var(--track);border-radius:4px;overflow:hidden}
+.tfb .bar i{position:absolute;top:0;bottom:0}
+.tfb .bar i.p{left:50%;background:var(--up)}.tfb .bar i.m{right:50%;background:var(--dn)}
+.cal{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.cal div{border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-size:11px;background:var(--card)}
+.cal b{display:block;font-size:12px}
+.chip{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;background:var(--soft);color:var(--navy)}
+.share{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.share code{background:var(--soft);padding:4px 8px;border-radius:6px;font-size:12px;word-break:break-all}
+.note{background:var(--soft);border-radius:8px;padding:12px 14px;font-size:12px;margin-top:16px}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+</style>
+</head><body>
+<header><div class="in"><h1>管理者ダッシュボード</h1>
+  <nav class="boards" aria-label="ダッシュボードの切り替え"><a class="board" href="../">競艇（BoatLab AI）</a><span class="board off" title="準備中">オートレース（準備中）</span><span class="board on" aria-current="page">FX</span></nav>
+</div></header>
+<main>
+
+<div class="panel">
+  <p id="status" style="margin:0 0 10px">読み込み中…</p>
+  <div class="row">
+    <button class="primary" id="send">いまの見解をメールで送る</button>
+    <button id="refresh">最新のデータで判定しなおす</button>
+    <span class="muted" id="act"></span>
+  </div>
+</div>
+
+<h2>いまの地合い（良い順）</h2>
+<div class="scroll" id="rank"></div>
+<p class="muted">地合い＝総合スコアの大きさ×確信度（4時間以内に重要指標があると下げる）。行を押すと下の詳しい見解に移ります。</p>
+
+<h2>銘柄ごとの見解</h2>
+<div id="detail"></div>
+
+<h2>的中率（毎朝8:30の判定）</h2>
+<div class="panel">
+  <div class="row"><span class="muted">期間</span><span class="seg" id="period"><button data-p="last30" class="on">直近30日</button><button data-p="all">全期間</button></span></div>
+  <div class="kpis" id="kpis" style="margin-top:12px"></div>
+  <div class="two" style="margin-top:12px">
+    <div class="scroll" id="by-stars"></div>
+    <div class="scroll" id="by-mr"></div>
+  </div>
+  <div class="scroll" id="by-symbol" style="margin-top:12px"></div>
+  <h3 style="font-size:14px;margin:16px 0 8px">日ごとの結果（直近30日）</h3>
+  <div class="cal" id="cal"></div>
+  <details><summary>ルールごとの一致率（効いていないルールを探す）</summary><div class="in"><div class="scroll" id="rules"></div></div></details>
+  <details><summary>直近の採点</summary><div class="in"><div class="scroll" id="latest-rows"></div></div></details>
+  <p class="muted" id="stats-note" style="margin-bottom:0"></p>
+</div>
+
+<h2>Claude に読ませる</h2>
+<div class="panel">
+  <div class="share" id="share">読み込み中…</div>
+  <p class="muted" style="margin-bottom:0">このURLを Claude のプロジェクトに貼って「分析して」と頼むと、判定と答え合わせの要約を読んで解説します。ログイン不要ですが、検索には載りません。人に教えないでください。詳しく分析したいときは CSV をダウンロードしてチャットに添付してください。</p>
+  <div class="row" style="margin-top:10px"><a href="scores.csv?dl" id="csv">採点結果のCSVをダウンロード</a></div>
+</div>
+
+<div class="note">
+  判定は、事前に用意したルール表（MACD・RSI・移動平均・ADX・ボリンジャー・ダウ理論・複数時間足・時間帯・経済指標・大衆のポジション）だけで作っています。AIは使っていません。
+  確信度とマジョリティリバース（MR）の％は点数で、勝率の保証ではありません。データ：Twelve Data（為替・金）、Coinbase（BTC）、Myfxbook ほか（大衆の比率）、Forex Factory（経済指標）。
+</div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const dirCls = (d) => (d > 0 ? "up" : d < 0 ? "dn" : "flat");
+const mrCls = (s) => (s === "◯" ? "mr-o" : s === "△" ? "mr-t" : "mr-x");
+const pct = (v) => (v == null ? "－" : `${v}%`);
+let LATEST = null, STATS = null, PERIOD = "last30";
+
+async function getJson(path) {
+  const r = await fetch(path, { cache: "no-store" });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+function renderLatest() {
+  const L = LATEST;
+  if (!L) {
+    $("status").textContent = "まだ判定がありません（毎朝8:30と、日中2時間おきに作ります）。";
+    $("rank").innerHTML = `<div class="empty">データがありません</div>`;
+    return;
+  }
+  const kind = L.kind === "morning" ? "毎朝8:30の定時判定" : "日中の途中経過";
+  $("status").innerHTML = `<b>${esc(L.time)}</b> 時点の判定（${kind}）。計算が終わったのは ${esc(L.generated)}。`;
+  const rows = L.symbols.map((s, i) => {
+    const mr = s.mr || {};
+    const ev = (s.events || []).map((e) => `${e.time} ${e.name}`).join("、");
+    return `<tr class="pick" data-sym="${esc(s.symbol)}"><td class="n">${i + 1}</td><td><b>${esc(s.symbol)}</b></td><td class="n">${esc(s.price_text)}</td>
+      <td class="${dirCls(s.dir)}">${esc(s.dir_symbol)} ${esc(s.dir_label)}</td><td>${esc(s.stars)} ${s.confidence}%</td><td>${esc(s.rc_symbol)}${esc(s.rc_level)}</td>
+      <td class="${mrCls(mr.symbol)}">${esc(mr.symbol)}${mr.score ? ` ${mr.score}% ${esc(mr.dir_label || "")}` : ""}</td><td class="n">${s.ds > 0 ? "+" : ""}${s.ds}</td><td class="muted">${esc(ev)}</td></tr>`;
+  });
+  for (const s of L.skipped || []) rows.push(`<tr><td></td><td><b>${esc(s.symbol)}</b></td><td colspan="7" class="muted">${esc(s.reason)}</td></tr>`);
+  $("rank").innerHTML = `<table><thead><tr><th>順位</th><th>銘柄</th><th class="n">価格</th><th>方向</th><th>確信度</th><th>転換リスク</th><th>MR</th><th class="n">総合</th><th>今日の重要指標</th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
+  $("rank").querySelectorAll("tr.pick").forEach((tr) => tr.addEventListener("click", () => {
+    const d = document.getElementById(`d-${tr.dataset.sym}`);
+    if (d) { d.open = true; d.scrollIntoView({ behavior: "smooth", block: "start" }); }
+  }));
+  $("detail").innerHTML = L.symbols.map((s, i) => {
+    const bars = Object.entries(s.tf_scores).map(([tf, v]) => {
+      const w = Math.min(50, Math.abs(v) / 2);
+      return `<div class="tfb"><span>${{ D: "日足", "4h": "4時間", "1h": "1時間", "15m": "15分", "10m": "10分", "5m": "5分", "1m": "1分" }[tf]}</span><span class="bar"><i class="${v >= 0 ? "p" : "m"}" style="width:${w}%"></i></span><span class="n">${v > 0 ? "+" : ""}${v}</span></div>`;
+    }).join("");
+    return `<details id="d-${esc(s.symbol)}" ${i < 3 ? "open" : ""}><summary>${esc(s.symbol)}　<span class="${dirCls(s.dir)}">${esc(s.dir_symbol)} ${esc(s.dir_label)}</span>　${esc(s.stars)} ${s.confidence}%　<span class="${mrCls(s.mr.symbol)}">MR ${esc(s.mr.symbol)}</span></summary>
+      <div class="in"><div class="tfbars">${bars}</div><pre class="msg">${esc(s.message)}</pre></div></details>`;
+  }).join("");
+}
+
+function tally(t) {
+  return `${pct(t.rate)} <span class="muted">（${t.hit}/${t.n}件${t.draw ? `、引き分け${t.draw}` : ""}）</span>`;
+}
+
+function renderStats() {
+  if (!STATS) {
+    $("kpis").innerHTML = `<div class="empty" style="grid-column:1/-1">まだ採点がありません。8:30の判定は、翌朝のNYクローズ（BTCは24時間後）のあとに採点します。</div>`;
+    ["by-stars", "by-mr", "by-symbol", "rules", "latest-rows"].forEach((id) => ($(id).innerHTML = ""));
+    return;
+  }
+  const B = STATS[PERIOD];
+  const o = B.overall, real = B.real;
+  $("kpis").innerHTML = [
+    ["方向の的中率", pct(o.rate), `的中${o.hit}・外れ${o.miss}・引き分け${o.draw}`],
+    ["比べる相手：前日と同じ方向", pct(B.baseline_prev.rate), `${B.baseline_prev.n}件`],
+    ["比べる相手：日足20EMAの向き", pct(B.baseline_ema.rate), `${B.baseline_ema.n}件。コイン投げは50%`],
+    ["実戦（0.5ADRの先着）", `${real["勝ち"]}勝 ${real["負け"]}敗`, `どちらも届かず ${real["どちらも届かず"]}`],
+  ].map(([k, v, s]) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
+  $("by-stars").innerHTML = `<table><thead><tr><th>確信度</th><th>的中率</th></tr></thead><tbody>${Object.entries(B.by_stars).map(([k, t]) => `<tr><td>${k}</td><td>${tally(t)}</td></tr>`).join("")}</tbody></table>`;
+  $("by-mr").innerHTML = `<table><thead><tr><th>MR</th><th class="n">件数</th><th class="n">ゾーン到達</th><th class="n">成功</th><th class="n">失敗</th></tr></thead><tbody>${Object.entries(B.mr).map(([k, m]) => `<tr><td class="${mrCls(k)}">${k}</td><td class="n">${m.n}</td><td class="n">${m.reached}</td><td class="n">${m.success}</td><td class="n">${m.fail}</td></tr>`).join("")}</tbody></table>`;
+  $("by-symbol").innerHTML = `<table><thead><tr><th>銘柄</th><th>的中率</th></tr></thead><tbody>${Object.entries(B.by_symbol).map(([k, t]) => `<tr><td>${k}</td><td>${tally(t)}</td></tr>`).join("")}</tbody></table>`;
+  $("cal").innerHTML = Object.entries(STATS.calendar).map(([d, c]) => `<div><b>${d.slice(5).replace("-", "/")}</b><span class="up">${c.hit}</span> / <span class="dn">${c.miss}</span>${c.draw ? ` / <span class="flat">${c.draw}</span>` : ""}</div>`).join("") || `<span class="muted">まだありません</span>`;
+  $("rules").innerHTML = `<table><thead><tr><th>ルール</th><th class="n">件数</th><th>向きが合った割合</th></tr></thead><tbody>${STATS.rules.slice(0, 40).map((r) => `<tr><td>${esc(r.id)}</td><td class="n">${r.n}</td><td>${pct(r.rate)}</td></tr>`).join("")}</tbody></table>`;
+  const cols = ["日付", "銘柄", "方向", "確信度", "結果", "値動き（ADR比）", "実戦", "MR記号", "MR結果", "前日と同じ", "20EMAの向き"];
+  $("latest-rows").innerHTML = `<table><thead><tr>${cols.map((c) => `<th>${c}</th>`).join("")}</tr></thead><tbody>${STATS.latest.map((r) => `<tr>${cols.map((c) => `<td>${esc(r[c])}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  $("stats-note").textContent = `記録 ${STATS.days}日・${STATS.rows}件（${STATS.updated} 更新）。上げ・下げの予想はADRの10%以上その方向に動けば的中、逆なら外れ、その間は引き分け。レンジの予想は値幅がADRの80%未満なら的中。1か月（約260件）たまるまでは、数字のぶれが大きい点に注意。`;
+}
+
+async function renderInfo() {
+  let info = {};
+  try { info = await getJson("info"); } catch (e) {}
+  $("share").innerHTML = info.share
+    ? `<code id="share-url">${esc(info.share)}</code><button id="copy">コピー</button>`
+    : `<span class="muted">GitHub Secrets に FX_SHARE_PATH を登録すると、ここにURLが出ます（README参照）。</span>`;
+  if (info.share) $("copy").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(info.share); $("copy").textContent = "コピーしました"; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents($("share-url")); getSelection().removeAllRanges(); getSelection().addRange(r); }
+  });
+  if (!info.mail) { $("send").disabled = true; $("act").textContent = "メールの送り先（FX_MAIL_TO か MAIL_TO）が未登録です。"; }
+  if (!info.dispatch) { $("refresh").disabled = true; $("refresh").title = "GH_DISPATCH_TOKEN を登録すると使えます（README参照）"; }
+  if (info.sent) $("act").textContent = `今日の8:30のメール：${info.sent.date === new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10) ? "送信済み" : "まだ"}`;
+}
+
+async function post(path, tag) {
+  const r = await fetch(path, { method: "POST", headers: { "x-boatlab-admin": tag } });
+  return r.json().catch(() => ({ ok: false, reason: "応答を読めませんでした" }));
+}
+
+$("send").addEventListener("click", async () => {
+  $("send").disabled = true;
+  const r = await post("mail", "fx-mail");
+  $("act").textContent = r.ok ? `送りました（${r.time} 時点の見解）` : r.reason;
+  $("send").disabled = false;
+});
+$("refresh").addEventListener("click", async () => {
+  $("refresh").disabled = true;
+  const r = await post("refresh", "fx-refresh");
+  $("act").textContent = r.reason;
+});
+$("period").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
+  PERIOD = b.dataset.p;
+  $("period").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+  renderStats();
+}));
+
+(async () => {
+  try { LATEST = await getJson("latest"); } catch (e) { $("status").textContent = "読み込めませんでした。"; }
+  try { STATS = await getJson("stats"); } catch (e) {}
+  renderLatest();
+  renderStats();
+  renderInfo();
+})();
+</script>
+</body></html>

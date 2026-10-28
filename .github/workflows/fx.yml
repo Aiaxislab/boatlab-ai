@@ -1,0 +1,93 @@
+name: FXの判定
+on:
+  schedule:
+    - cron: "15 23 * * *" # 毎日 8:15（日本時間）に起動し、8:30 まで待って定時判定。GitHubの都合で遅れることがある
+    - cron: "0 1,3,5,7,9,11,13,15 * * *" # 10:00〜24:00（日本時間）の2時間おき。ダッシュボード用の途中経過
+  pull_request: # 変更の確認用。外部には繋がず、作り物のデータで最後まで動くかだけを見る
+    paths: ["fx/**", ".github/workflows/fx.yml", "requirements-fx.txt"]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "morning＝8:30の定時判定（記録・採点・メール）／intraday＝いまの途中経過"
+        type: choice
+        options: [intraday, morning]
+        default: intraday
+
+concurrency: fx-judge # 競艇の daily・train とは別の名前（待たされないように）
+
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+      MYFXBOOK_EMAIL: ${{ secrets.MYFXBOOK_EMAIL }}
+      MYFXBOOK_PASSWORD: ${{ secrets.MYFXBOOK_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q -r requirements-fx.txt
+
+      - name: 作り物のデータで動作確認
+        if: github.event_name == 'pull_request'
+        run: python -m fx.selftest
+
+      - name: どちらの判定かを決める
+        if: github.event_name != 'pull_request'
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then mode="${{ inputs.mode }}"
+          elif [ "${{ github.event.schedule }}" = "15 23 * * *" ]; then mode=morning
+          else mode=intraday; fi
+          echo "MODE=$mode" >> "$GITHUB_ENV"
+          echo "今回は $mode です"
+          if [ -z "$TWELVEDATA_API_KEY" ]; then echo "::warning::TWELVEDATA_API_KEY が未登録なので、為替と金は判定できません（README参照）"; fi
+
+      - uses: actions/setup-node@v4
+        if: github.event_name != 'pull_request'
+        with:
+          node-version: "22"
+      - name: これまでの記録を R2 から取ってくる
+        if: github.event_name != 'pull_request'
+        run: |
+          npm install --no-save --no-audit --no-fund wrangler@4.152.0 > /dev/null
+          mkdir -p out/fx/judge
+          # 無いとき（初回）は空から始める。通信エラーのときは止める（記録を消さないため）
+          get() {
+            if out=$(npx wrangler r2 object get "boatlab/admin/fx/$1" --file "out/fx/$1" --remote 2>&1); then
+              echo "$1 を取得しました"
+            elif echo "$out" | grep -q "The specified key does not exist"; then
+              rm -f "out/fx/$1"; echo "$1 はまだありません"
+            else
+              echo "$out"; exit 1
+            fi
+          }
+          get pending.json
+          get scores.csv
+          get crowd.json
+          today=$(TZ=Asia/Tokyo date +%F)
+          get "judge/$today.json"
+          if [ -e "out/fx/judge/$today.json" ]; then echo "HAD_JUDGE=1" >> "$GITHUB_ENV"; fi
+
+      - name: 判定する
+        if: github.event_name != 'pull_request'
+        run: python -m fx.run --mode "$MODE" --state out/fx
+
+      - name: Cloudflare R2 に置く
+        if: github.event_name != 'pull_request'
+        run: |
+          put() { npx wrangler r2 object put "boatlab/admin/fx/$1" --file "out/fx/$1" --content-type "$2" --remote > /dev/null && echo "$1 を置きました"; }
+          put latest.json "application/json; charset=utf-8"
+          put pending.json "application/json; charset=utf-8"
+          put crowd.json "application/json; charset=utf-8"
+          put share.md "text/plain; charset=utf-8"
+          [ -e out/fx/scores.csv ] && put scores.csv "text/csv; charset=utf-8"
+          [ -e out/fx/stats.json ] && put stats.json "application/json; charset=utf-8"
+          # 8:30の判定は1日1回だけ置く（後から書き換えない。メールはこれを見て Worker が送る）
+          today=$(TZ=Asia/Tokyo date +%F)
+          if [ "$MODE" = "morning" ] && [ -z "$HAD_JUDGE" ] && [ -e "out/fx/judge/$today.json" ]; then
+            put "judge/$today.json" "application/json; charset=utf-8"
+          fi

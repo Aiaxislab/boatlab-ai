@@ -4,6 +4,7 @@
 
 import { handleAdmin } from "./admin.js";
 import { dailyMail } from "./mail.js";
+import { FX_CRON, fxScheduled, handleFxShare } from "./fx/fx.js";
 import { cached, checkUsage, isPaused, pausedResponse, rateLimited, tooMany } from "./guard.js";
 
 const VENUE_NAMES = { "01": "桐生", "02": "戸田", "03": "江戸川", "04": "平和島", "05": "多摩川", "06": "浜名湖", "07": "蒲郡", "08": "常滑", "09": "津", "10": "三国", "11": "びわこ", "12": "住之江", "13": "尼崎", "14": "鳴門", "15": "丸亀", "16": "児島", "17": "宮島", "18": "徳山", "19": "下関", "20": "若松", "21": "芦屋", "22": "福岡", "23": "唐津", "24": "大村" };
@@ -30,7 +31,12 @@ async function fromBucket(env, key) {
 export default {
   // 30分おき。使用量を見て、無料枠に近づいていたらサイトを一時停止する（guard.js）。
   // 朝 6:00〜8:30（日本時間）は、今日の予想ができていれば高確率のレースをメールする（1日1回）
+  // FX_CRON（8:00〜10:55 の5分おき）は FX の毎朝のメールだけ（fx/fx.js）
   async scheduled(event, env, ctx) {
+    if (event.cron === FX_CRON) {
+      ctx.waitUntil(fxScheduled(event, env).then((r) => console.log("fx", JSON.stringify(r))));
+      return;
+    }
     ctx.waitUntil(checkUsage(env).then((r) => console.log("guard", JSON.stringify(r))));
     const h = new Date(event.scheduledTime).getUTCHours();
     if (h >= 21 && h <= 23) ctx.waitUntil(dailyMail(env).then((r) => console.log("mail", JSON.stringify(r))));
@@ -44,6 +50,10 @@ export default {
     // 管理者ダッシュボードは一時停止中でも開ける（再開ボタンを押すため）
     const admin = await handleAdmin(request, env, url);
     if (admin) return admin;
+
+    // FXの要約（Claude に読ませる非公開URL）。自分用なので、サイトの一時停止中でも開ける
+    const fxShare = await handleFxShare(request, env, url);
+    if (fxShare) return fxShare;
 
     if (await isPaused(env)) return pausedResponse();
 

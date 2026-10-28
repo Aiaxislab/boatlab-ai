@@ -90,7 +90,9 @@ python -m boatlab.daily --date 2026-10-26 --venues 06   # 浜名湖だけ作る
 | `worker/guard.js` | サイトの守り（一時保存・アクセス回数の制限・自動一時停止） |
 | `boatlab/ledger.py` | ダッシュボード用CSVへの追記 |
 | `boatlab/ml.py`, `boatlab/train.py` | AI学習モデル（特徴量・学習・検証） |
-| `.github/workflows/` | 毎朝の自動実行とサイト公開 |
+| `fx/`, `fx/knowledge/` | FXの判定（データ取得・指標計算・ルール表・採点）。競艇とは別 |
+| `worker/fx/` | FXのダッシュボード・メール・Claude用の要約URL |
+| `.github/workflows/` | 毎朝の自動実行とサイト公開（FXは `fx.yml`） |
 
 ## 予想の計算について
 
@@ -109,3 +111,37 @@ GitHub Actions の「AIモデルの学習」が週1回動きます（Actions →
 4. 毎朝のPDF作成は、採用されたモデルがあればそれを使う。どちらのモデルで予想したかはCSVの「モデル」列に残り、ダッシュボードの「予想モデル別」で比べられる
 
 ダッシュボードの「AI学習モデル」で、採用中かどうか、検証期間での比較、確率が当てになるか（確率帯ごとの実際の的中率）、学習した重みを見られます。
+
+## FX（自分用のFXアドバイザー）
+
+管理者ダッシュボードの「FX」タブ（`https://aiaxislab.win/<ADMIN_PATH>/fx/`）。競艇とはデータもコードも分けています。
+
+### 動き
+
+1. 毎朝8:15（日本時間）に GitHub Actions の「FXの判定」が起動し、8:30 まで待ってから12銘柄（主要7ペア・EURJPY・GBPJPY・AUDJPY・XAUUSD・BTCUSD）を判定します。
+2. 1分足〜日足の7つの時間足で指標を計算し、`fx/knowledge/interpretation_table.json` のルール表に当てて説明文を集め、`composite_rules.json` の決まりで「方向（▲▲〜▼▼）・確信度・時間で流れが変わるリスク・マジョリティリバース（◯/△/×と％）」を出します。AIは使いません。
+3. 判定は R2 の `admin/fx/judge/日付.json` に1日1回だけ置き、後から書き換えません。Worker が 8:00〜10:55 に5分おきに見て、できていればメールを1回送ります。
+4. 翌朝のNYクローズ（BTCは24時間後）を過ぎたら答え合わせをして `admin/fx/scores.csv` に足し、的中率を `admin/fx/stats.json` にまとめます。「前日と同じ方向」「日足20EMAの向き」という単純な予想とも比べます。
+5. 日中は10:00〜24:00に2時間おきに途中経過を作ります（ダッシュボード用。採点はしません）。
+
+使うデータ：Twelve Data（為替・金、無料枠1日800回）、Coinbase の公開データ（BTC）、Myfxbook のコミュニティアウトルック（大衆の比率、無料枠1日100回）、Forex Factory の指標カレンダー。どれも自分だけが見る前提の使い方です（ダッシュボードはログイン必須、要約URLも人に教えない）。
+
+### Claude に読ませる
+
+GitHub Secrets に `FX_SHARE_PATH` を登録すると、`https://aiaxislab.win/<FX_SHARE_PATH>` に判定と答え合わせの要約（テキスト）が出ます。ログイン不要・検索には載りません。このURLを Claude のプロジェクトに貼って「分析して」と頼めば、API を使わずに読んで解説できます。`/scores.csv`・`/stats.json` も同じURLの下にあります。取得した足データそのものは載せません。
+
+### GitHub Secrets に登録するもの（FX）
+
+| 名前 | 中身 |
+|---|---|
+| `TWELVEDATA_API_KEY` | Twelve Data の APIキー（無料の Basic プラン）。無いと為替と金は判定できない |
+| `MYFXBOOK_EMAIL`, `MYFXBOOK_PASSWORD` | Myfxbook のログイン情報（大衆の比率）。無くても判定はするが、マジョリティリバースは「－」になる |
+| `FX_SHARE_PATH` | Claude に読ませる要約のURLの文字列（16文字以上のでたらめな英数字。ADMIN_PATH とは別にする） |
+| `FX_MAIL_TO` | 任意。FXのメールの送り先（カンマ区切り）。無ければ `MAIL_TO` に送る。Email Routing で確認済みのアドレスだけに届く |
+| `GH_DISPATCH_TOKEN` | 任意。GitHub の fine-grained トークン（このリポジトリの Actions を Read and write だけ）。あると 8:20 に Worker から判定を起動して時刻が正確になり、ダッシュボードの「最新のデータで判定しなおす」も使える |
+
+登録・変更したら Actions →「サイトを公開」→ Run workflow で Worker に反映します。初回は Actions →「FXの判定」→ Run workflow（mode: intraday）で動作を確かめてください。
+
+### 判定の中身を変えるとき
+
+説明文や点数は `fx/knowledge/` の JSON を直すだけで変わります（`interpretation_table.json` の `text`・`bias`、`composite_rules.json` の閾値）。PR を出すと `python -m fx.selftest`（作り物のデータで最後まで動くかの確認）が動きます。

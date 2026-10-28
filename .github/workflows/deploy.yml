@@ -50,6 +50,9 @@ jobs:
           ACCESS_AUD: ${{ secrets.ACCESS_AUD }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
           CF_ANALYTICS_TOKEN: ${{ secrets.CF_ANALYTICS_TOKEN }}
+          FX_SHARE_PATH: ${{ secrets.FX_SHARE_PATH }}
+          FX_MAIL_TO: ${{ secrets.FX_MAIL_TO }}
+          GH_DISPATCH_TOKEN: ${{ secrets.GH_DISPATCH_TOKEN }}
         run: |
           args=(--var "SITE_BYTES:$(du -sb site | cut -f1)")
           if [ -n "$ADMIN_PATH" ] && [ -n "$ACCESS_TEAM" ]; then
@@ -59,6 +62,9 @@ jobs:
             echo "::warning::ADMIN_PATH・ACCESS_TEAM が未登録なので、管理者ダッシュボードは表示されません（README参照）"
           fi
           [ -n "$MAIL_TO" ] && args+=(--var "MAIL_TO:$MAIL_TO")
+          # FX（worker/fx/）。要約URLの文字列とメールの送り先
+          [ -n "$FX_SHARE_PATH" ] && args+=(--var "FX_SHARE_PATH:$FX_SHARE_PATH")
+          [ -n "$FX_MAIL_TO" ] && args+=(--var "FX_MAIL_TO:$FX_MAIL_TO")
           # 使用量のチェック（サイトの自動一時停止）に使う。アカウントIDは同じものを渡す
           args+=(--var "CF_ACCOUNT_ID:$CLOUDFLARE_ACCOUNT_ID")
           npx wrangler deploy "${args[@]}"
@@ -68,3 +74,5 @@ jobs:
           else
             echo "::warning::CF_ANALYTICS_TOKEN が未登録なので、使用量による自動一時停止は動きません（README参照）"
           fi
+          # FXの判定をWorkerから起動するためのトークン（任意）。画面に出ない「シークレット」として渡す
+          if [ -n "$GH_DISPATCH_TOKEN" ]; then echo "$GH_DISPATCH_TOKEN" | npx wrangler secret put GH_DISPATCH_TOKEN; fi
