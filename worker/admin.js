@@ -7,7 +7,7 @@
 // （チームの Access アプリがこれ1つなら守りは同じ。アプリを増やすなら AUD も登録すること）。
 
 import PAGE from "./admin.html";
-import { BUY_LIMIT_CHOICES, BUY_MAX_CHOICES, BUY_MIN_CHOICES, buildBuyList, buySettings } from "./buy.js";
+import { BUY_LIMIT_MAX, BUY_MAX_CHOICES, BUY_MIN_CHOICES, buildBuyList, buySettings, okLimit } from "./buy.js";
 import { checkUsage, LIMITS, RATE, readGuard, writeGuard } from "./guard.js";
 import { dailyMail, LOG_KEY, SETTINGS_KEY, MIN_CHOICES, MAX_CHOICES, mailMinPct, mailMaxPct } from "./mail.js";
 
@@ -128,7 +128,7 @@ export async function handleAdmin(request, env, url) {
     const body = picks && picks.date === jstDate()
       ? { ready: true, ...buildBuyList(picks, settings) }
       : { ready: false, date: jstDate(), ...settings, reason: "今日の予想がまだできていません（毎朝5:30ごろから作ります）" };
-    return new Response(JSON.stringify({ ...body, minChoices: BUY_MIN_CHOICES, maxChoices: BUY_MAX_CHOICES, limitChoices: BUY_LIMIT_CHOICES }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+    return new Response(JSON.stringify({ ...body, minChoices: BUY_MIN_CHOICES, maxChoices: BUY_MAX_CHOICES, limitMax: BUY_LIMIT_MAX }), { headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
   }
   if (sub === "/mail-log" && request.method === "GET") {
     const obj = await env.BUCKET.get(LOG_KEY);
@@ -136,20 +136,20 @@ export async function handleAdmin(request, env, url) {
   }
   if (sub === "/settings" && request.method === "POST") {
     if (request.headers.get("origin") !== url.origin || request.headers.get("x-boatlab-admin") !== "settings") return NOT_FOUND();
-    // 送られてきた項目だけ変える（メールの基準・購入の基準・1日の上限）
+    // 送られてきた項目だけ変える（メールの範囲・購入の範囲・1日の上限金額）
     const body = await request.json().catch(() => ({}));
-    const allowed = { mailMin: MIN_CHOICES, mailMax: MAX_CHOICES, buyMin: BUY_MIN_CHOICES, buyMax: BUY_MAX_CHOICES, buyLimit: BUY_LIMIT_CHOICES };
+    const allowed = { mailMin: MIN_CHOICES, mailMax: MAX_CHOICES, buyMin: BUY_MIN_CHOICES, buyMax: BUY_MAX_CHOICES, buyLimit: okLimit };
     const change = {};
-    for (const [k, choices] of Object.entries(allowed)) {
+    for (const [k, ok] of Object.entries(allowed)) {
       if (!(k in body)) continue;
       const v = Number(body[k]);
-      if (!choices.includes(v)) return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
+      if (!(typeof ok === "function" ? ok(v) : ok.includes(v))) return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
       change[k] = v;
     }
     if (!Object.keys(change).length) return new Response(JSON.stringify({ ok: false }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
     const old = await env.BUCKET.get(SETTINGS_KEY);
     const prev = old ? await old.json() : {};
-    // 上限は基準より大きくないといけない（100 は上限なし）
+    // 上限（未満）は下限（以上）より大きくないといけない（100 は上限なし）
     const next = { mailMin: await mailMinPct(env), mailMax: await mailMaxPct(env), ...(await buySettings(env)), ...change };
     if (next.mailMax <= next.mailMin || next.buyMax <= next.buyMin) return new Response(JSON.stringify({ ok: false, reason: "上限は基準より大きくしてください" }), { status: 400, headers: { ...PRIVATE, "content-type": "application/json; charset=utf-8" } });
     const settings = { ...prev, ...change, updated_at: new Date(Date.now() + 9 * 3600e3).toISOString().replace("Z", "+09:00") };

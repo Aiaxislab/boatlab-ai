@@ -10,19 +10,20 @@ const combo = (c, sep = "-") => c.join(sep);
 const pct = (p) => (p * 100).toFixed(1) + "%";
 const jstDate = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
 
-// 的中確率の範囲の言い方（max が 1 なら上限なし）
-export const rangeText = (min, max = 1) => `${Math.round(min * 100)}%超え${max < 1 ? `${Math.round(max * 100)}%未満` : ""}`;
+// 的中確率の範囲（min 以上、max 未満。max が 1 なら上限なし）
+export const inRange = (p, min, max = 1) => p >= min && (max >= 1 || p < max);
+export const rangeText = (min, max = 1) => [min > 0 ? `${Math.round(min * 100)}%以上` : "", max < 1 ? `${Math.round(max * 100)}%未満` : ""].join("") || "すべて";
 
 export function buildMail(picks, min, max = 1) {
   // Worker は UTC で動くので、日付の文字列から直接つくる
   const [y, m, dd] = picks.date.split("-").map(Number);
   const day = `${m}/${dd}（${WEEK[new Date(Date.UTC(y, m - 1, dd)).getUTCDay()]}）`;
-  const races = picks.races.filter((r) => r.buy_prob > min && (max >= 1 || r.buy_prob < max)).sort((a, b) => (a.deadline < b.deadline ? -1 : 1));
+  const races = picks.races.filter((r) => inRange(r.buy_prob, min, max)).sort((a, b) => (a.deadline < b.deadline ? -1 : 1));
   const subject = races.length
     ? `【BoatLab AI】${day} 的中確率${rangeText(min, max)} ${races.length}レース`
     : `【BoatLab AI】${day} 的中確率${rangeText(min, max)}のレースはありません`;
   const lines = [
-    `${day}の予想で、買い目（3連単6点）の的中確率が${Math.round(min * 100)}%を超え${max < 1 ? `、${Math.round(max * 100)}%未満の` : "た"}レースです。`,
+    `${day}の予想で、買い目（3連単6点）の的中確率が${rangeText(min, max)}のレースです。`,
     races.length ? `全${picks.races.length}レース中 ${races.length}レース。締切が早い順に並べています。` : `今日は該当するレースがありませんでした（全${picks.races.length}レース）。`,
     "",
   ];
@@ -79,8 +80,9 @@ async function sendOne(env, to, subject, text) {
 }
 
 export const SETTINGS_KEY = "admin/settings.json"; // ダッシュボードで変える設定（メールの基準など）
-export const MIN_CHOICES = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80];
-export const MAX_CHOICES = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100]; // 上限（未満）。100 は上限なし
+// 確率は10%刻みの帯で選ぶ（例：10%以上〜20%未満で「10%台だけ」）
+export const MIN_CHOICES = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]; // 以上
+export const MAX_CHOICES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]; // 未満。100 は上限なし
 
 // メールの基準（%）。ダッシュボードで選んだ値 → なければ MAIL_MIN → なければ50%
 export async function mailMinPct(env) {
@@ -89,11 +91,12 @@ export async function mailMinPct(env) {
   return MIN_CHOICES.includes(saved) ? saved : Number(env.MAIL_MIN) || 50;
 }
 
-// メールの上限（%、未満）。選んでいなければ100（上限なし）
+// メールの上限（%、未満）。選んでいなければ100（上限なし）。
+// 前の刻み（5%）で保存した値が読めず、下限以下になったときも上限なしにする
 export async function mailMaxPct(env) {
   const obj = await env.BUCKET.get(SETTINGS_KEY);
   const saved = obj ? Number((await obj.json()).mailMax) : NaN;
-  return MAX_CHOICES.includes(saved) ? saved : 100;
+  return MAX_CHOICES.includes(saved) && saved > (await mailMinPct(env)) ? saved : 100;
 }
 
 // force: ダッシュボードの「テスト送信」。送ったかどうかの記録を無視して今すぐ送る
