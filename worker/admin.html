@@ -9,10 +9,13 @@
 :root[data-theme="dark"]{--ink:#e8edf2;--muted:#9aa6b1;--line:#2b3540;--bg:#0e141b;--card:#161e27;--accent:#5aa9f0;--navy:#cfe2ff;--red:#ff6b7d;--good:#4cc27e;--soft:#1b2a3c;--track:#243040;--warn:#f0b44c}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,-apple-system,"Hiragino Sans",sans-serif;line-height:1.6;font-size:14px}
-header{background:linear-gradient(115deg,#051a3d,#0a3378 45%,#0d56b3);color:#fff;padding:16px}
+header{background:linear-gradient(115deg,#051a3d,#0a3378 45%,#0d56b3);color:#fff;padding:12px 16px 0}
 header .in,main{max-width:1100px;margin:0 auto}
-header h1{margin:0;font-size:20px}
-header p{margin:2px 0 0;font-size:12px;color:#cfe6ff}
+header h1{margin:0 0 8px;font-size:18px}
+.boards{display:flex;gap:4px;flex-wrap:wrap}
+.board{padding:6px 14px;border-radius:6px 6px 0 0;font-size:13px;background:rgba(255,255,255,.12);color:#b9cdea}
+.board.on{background:var(--bg);color:var(--navy);font-weight:700}
+.board.off{cursor:not-allowed}
 main{padding:16px}
 h2{font-size:17px;margin:26px 0 10px;color:var(--navy);border-left:4px solid var(--accent);padding-left:8px}
 .muted{color:var(--muted);font-size:12px}
@@ -35,7 +38,16 @@ button.chip.on{background:var(--soft);border-color:var(--accent)}
 .kpi .k{font-size:12px;color:var(--muted)}
 .kpi .v{font-size:24px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
 .kpi .s{font-size:12px;color:var(--muted)}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.lbl{color:var(--muted);font-size:13px}
+.seg{display:inline-flex;border:1px solid var(--accent);border-radius:8px;overflow:hidden;margin-right:10px}
+.seg button{border:0;border-radius:0;background:transparent;color:var(--accent);padding:6px 14px}
+.seg button.on{background:var(--accent);color:#fff;font-weight:700}
+.what{min-width:110px}
+th.grp{text-align:center;background:var(--soft);color:var(--navy);font-weight:700;cursor:default}
+tr.total td{font-weight:700;border-top:2px solid var(--navy)}
+details{background:var(--card);border:1px solid var(--line);border-radius:8px;margin-top:8px}
+details summary{cursor:pointer;padding:10px 14px;font-weight:700}
+details .in{padding:0 14px 14px}
 .scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:8px}
 table{border-collapse:collapse;width:100%;min-width:760px}
 td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;white-space:nowrap}
@@ -51,105 +63,108 @@ th.sorted::after{content:" ▼"}th.sorted.asc::after{content:" ▲"}
 .note{background:var(--soft);border-radius:8px;padding:12px 14px;font-size:12px;margin-top:16px}
 </style>
 </head><body>
-<header><div class="in"><h1>BoatLab AI 管理者ダッシュボード</h1><p>このページはあなた専用です。公開ページからはリンクしていません。</p></div></header>
+<header><div class="in"><h1>管理者ダッシュボード</h1>
+  <nav class="boards" aria-label="ダッシュボードの切り替え"><span class="board on" aria-current="page">競艇（BoatLab AI）</span><span class="board off" title="準備中">オートレース（準備中）</span><span class="board off" title="準備中">FX（準備中）</span></nav>
+</div></header>
 <main>
 
-<h2>サイトの守り（一時停止）</h2>
-<div class="panel" id="guard">読み込み中…</div>
-
-<h2>容量</h2>
-<div class="gauges" id="gauges"><div class="panel muted">読み込み中…</div></div>
-<p class="muted" id="usage-note"></p>
-
-<h2>レースごとの成績データ（CSV）</h2>
+<h2>確率帯ごとの成績</h2>
 <div class="panel">
-  <p id="csv-meta" class="muted" style="margin-top:0">読み込み中…</p>
   <div class="row">
-    <button class="primary" id="dl">CSVをダウンロード</button>
-    <button class="danger" id="clear">データをクリア</button>
+    <span class="lbl">期間</span><span class="seg" id="period"><button data-period="day" class="on">最新の1日</button><button data-period="month">過去1か月</button></span>
+    <span class="lbl">的中率の数え方</span><span class="seg" id="hitby"><button data-hitby="race" class="on">レース数で割る</button><button data-hitby="point">点数で割る</button></span>
   </div>
-  <p class="muted" style="margin-bottom:0">毎朝の処理で、前日までに答え合わせできたレースが1行ずつ追加されます。クリアボタンを押すまで消えません（クリアすると、その日より前のレースは二度と追加されません）。</p>
+  <div class="kpis" id="band-kpis" style="margin-top:12px"></div>
+  <div class="scroll" id="band-table" style="margin-top:12px"></div>
+  <p class="muted" id="band-note" style="margin-bottom:0"></p>
 </div>
 
-<h2>毎朝のメール</h2>
+<h2>設定</h2>
 <div class="panel">
   <p id="mail-meta" class="muted" style="margin-top:0">読み込み中…</p>
   <div class="row">
-    <label>メールで送る基準：買い目の的中確率が <select id="mail-min"></select> を超え、<select id="mail-max"></select> のレース</label>
+    <b class="what">毎朝のメール</b>
+    <label>的中確率 <select id="mail-min"></select> 〜 <select id="mail-max"></select></label>
     <button id="mail-test">今日の分をいま送ってみる</button>
   </div>
-  <p class="muted" style="margin-bottom:0">基準を変えると、次の朝のメールから変わります（「いま送ってみる」はすぐ新しい基準で送ります）。</p>
+  <div class="row" style="margin-top:10px">
+    <b class="what">今日の買い目</b>
+    <label>的中確率 <select id="buy-min"></select> 〜 <select id="buy-max"></select></label>
+    <label>1日の上限 <input id="buy-limit" type="text" inputmode="numeric" maxlength="6" size="7" autocomplete="off"> 円</label>
+    <button id="buy-limit-save">上限金額を保存</button>
+  </div>
+  <p class="muted" style="margin-bottom:0">確率は「〜%以上〜%未満」で選びます。例：10%以上〜20%未満で10%台だけ、10%以上〜40%未満で10〜40%。メールは次の朝から（「いま送ってみる」はすぐ）、買い目はすぐ変わります。</p>
 </div>
 
 <h2>今日の買い目（購入用）</h2>
 <div class="panel">
-  <div class="row">
-    <label>買う基準：的中確率が <select id="buy-min"></select> 以上、<select id="buy-max"></select></label>
-    <label>1日の上限 <select id="buy-limit"></select></label>
-  </div>
-  <p id="buy-meta" class="muted">読み込み中…</p>
+  <p id="buy-meta" class="muted" style="margin-top:0">読み込み中…</p>
   <div class="scroll" id="buy-table"></div>
   <p class="muted" id="buy-skip"></p>
-  <p class="muted" style="margin-bottom:0">基準に合うレースを確率の高い順に、1日の上限金額に収まるだけ選び、締切の早い順に並べています（1レース＝3連単6点×100円＝600円）。購入はテレボートでご自身が行います。「入力した」の印は、このブラウザにだけ記録されます。</p>
+  <p class="muted" style="margin-bottom:0">確率の範囲に入るレースを締切の早い順に、1日の上限金額に届くまで選んでいます（1レース＝3連単6点×100円＝600円）。購入はテレボートでご自身が行います。「入力した」の印は、このブラウザにだけ記録されます。</p>
 </div>
 
-<h2>メールで送ったレースの結果</h2>
-<div class="tabs">
-  <button class="chip on" data-mail="sent">メールで送ったレース</button>
-  <button class="chip" data-mail="all">確率が基準に合うレースすべて（過去分も）</button>
-</div>
-<div class="kpis" id="mail-kpis"></div>
-<div class="scroll" id="mail-table" style="margin-top:10px;max-height:520px;overflow-y:auto"></div>
-<p class="muted" id="mail-note"></p>
-
-<h2>直近1か月の収支（100円あたり）</h2>
-<p class="muted" style="margin-top:0">上の切り替え（メールで送ったレース／基準を超えたレースすべて）と同じレースを、今日から30日前までで集計します。1レースは3連単6点を100円ずつ（600円）買った場合です。「100円あたり」は、100円賭けて平均いくら増えたか（減ったか）です。</p>
-<div class="kpis" id="report-kpis"></div>
-<h3 style="font-size:14px;margin:14px 0 6px">的中確率の帯ごと</h3>
-<div class="scroll" id="report-band"></div>
-<h3 style="font-size:14px;margin:14px 0 6px">日ごと（数字は100円あたりの収支）</h3>
-<div class="scroll" id="report-day" style="max-height:520px;overflow-y:auto"></div>
-
-<h2>AI学習モデル</h2>
-<div class="panel" id="model">読み込み中…</div>
-
-<h2>絞り込み</h2>
-<div class="panel">
-  <div class="row">
-    <label>期間 <input type="date" id="from"> 〜 <input type="date" id="to"></label>
-    <button class="chip" data-range="all">全期間</button>
-    <button class="chip" data-range="30">直近30日</button>
-    <button class="chip" data-range="7">直近7日</button>
-    <button class="chip" data-range="month">今月</button>
+<h2>そのほか</h2>
+<details>
+  <summary>内訳（会場別・レース別・曜日別・月別など）と各レース一覧</summary>
+  <div class="in">
+    <div class="row">
+      <label>見方 <select id="view"></select></label>
+      <label>期間 <input type="date" id="from"> 〜 <input type="date" id="to"></label>
+      <button class="chip" data-range="all">全期間</button>
+      <button class="chip" data-range="30">直近30日</button>
+      <button class="chip" data-range="7">直近7日</button>
+      <button class="chip" data-range="month">今月</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <label>会場 <select id="venue"><option value="">すべて</option></select></label>
+      <label>レース <select id="race"><option value="">すべて</option></select></label>
+      <label>曜日 <select id="week"><option value="">すべて</option></select></label>
+      <label>予想的中確率 <select id="prob"><option value="">すべて</option></select></label>
+    </div>
+    <div class="scroll" id="table" style="margin-top:10px;max-height:560px;overflow-y:auto"></div>
+    <p class="muted" id="table-note"></p>
+    <div class="note">
+    <b>数え方</b>　◎1着率：本命が1着になった割合。◎3着内率：本命が3着以内に入った割合。予想1位的中：一番確率が高いと出した3連単1点が当たった割合。
+    買い目的中率：PDFの3連単6点のどれかが当たった割合。回収率：6点を100円ずつ買ったときの払戻÷購入額（100%超でプラス）。収支：払戻−購入額。
+    3連複：安定策の3点を100円ずつ買ったときの数字。予想的中確率：PDFに載せた「買い目の的中確率」。レース数が10未満の行は薄く表示しています。表の見出しを押すと並べ替えできます。
+    </div>
   </div>
-  <div class="row" style="margin-top:8px">
-    <label>会場 <select id="venue"><option value="">すべて</option></select></label>
-    <label>レース <select id="race"><option value="">すべて</option></select></label>
-    <label>曜日 <select id="week"><option value="">すべて</option></select></label>
-    <label>予想的中確率 <select id="prob"><option value="">すべて</option></select></label>
+</details>
+<details>
+  <summary>AI学習モデル</summary>
+  <div class="in" id="model">読み込み中…</div>
+</details>
+<details>
+  <summary>サイトの守り（一時停止）<span class="muted" id="guard-sum"></span></summary>
+  <div class="in" id="guard">読み込み中…</div>
+</details>
+<details>
+  <summary>容量</summary>
+  <div class="in">
+    <div class="gauges" id="gauges"><div class="panel muted">読み込み中…</div></div>
+    <p class="muted" id="usage-note" style="margin-bottom:0"></p>
   </div>
-</div>
-
-<h2>全体</h2>
-<div class="kpis" id="kpis"></div>
-
-<h2>内訳</h2>
-<div class="tabs" id="tabs"></div>
-<div class="scroll" id="table"></div>
-<p class="muted" id="table-note"></p>
-
-<div class="note">
-<b>数え方</b>　◎1着率：本命が1着になった割合。◎3着内率：本命が3着以内に入った割合。予想1位的中：一番確率が高いと出した3連単1点が当たった割合。
-買い目的中率：PDFの3連単6点のどれかが当たった割合。回収率：6点を100円ずつ買ったときの払戻÷購入額（100%超でプラス）。収支：払戻−購入額。
-3連複：安定策の3点を100円ずつ買ったときの数字。予想的中確率：PDFに載せた「買い目の的中確率」。予想的中確率別のタブで、その確率帯のレースが実際に何%当たったかを見られます。レース数が10未満の行は薄く表示しています。表の見出しを押すと並べ替えできます。
-</div>
+</details>
+<details>
+  <summary>レースごとの成績データ（CSV）</summary>
+  <div class="in">
+    <p id="csv-meta" class="muted" style="margin-top:0">読み込み中…</p>
+    <div class="row">
+      <button class="primary" id="dl">CSVをダウンロード</button>
+      <button class="danger" id="clear">データをクリア</button>
+    </div>
+    <p class="muted" style="margin-bottom:0">毎朝の処理で、前日までに答え合わせできたレースが1行ずつ追加されます。クリアボタンを押すまで消えません（クリアすると、その日より前のレースは二度と追加されません）。</p>
+  </div>
+</details>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-// 上限（未満）の選択肢。100 は上限なし
-const maxOptions = (choices, cur, min) => choices.map((p) => `<option value="${p}" ${p === cur ? "selected" : ""} ${p !== 100 && p <= min ? "disabled" : ""}>${p === 100 ? "上限なし" : p + "%未満"}</option>`).join("");
-const rangePct = (min, max) => `${min}%を超え${max < 100 ? `${max}%未満の` : "た"}`;
+// 確率の範囲：下限（以上）と上限（未満）の選択肢。0 は下限なし、100 は上限なし
+const minOptions = (choices, cur, max) => choices.map((p) => `<option value="${p}" ${p === cur ? "selected" : ""} ${p >= max ? "disabled" : ""}>${p ? p + "%以上" : "下限なし"}</option>`).join("");
+const maxOptions = (choices, cur, min) => choices.map((p) => `<option value="${p}" ${p === cur ? "selected" : ""} ${p <= min ? "disabled" : ""}>${p === 100 ? "上限なし" : p + "%未満"}</option>`).join("");
+const rangePct = (min, max) => (min > 0 ? `${min}%以上` : "") + (max < 100 ? `${max}%未満` : "") || "すべて";
 const pct = (x) => (x == null || isNaN(x) ? "―" : (x * 100).toFixed(1) + "%");
 const yen = (x) => (x > 0 ? "+" : "") + Math.round(x).toLocaleString() + "円";
 const WEEK = ["月", "火", "水", "木", "金", "土", "日"];
@@ -179,7 +194,7 @@ function parseCSV(text) {
   return rows.filter((r) => r.length > 1);
 }
 
-let RACES = [], TAB = "prob", SORT = null, MAIL_LOG = [], MAIL_MIN = 50, MAIL_MAX = 100, MAIL_VIEW = "sent";
+let RACES = [], TAB = "prob", SORT = null, MAIL_MIN = 50, MAIL_MAX = 100, PERIOD = "day", HITBY = "race";
 
 function toRaces(rows) {
   const [head, ...body] = rows;
@@ -264,75 +279,52 @@ function renderList(rs) {
   $("table-note").textContent = rs.length > LIST_MAX ? `新しい順に${LIST_MAX}件まで表示（全${rs.length.toLocaleString()}件はCSVで見られます）` : `${rs.length}件`;
 }
 
-function renderMail() {
-  let rs, note;
-  if (MAIL_VIEW === "sent") {
-    const sent = new Set(MAIL_LOG.flatMap((d) => d.races.map((k) => `${d.date}-${k}`)));
-    rs = RACES.filter((r) => sent.has(`${r.date}-${r.jcd}-${r.no}`));
-    const pending = MAIL_LOG.reduce((a, d) => a + d.races.length, 0) - rs.length;
-    note = MAIL_LOG.length
-      ? `${MAIL_LOG[0].date} から ${MAIL_LOG.length}日分、${MAIL_LOG.reduce((a, d) => a + d.races.length, 0)}レースを送りました。${pending > 0 ? `うち${pending}レースは結果の答え合わせ待ち（翌朝に入ります）。` : ""}`
-      : "まだメールを送っていません。送ったレースは翌朝の答え合わせのあと、ここに結果が出ます。";
-  } else {
-    rs = RACES.filter((r) => r.prob != null && r.prob * 100 > MAIL_MIN && (MAIL_MAX >= 100 || r.prob * 100 < MAIL_MAX));
-    note = `メールを始める前の分も含めて、買い目の的中確率が${rangePct(MAIL_MIN, MAIL_MAX)}レースすべてです。`;
-  }
-  const s = summary(rs);
-  const k = (label, v, sub) => `<div class="kpi"><div class="k">${label}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`;
-  $("mail-kpis").innerHTML = s.races ? [
-    k("レース数", s.races.toLocaleString(), `予想の平均 ${pct(s.prob_avg)}`),
-    k("買い目の的中率", pct(s.buy_hit), `${rs.filter((r) => r.buy_hit).length}レース的中`),
-    k("買い目の回収率", pct(s.buy_roi), yen(s.buy_profit)),
-    k("3連複の的中率", pct(s.trio_hit), `回収率 ${pct(s.trio_roi)}`),
-  ].join("") : "";
-  const mark = (x) => (x ? `<span class="hit">○</span>` : "×");
-  const rows = [...rs].sort((a, b) => (a.date + a.deadline < b.date + b.deadline ? 1 : -1));
-  $("mail-table").innerHTML = rows.length ? `<table><tr><th>日付</th><th>会場</th><th>R</th><th>締切</th><th class="n">予想確率</th><th>買い目</th><th>結果</th><th>的中</th><th class="n">払戻</th><th class="n">収支</th><th>3連複</th></tr>
-    ${rows.map((r) => `<tr><td>${r.date}（${r.week}）</td><td>${esc(r.venue)}</td><td>${r.no}R</td><td>${esc(r.deadline)}</td><td class="n">${pct(r.prob)}</td><td class="muted">${esc(r.buy)}</td><td><b>${esc(r.result)}</b></td><td>${mark(r.buy_hit)}</td><td class="n">${r.buy_return.toLocaleString()}円</td>${cell("yen", r.buy_return - r.buy_cost)}<td>${mark(r.trio_hit)}</td></tr>`).join("")}</table>`
-    : `<div class="empty">まだ結果の出たレースはありません。</div>`;
-  $("mail-note").textContent = note;
-  renderReport(rs);
+// 確率帯ごとの成績（全レース）。3連単6点と3連複3点を別々に、使った金額・戻った金額・収支・回収率を出す
+const BANDS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const bandLabel = (k) => (k === "—" ? "記録なし" : k === "0" ? "10%未満" : k === "9" ? "90%以上" : `${k}0%台`);
+const md = (iso) => iso.slice(5).replace("-", "/").replace(/^0/, "").replace("/0", "/");
+function bet(rs, pre) {
+  const v = (r, k) => +r[`${pre}_${k}`] || 0;
+  const cost = rs.reduce((a, r) => a + v(r, "cost"), 0), ret = rs.reduce((a, r) => a + v(r, "return"), 0), hits = rs.reduce((a, r) => a + v(r, "hit"), 0);
+  const points = cost / 100; // 1点100円
+  return { cost, ret, hits, profit: ret - cost, roi: cost ? ret / cost : null, rate: HITBY === "race" ? (rs.length ? hits / rs.length : null) : points ? hits / points : null };
 }
-
-// 直近30日の収支。100円あたりの収支 = (払戻 − 購入額) ÷ 購入額 × 100
-function renderReport(all) {
-  const from = addDays(jst(), -30);
-  const rs = all.filter((r) => r.date >= from && r.prob != null);
-  const per100 = (ret, cost) => (cost ? ((ret - cost) / cost) * 100 : null);
-  const fmt100 = (v) => (v == null ? "―" : `${v > 0 ? "+" : ""}${v.toFixed(1)}円`);
-  const cls = (v) => (v == null ? "" : v > 0 ? "plus" : v < 0 ? "minus" : "");
-  const agg = (xs) => {
-    const cost = xs.reduce((a, r) => a + r.buy_cost, 0), ret = xs.reduce((a, r) => a + r.buy_return, 0);
-    return { n: xs.length, hit: xs.filter((r) => r.buy_hit).length, cost, ret, profit: ret - cost, p100: per100(ret, cost), roi: cost ? ret / cost : null };
-  };
-  if (!rs.length) {
-    $("report-kpis").innerHTML = "";
-    $("report-band").innerHTML = `<div class="empty">直近30日に結果の出たレースはまだありません。</div>`;
-    $("report-day").innerHTML = "";
+function renderBands() {
+  const dates = RACES.map((r) => r.date).sort(), last = dates[dates.length - 1];
+  const [dayBtn, monthBtn] = document.querySelectorAll("[data-period]");
+  if (!last) {
+    $("band-kpis").innerHTML = "";
+    $("band-table").innerHTML = `<div class="empty">まだ結果の出たレースはありません（毎朝、前日分をまとめて取り込みます）。</div>`;
+    $("band-note").textContent = "";
     return;
   }
-  const t = agg(rs);
+  const from = PERIOD === "day" ? last : addDays(last, -29);
+  dayBtn.textContent = `最新の1日（${md(last)}）`;
+  monthBtn.textContent = `過去1か月（${md(addDays(last, -29))}〜${md(last)}）`;
+  const rs = RACES.filter((r) => r.date >= from && r.date <= last);
+  const t = bet(rs, "buy"), f = bet(rs, "trio");
   const k = (label, v, sub, c = "") => `<div class="kpi"><div class="k">${label}</div><div class="v ${c}">${v}</div><div class="s">${sub}</div></div>`;
-  $("report-kpis").innerHTML = [
-    k("収支（30日）", yen(t.profit), `購入 ${t.cost.toLocaleString()}円／払戻 ${t.ret.toLocaleString()}円`, cls(t.profit)),
-    k("回収率", pct(t.roi), `${t.n}レース中 ${t.hit}レース的中`),
-    k("100円あたり", fmt100(t.p100), "100円賭けたときの平均の増減", cls(t.p100)),
+  const cost = t.cost + f.cost, ret = t.ret + f.ret;
+  const sign = (v) => (v > 0 ? "plus" : v < 0 ? "minus" : "");
+  $("band-kpis").innerHTML = [
+    k("対象レース", rs.length.toLocaleString(), PERIOD === "day" ? `${last} の結果が出た全レース` : `${from} 〜 ${last} の全レース`),
+    k("使った金額（3連単＋3連複）", cost.toLocaleString() + "円", `3連単 ${t.cost.toLocaleString()}円／3連複 ${f.cost.toLocaleString()}円`),
+    k("戻った金額", ret.toLocaleString() + "円", `収支 <span class="${sign(ret - cost)}">${yen(ret - cost)}</span>`),
+    k("回収率", pct(cost ? ret / cost : null), `3連単 ${pct(t.roi)}／3連複 ${pct(f.roi)}`),
   ].join("");
-  const bandOf = (r) => Math.min(90, Math.floor(r.prob * 10) * 10);
-  const bands = [...new Set(rs.map(bandOf))].sort((a, b) => a - b);
-  const head = `<tr><th>確率帯</th><th class="n">レース数</th><th class="n">的中</th><th class="n">購入額</th><th class="n">払戻</th><th class="n">収支</th><th class="n">100円あたり</th><th class="n">回収率</th></tr>`;
-  const line = (label, a) => `<tr class="${a.n < 10 ? "few" : ""}"><td>${label}</td><td class="n">${a.n}</td><td class="n">${a.hit}</td><td class="n">${a.cost.toLocaleString()}円</td><td class="n">${a.ret.toLocaleString()}円</td>${cell("yen", a.profit)}<td class="n ${cls(a.p100)}">${fmt100(a.p100)}</td><td class="n">${pct(a.roi)}</td></tr>`;
-  $("report-band").innerHTML = `<table style="min-width:0">${head}${bands.map((b) => line(b === 90 ? "90%以上" : `${b}%台`, agg(rs.filter((r) => bandOf(r) === b)))).join("")}${line("<b>合計</b>", t)}</table>`;
-  const days = [...new Set(rs.map((r) => r.date))].sort().reverse();
-  $("report-day").innerHTML = `<table style="min-width:0"><tr><th>日付</th>${bands.map((b) => `<th class="n">${b === 90 ? "90%以上" : b + "%台"}</th>`).join("")}<th class="n">その日の合計</th><th class="n">収支</th></tr>
-    ${days.map((d) => {
-      const dr = rs.filter((r) => r.date === d), a = agg(dr);
-      return `<tr><td>${d}（${dr[0].week}）</td>${bands.map((b) => {
-        const x = agg(dr.filter((r) => bandOf(r) === b));
-        return x.n ? `<td class="n ${cls(x.p100)}" title="${x.n}レース・${x.hit}的中">${fmt100(x.p100)}</td>` : `<td class="n muted">―</td>`;
-      }).join("")}<td class="n ${cls(a.p100)}"><b>${fmt100(a.p100)}</b></td>${cell("yen", a.profit)}</tr>`;
-    }).join("")}</table>`;
+  const by = new Map(BANDS.map((b) => [b, []]));
+  for (const r of rs) { const b = band(r.prob); if (!by.has(b)) by.set(b, []); by.get(b).push(r); }
+  if (!by.get("—")?.length) by.delete("—");
+  const cells = (a, n) => !n ? `<td class="n">―</td>`.repeat(5)
+    : `<td class="n"><b>${pct(a.rate)}</b></td><td class="n">${a.cost.toLocaleString()}円</td><td class="n">${a.ret.toLocaleString()}円</td>${cell("yen", a.profit)}${cell("roi", a.roi)}`;
+  const line = (label, xs, cls = "") => `<tr class="${cls || (xs.length < 10 ? "few" : "")}"><td>${label}</td><td class="n">${xs.length.toLocaleString()}</td>${cells(bet(xs, "buy"), xs.length)}${cells(bet(xs, "trio"), xs.length)}</tr>`;
+  const sub = `<th class="n">的中率</th><th class="n">使った</th><th class="n">戻った</th><th class="n">収支</th><th class="n">回収率</th>`;
+  $("band-table").innerHTML = `<table><tr><th rowspan="2">確率帯</th><th rowspan="2" class="n">件数</th><th colspan="5" class="grp">3連単 6点（各100円）</th><th colspan="5" class="grp">3連複 3点（各100円）</th></tr><tr>${sub}${sub}</tr>
+    ${[...by].map(([b, xs]) => line(bandLabel(b), xs)).join("")}${line("合計", rs, "total")}</table>`;
+  $("band-note").textContent = `確率帯は、その朝の予想で出した「買い目（3連単6点）の的中確率」です。的中率は${HITBY === "race" ? "当たったレース数 ÷ レース数" : "当たった点数 ÷ 買った点数（3連単は1レース6点、3連複は3点）"}。件数10未満の帯は薄く表示しています。結果は毎朝、前日分をまとめて取り込みます。`;
 }
+document.querySelectorAll("[data-period]").forEach((b) => (b.onclick = () => { PERIOD = b.dataset.period; document.querySelectorAll("[data-period]").forEach((x) => x.classList.toggle("on", x === b)); renderBands(); }));
+document.querySelectorAll("[data-hitby]").forEach((b) => (b.onclick = () => { HITBY = b.dataset.hitby; document.querySelectorAll("[data-hitby]").forEach((x) => x.classList.toggle("on", x === b)); renderBands(); }));
 
 // 今日の買い目（購入用）。どれを買うかはサーバーで決め、ここでは表示と「入力した」の印だけ
 let BUY = null;
@@ -342,17 +334,19 @@ const saveDone = (d, set) => { try { localStorage.setItem(doneKey(d), JSON.strin
 async function loadBuy() {
   try { BUY = await (await fetch("buy", { cache: "no-store" })).json(); } catch (e) { $("buy-meta").textContent = "読み込めませんでした。"; return; }
   const b = BUY;
-  $("buy-min").innerHTML = b.minChoices.map((p) => `<option value="${p}" ${p === b.buyMin ? "selected" : ""} ${p >= b.buyMax ? "disabled" : ""}>${p}%</option>`).join("");
+  $("buy-min").innerHTML = minOptions(b.minChoices, b.buyMin, b.buyMax);
   $("buy-max").innerHTML = maxOptions(b.maxChoices, b.buyMax, b.buyMin);
-  $("buy-limit").innerHTML = b.limitChoices.map((y) => `<option value="${y}" ${y === b.buyLimit ? "selected" : ""}>${y ? y.toLocaleString() + "円（" + y / 600 + "レースまで）" : "買わない"}</option>`).join("");
+  if (document.activeElement !== $("buy-limit")) $("buy-limit").value = b.buyLimit;
   if (!b.ready) { $("buy-meta").textContent = b.reason; $("buy-table").innerHTML = ""; $("buy-skip").textContent = ""; return; }
   const done = readDone(b.date);
   $("buy-meta").innerHTML = b.count
-    ? `<b>${b.date}</b>：${b.count}レース・合計 <b>${b.total.toLocaleString()}円</b>（上限 ${b.buyLimit.toLocaleString()}円）。入力済み ${b.races.filter((r) => done.has(r.jcd + "-" + r.no)).length}／${b.count}`
-    : `<b>${b.date}</b>：的中確率${b.buyMin}%以上${b.buyMax < 100 ? `${b.buyMax}%未満` : ""}のレースはありません（全${b.all}レース）。今日は買いません。`;
+    ? `<b>${b.date}</b>：的中確率${rangePct(b.buyMin, b.buyMax)}のレースから ${b.count}レース・合計 <b>${b.total.toLocaleString()}円</b>（上限 ${b.buyLimit.toLocaleString()}円）。入力済み ${b.races.filter((r) => done.has(r.jcd + "-" + r.no)).length}／${b.count}`
+    : b.skipped.length
+      ? `<b>${b.date}</b>：上限金額（${b.buyLimit.toLocaleString()}円）では1レース（600円）も買えません。今日は買いません。`
+      : `<b>${b.date}</b>：的中確率${rangePct(b.buyMin, b.buyMax)}のレースはありません（全${b.all}レース）。今日は買いません。`;
   $("buy-table").innerHTML = b.count ? `<table><tr><th>入力した</th><th>締切</th><th>会場</th><th>R</th><th class="n">的中確率</th><th>式別</th><th>組番（各100円）</th><th class="n">金額</th></tr>
     ${b.races.map((r) => { const k = r.jcd + "-" + r.no; return `<tr class="${done.has(k) ? "few" : ""}"><td><input type="checkbox" data-buy="${k}" ${done.has(k) ? "checked" : ""} aria-label="${esc(r.venue)}${r.no}Rを入力した"></td><td>${esc(r.deadline)}</td><td>${esc(r.venue)}</td><td>${r.no}R</td><td class="n">${pct(r.prob)}</td><td>3連単</td><td><b>${r.bets.map((x) => x.combo.join("-")).join("　")}</b></td><td class="n">${r.cost.toLocaleString()}円</td></tr>`; }).join("")}</table>` : "";
-  $("buy-skip").textContent = b.skipped.length ? `上限のため見送り：${b.skipped.map((r) => `${r.venue}${r.no}R（${pct(r.prob)}）`).join("、")}` : "";
+  $("buy-skip").textContent = b.skipped.length ? `上限金額に届いたため見送り：${b.skipped.map((r) => `${r.venue}${r.no}R（${pct(r.prob)}）`).join("、")}` : "";
 }
 $("buy-table").onchange = (e) => {
   const c = e.target.closest("[data-buy]"); if (!c || !BUY) return;
@@ -364,12 +358,19 @@ $("buy-table").onchange = (e) => {
 const saveBuy = async (key, v, msg, el, back) => {
   if (!confirm(msg)) { el.value = back; return; }
   const r = await fetch("settings", { method: "POST", headers: { "x-boatlab-admin": "settings", "content-type": "application/json" }, body: JSON.stringify({ [key]: v }) });
-  if (!r.ok) alert("変更できませんでした。上限は基準より大きくしてください。");
+  if (!r.ok) alert("変更できませんでした。上限（〜%未満）は下限（〜%以上）より大きくしてください。");
+  el.blur();
   await loadBuy();
 };
-$("buy-min").onchange = (e) => saveBuy("buyMin", +e.target.value, `買う基準を「的中確率${e.target.value}%以上」に変えます。よろしいですか？`, e.target, BUY.buyMin);
-$("buy-max").onchange = (e) => saveBuy("buyMax", +e.target.value, `買う基準の上限を「${+e.target.value === 100 ? "上限なし" : e.target.value + "%未満"}」に変えます。よろしいですか？`, e.target, BUY.buyMax);
-$("buy-limit").onchange = (e) => saveBuy("buyLimit", +e.target.value, `1日の上限を${(+e.target.value).toLocaleString()}円に変えます。よろしいですか？`, e.target, BUY.buyLimit);
+$("buy-min").onchange = (e) => saveBuy("buyMin", +e.target.value, `買う範囲を「的中確率${rangePct(+e.target.value, BUY.buyMax)}」に変えます。よろしいですか？`, e.target, BUY.buyMin);
+$("buy-max").onchange = (e) => saveBuy("buyMax", +e.target.value, `買う範囲を「的中確率${rangePct(BUY.buyMin, +e.target.value)}」に変えます。よろしいですか？`, e.target, BUY.buyMax);
+$("buy-limit").oninput = (e) => { e.target.value = e.target.value.replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\D/g, "").slice(0, 6); };
+$("buy-limit").onkeydown = (e) => { if (e.key === "Enter" && !e.isComposing) $("buy-limit-save").click(); };
+$("buy-limit-save").onclick = () => {
+  const el = $("buy-limit"), v = el.value;
+  if (!/^\d{1,6}$/.test(v)) { alert("金額は数字で6桁まで入れてください（例：3000）。"); el.value = BUY.buyLimit; return; }
+  saveBuy("buyLimit", +v, `1日の上限を${(+v).toLocaleString()}円に変えます（締切の早い順に、この金額まで買います）。よろしいですか？`, el, BUY.buyLimit);
+};
 loadBuy();
 
 // サイトの守り：今の状態、今月の使用量、一時停止・再開
@@ -392,6 +393,7 @@ async function loadGuard() {
          <div class="panel gauge"><div class="k">直近30分</div><div class="v">${u.recent_requests.toLocaleString()}</div><div class="muted">サイトへのアクセス数。R2読み出しは${u.recent_classB.toLocaleString()}回（${L.burstB.toLocaleString()}回で自動停止）</div></div></div>
          <p class="muted">最終チェック：${new Date(u.checked_at).toLocaleString("ja-JP")}（30分ごと）${g.error ? `。前回のチェックで使用量を読めませんでした：${esc(g.error)}` : ""}</p>`
       : `<p class="muted">まだ使用量をチェックしていません（30分以内に始まります）。${g.error ? `前回のチェックで使用量を読めませんでした：${esc(g.error)}` : ""}</p>`;
+  $("guard-sum").textContent = g.paused ? "　一時停止中" : "　公開中";
   $("guard").innerHTML = `${status}${usage}
     <div class="row">${g.paused ? `<button class="primary" data-guard="resume">サイトを再開する</button>` : `<button class="danger" data-guard="pause">サイトを一時停止する</button>`}${g.analytics ? `<button data-guard="check">使用量をいま確認する</button>` : ""}</div>
     <p class="muted" style="margin-bottom:0">守り方：PDFはCloudflareの一時保存から返すので、同じPDFを何度開かれてもR2の読み出しは増えません。1つのIPから60秒に${g.rate.limit}回を超えて取りに来たら、しばらく断ります（ふつうの人は届かない回数）。自動で止まったときは、ここから再開するまで止まったままです。</p>`;
@@ -412,18 +414,8 @@ $("guard").onclick = async (e) => {
 loadGuard();
 
 function render() {
-  renderMail();
   const rs = filtered();
-  const s = summary(rs);
-  const k = (label, v, sub) => `<div class="kpi"><div class="k">${label}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`;
-  $("kpis").innerHTML = s.races ? [
-    k("レース数", s.races.toLocaleString(), rs.length ? `${rs.map((r) => r.date).sort()[0]} 〜` : ""),
-    k("◎の1着率", pct(s.honmei_win), `3着内 ${pct(s.honmei_top3)}`),
-    k("買い目の的中率", pct(s.buy_hit), `予想1位 ${pct(s.top1_hit)}`),
-    k("買い目の回収率", pct(s.buy_roi), yen(s.buy_profit)),
-    k("3連複の的中率", pct(s.trio_hit), `回収率 ${pct(s.trio_roi)}`),
-  ].join("") : `<div class="panel empty">この条件に当てはまるレースはありません。</div>`;
-  if (!rs.length) { $("table").innerHTML = `<div class="empty">データがありません。</div>`; $("table-note").textContent = ""; return; }
+  if (!rs.length) { $("table").innerHTML = `<div class="empty">この条件に当てはまるレースはありません。</div>`; $("table-note").textContent = ""; return; }
   TAB === "list" ? renderList(rs) : renderGroup(rs);
 }
 
@@ -448,11 +440,11 @@ async function loadUsage() {
       g("PDF", u.pdf, `${u.pdfFiles}ファイル${u.oldestPdf ? "・" + u.oldestPdf + "から" : ""}`),
     ].join("");
     $("mail-meta").textContent = u.mail
-      ? `毎朝6時〜8時半に、買い目の的中確率が${rangePct(u.mailMin, u.mailMax)}レースだけをメールで送ります（予想ができしだい1日1回）。`
+      ? `毎朝6時〜8時半に、買い目の的中確率が${rangePct(u.mailMin, u.mailMax)}のレースだけをメールで送ります（予想ができしだい1日1回）。`
       : "まだ送り先が設定されていません（GitHub の Secrets に MAIL_TO を登録すると始まります）。";
     $("mail-test").disabled = !u.mail;
     MAIL_MIN = u.mailMin; MAIL_MAX = u.mailMax;
-    $("mail-min").innerHTML = u.mailChoices.map((p) => `<option value="${p}" ${p === u.mailMin ? "selected" : ""} ${p >= u.mailMax ? "disabled" : ""}>${p}%</option>`).join("");
+    $("mail-min").innerHTML = minOptions(u.mailChoices, u.mailMin, u.mailMax);
     $("mail-max").innerHTML = maxOptions(u.mailMaxChoices, u.mailMax, u.mailMin);
     $("usage-note").textContent = `内訳：PDF ${bytes(u.pdf)}／CSV ${bytes(u.csv)}／公開データ ${bytes(u.data)}／ページ ${bytes(u.site)}${u.ml ? "／AI学習データ " + bytes(u.ml) : ""}${u.other ? "／その他 " + bytes(u.other) : ""}。PDFは30日たつと自動で消えます。Cloudflare R2 の無料枠は10GBまでです。`;
   } catch (e) {
@@ -476,19 +468,15 @@ async function loadRaces() {
   } catch (e) {
     $("csv-meta").textContent = "CSVを読み込めませんでした。";
   }
+  renderBands();
   render();
 }
 
 $("race").innerHTML += Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1}R</option>`).join("");
 $("week").innerHTML += WEEK.map((w) => `<option value="${w}">${w}曜日</option>`).join("");
 $("prob").innerHTML += [30, 40, 50, 60, 70].map((p) => `<option value="${p}">${p}%以上</option>`).join("");
-$("tabs").innerHTML = Object.entries(GROUPS).map(([k, [t]]) => `<button class="chip ${k === TAB ? "on" : ""}" data-tab="${k}">${t}</button>`).join("");
-$("tabs").onclick = (e) => {
-  const b = e.target.closest("[data-tab]"); if (!b) return;
-  TAB = b.dataset.tab; SORT = null;
-  document.querySelectorAll("[data-tab]").forEach((x) => x.classList.toggle("on", x === b));
-  render();
-};
+$("view").innerHTML = Object.entries(GROUPS).map(([k, [t]]) => `<option value="${k}" ${k === TAB ? "selected" : ""}>${t}</option>`).join("");
+$("view").onchange = (e) => { TAB = e.target.value; SORT = null; render(); };
 $("table").onclick = (e) => {
   const th = e.target.closest("th[data-k]"); if (!th || TAB === "list") return;
   const k = th.dataset.k;
@@ -500,11 +488,10 @@ document.querySelectorAll("[data-range]").forEach((b) => (b.onclick = () => setR
 $("dl").onclick = () => { location.href = "races.csv?dl=1"; };
 const saveMail = async (e, key) => {
   const v = +e.target.value, min = key === "mailMin" ? v : MAIL_MIN, max = key === "mailMax" ? v : MAIL_MAX, back = key === "mailMin" ? MAIL_MIN : MAIL_MAX;
-  if (!confirm(`メールで送る基準を「${rangePct(min, max)}レース」に変えます。よろしいですか？`)) { e.target.value = back; return; }
+  if (!confirm(`メールで送る範囲を「的中確率${rangePct(min, max)}のレース」に変えます。よろしいですか？`)) { e.target.value = back; return; }
   const r = await fetch("settings", { method: "POST", headers: { "x-boatlab-admin": "settings", "content-type": "application/json" }, body: JSON.stringify({ [key]: v }) });
-  if (!r.ok) { alert("変更できませんでした。上限は基準より大きくしてください。"); e.target.value = back; return; }
+  if (!r.ok) { alert("変更できませんでした。上限（〜%未満）は下限（〜%以上）より大きくしてください。"); e.target.value = back; return; }
   await loadUsage();
-  renderMail();
 };
 $("mail-min").onchange = (e) => saveMail(e, "mailMin");
 $("mail-max").onchange = (e) => saveMail(e, "mailMax");
@@ -527,15 +514,6 @@ $("clear").onclick = async () => {
   alert("クリアしました。");
   await Promise.all([loadRaces(), loadUsage()]);
 };
-
-document.querySelectorAll("[data-mail]").forEach((b) => (b.onclick = () => {
-  MAIL_VIEW = b.dataset.mail;
-  document.querySelectorAll("[data-mail]").forEach((x) => x.classList.toggle("on", x === b));
-  renderMail();
-}));
-async function loadMailLog() {
-  try { MAIL_LOG = await (await fetch("mail-log", { cache: "no-store" })).json(); } catch (e) { MAIL_LOG = []; }
-}
 
 // AI学習モデルの状態と、今の簡易モデルとの比べ方
 const W_NAMES = { nat: "全国勝率", nat2: "全国2連率", loc: "当地勝率（全国との差）", loc2: "当地2連率（全国との差）", loc_none: "当地初出走", motor: "モーター2連率", boat: "ボート2連率", age: "年齢", weight: "体重", A1: "級別A1", A2: "級別A2", B2: "級別B2", st: "今節の平均ST（遅いほど）", st_none: "今節初戦" };
@@ -578,6 +556,7 @@ async function loadModel() {
 loadModel();
 
 setRange("all");
-Promise.all([loadMailLog(), loadUsage()]).then(loadRaces);
+loadUsage();
+loadRaces();
 </script>
 </body></html>
