@@ -188,7 +188,8 @@ def global_features(sym: dict, tfs: dict, bars: dict, t: float, events: list[dic
         g["mins_to_tokyo_fix"] = (_at(j.date(), 9, 55, JST) - t) / 60
         g["is_gotobi"] = int(is_gotobi(j.date()))
         g["is_month_end"] = int(is_month_end(j.date()))
-        g["is_friday"] = int(j.weekday() == 4)
+        # その取引日（NY 17:00 で切り替わる）が金曜か。日本時間の金曜0時台はまだNYの木曜
+        g["is_friday"] = int((dt.datetime.fromtimestamp(t, NY) + dt.timedelta(hours=7)).weekday() == 4)
     else:
         g["session"] = "crypto"
         g["is_friday"] = 0
