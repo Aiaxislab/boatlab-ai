@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>BoatLab AI 2｜管理者ダッシュボード</title>
+<style>
+:root{--ink:#14181b;--muted:#5d666c;--line:#d5dce3;--bg:#f5f7fa;--card:#fff;--accent:#0b5cad;--navy:#0a2550;--red:#c8102e;--good:#1d7f45;--soft:#e3eefa;--track:#e6ebf0;--warn:#d98a00}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#e8edf2;--muted:#9aa6b1;--line:#2b3540;--bg:#0e141b;--card:#161e27;--accent:#5aa9f0;--navy:#cfe2ff;--red:#ff6b7d;--good:#4cc27e;--soft:#1b2a3c;--track:#243040;--warn:#f0b44c}}
+:root[data-theme="dark"]{--ink:#e8edf2;--muted:#9aa6b1;--line:#2b3540;--bg:#0e141b;--card:#161e27;--accent:#5aa9f0;--navy:#cfe2ff;--red:#ff6b7d;--good:#4cc27e;--soft:#1b2a3c;--track:#243040;--warn:#f0b44c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,-apple-system,"Hiragino Sans",sans-serif;line-height:1.6;font-size:14px}
+header{background:linear-gradient(115deg,#051a3d,#0a3378 45%,#0d56b3);color:#fff;padding:12px 16px 0}
+header .in,main{max-width:1100px;margin:0 auto}
+header h1{margin:0 0 8px;font-size:18px}
+.boards{display:flex;gap:4px;flex-wrap:wrap}
+.board{padding:6px 14px;border-radius:6px 6px 0 0;font-size:13px;background:rgba(255,255,255,.12);color:#b9cdea;text-decoration:none}
+a.board:hover{background:rgba(255,255,255,.22);color:#fff}
+.board.on{background:var(--bg);color:var(--navy);font-weight:700}
+.board.off{cursor:not-allowed}
+main{padding:16px}
+h2{font-size:17px;margin:26px 0 10px;color:var(--navy);border-left:4px solid var(--accent);padding-left:8px}
+h3{font-size:14px;margin:16px 0 8px}
+.muted{color:var(--muted);font-size:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+label{font-size:13px}
+input,select,button{font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+input[type=number]{width:90px}
+button{cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+button:disabled{opacity:.5;cursor:default}
+a{color:var(--accent)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
+.kpi .k{font-size:12px;color:var(--muted)}
+.kpi .v{font-size:22px;font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--accent);border-radius:8px;overflow:hidden}
+.seg button{border:0;border-radius:0;background:transparent;color:var(--accent);padding:6px 14px}
+.seg button.on{background:var(--accent);color:#fff;font-weight:700}
+.scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%}
+td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;white-space:nowrap}
+th{color:var(--muted);font-weight:500;font-size:12px;background:var(--card);position:sticky;top:0}
+th.grp{text-align:center;background:var(--soft);color:var(--navy);font-weight:700}
+tr.total td{font-weight:700;border-top:2px solid var(--navy)}
+tr.sum td{background:var(--soft);font-size:12px}
+.n{text-align:right;font-variant-numeric:tabular-nums}
+.plus{color:var(--good);font-weight:700}.minus{color:var(--red)}
+.chip{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;background:var(--soft);color:var(--navy)}
+.warn{color:var(--warn)}
+.note{background:var(--soft);border-radius:8px;padding:12px 14px;font-size:12px;margin-top:16px}
+.empty{padding:20px;text-align:center;color:var(--muted)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+</style>
+</head><body>
+<header><div class="in"><h1>管理者ダッシュボード</h1>
+  <nav class="boards" aria-label="ダッシュボードの切り替え"><a class="board" href="../">競艇（BoatLab AI）</a><span class="board on" aria-current="page">BoatLab AI 2</span><span class="board off" title="準備中">オートレース（準備中）</span><a class="board" href="../fx/">FX</a></nav>
+</div></header>
+<main>
+
+<div class="panel">
+  <p style="margin:0 0 6px"><b>お買い得舟券</b>：締切5分前の実際のオッズとAIの確率を比べて、期待値（AI確率×オッズ）が高い3連単・3連複を選びます。</p>
+  <p class="muted" id="status" style="margin:0">読み込み中…</p>
+</div>
+
+<h2>設定</h2>
+<div class="panel">
+  <div class="row">
+    <label for="ev-sel">期待値のしきい値</label>
+    <select id="ev-sel"></select>
+    <input type="number" id="ev-in" min="1" max="10" step="0.01" aria-label="しきい値を手入力">
+    <label><input type="checkbox" id="auto"> 締切5分前に毎回メールを送る（何もしなくても届く）</label>
+    <button class="primary" id="save">保存</button>
+    <span class="muted" id="save-msg"></span>
+  </div>
+  <p class="muted" id="rules" style="margin:10px 0 0"></p>
+</div>
+
+<h2>今の判定（締切5分前）</h2>
+<div class="panel" style="margin-bottom:10px">
+  <div class="row">
+    <button class="primary" id="mail">この内容をメールで送る</button>
+    <span class="muted" id="mail-msg"></span>
+  </div>
+  <p class="muted" id="next" style="margin:8px 0 0"></p>
+</div>
+<div class="scroll" id="live"></div>
+<p class="muted">終わったレースはここから消え、下の「予実」と記録（CSV）にだけ残ります。1分ごとに自動で更新します。</p>
+
+<h2>予実（予想と実績の比較）</h2>
+<div class="panel">
+  <div class="row"><span class="muted">期間</span><span class="seg" id="period"><button data-p="1">今日</button><button data-p="7">直近7日</button><button data-p="30" class="on">直近30日</button><button data-p="0">全期間</button></span></div>
+  <div class="kpis" id="kpis" style="margin-top:12px"></div>
+  <h3>式別ごと</h3>
+  <div class="scroll" id="by-type"></div>
+  <h3>期待値の帯ごと</h3>
+  <div class="scroll" id="by-ev"></div>
+  <h3>日ごと</h3>
+  <div class="scroll" id="by-day" style="max-height:420px;overflow-y:auto"></div>
+  <p class="muted" id="yj-note" style="margin-bottom:0"></p>
+</div>
+
+<h2>記録</h2>
+<div class="scroll" id="log" style="max-height:480px;overflow-y:auto"></div>
+<div class="row" style="margin-top:10px"><a href="log.csv?dl">記録のCSVをダウンロード</a><span class="muted">判定した舟券を1点1行で、ずっと残します（Excelでそのまま開けます）。</span></div>
+
+<div class="note">
+  期待値＝AI確率×オッズ。1.0で「長く買い続けると元が戻る」、それを超えた分がお買い得の度合いです。<br>
+  予実の「予想」は締切5分前の数字（予想的中数＝AI確率の合計、期待回収率＝期待値の平均）、「実績」は実際の結果と払戻（各100円で買った場合）です。<br>
+  記録は判定した時点のしきい値で残すので、あとでしきい値を変えても過去の予実は変わりません。オッズは締切まで動くため（人気の目は下がりやすい）、実績は予想より低めに出やすくなります。<br>
+  レース直後に結果を取れなかった分は、翌朝の処理で公式の成績から埋めます（それまで「結果待ち」）。
+</div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pct = (v, d = 1) => (v == null || !isFinite(v) ? "－" : `${(v * 100).toFixed(d)}%`);
+const yen = (v) => `${v > 0 ? "+" : ""}${Math.round(v).toLocaleString()}円`;
+const cls = (v) => (v > 0 ? "plus" : v < 0 ? "minus" : "");
+const BET = 100;
+let LIVE = null, LOG = [], PERIOD = 30;
+
+async function post(path, tag, body) {
+  const res = await fetch(path, { method: "POST", headers: { "content-type": "application/json", "x-boatlab-admin": tag }, body: JSON.stringify(body || {}) });
+  return res.json().catch(() => ({ ok: false, reason: `エラー（${res.status}）` }));
+}
+
+// ---- 設定と今の判定 ----
+async function loadLive() {
+  LIVE = await (await fetch("live", { cache: "no-store" })).json();
+  const s = LIVE.settings;
+  $("status").textContent = LIVE.ready ? `今日（${LIVE.today}）のAI確率：準備済み（${LIVE.model}、${LIVE.generated}作成）` : "今日のAI確率はまだありません（毎朝5:30ごろから作ります）";
+  if (!$("ev-sel").options.length) {
+    $("ev-sel").innerHTML = LIVE.choices.map((c) => `<option value="${c}">${c.toFixed(1)}</option>`).join("") + `<option value="custom">手入力</option>`;
+    const custom = !LIVE.choices.includes(s.ev);
+    $("ev-sel").value = custom ? "custom" : String(s.ev);
+    $("ev-in").value = s.ev.toFixed(2);
+    $("ev-in").style.display = custom ? "" : "none";
+    $("auto").checked = s.auto;
+  }
+  const r = LIVE.rules;
+  $("rules").textContent = `今のしきい値：${s.ev.toFixed(2)}${s.auto ? "（自動メール：オン）" : "（自動メール：オフ）"}。ほかの決まり：3連単はAI確率${r["3連単"].minProb * 100}%以上・オッズ${r["3連単"].minOdds}〜${r["3連単"].maxOdds}倍・1レース${r["3連単"].max}点まで、3連複はAI確率${r["3連複"].minProb * 100}%以上・オッズ${r["3連複"].minOdds}〜${r["3連複"].maxOdds}倍・1レース${r["3連複"].max}点まで（期待値の高い順）。${LIVE.mail ? "" : "メールの宛先（MAIL_TO）が未設定です。"}`;
+  $("next").textContent = LIVE.next.length ? `次に判定するレース：${LIVE.next.map((x) => `${x.venue}${x.no}R（${x.deadline}締切）`).join("、")}` : (LIVE.ready ? "今日はもう判定するレースがありません。" : "");
+  renderLive();
+}
+
+function renderLive() {
+  const races = LIVE.races;
+  if (!races.length) { $("live").innerHTML = `<div class="empty">いま判定済みのレースはありません。締切5分前になると、ここに出ます。</div>`; return; }
+  let html = `<table><tr><th>締切</th><th>会場</th><th>R</th><th>判定</th><th>式別</th><th>組番</th><th class="n">AI確率</th><th class="n">オッズ</th><th class="n">期待値</th></tr>`;
+  for (const r of races) {
+    const head = `<td>${esc(r.deadline)}</td><td>${esc(r.venue)}</td><td>${r.no}R</td><td>${esc(r.judged_at)}${r.mailed ? ' <span class="chip">メール済</span>' : ""}</td>`;
+    if (!r.picks.length) { html += `<tr>${head}<td colspan="5" class="muted">${esc(r.note || `期待値${r.ev}以上の舟券はありませんでした`)}</td></tr>`; continue; }
+    r.picks.forEach((p, i) => {
+      html += `<tr>${i ? "<td></td><td></td><td></td><td></td>" : head}<td>${esc(p.type)}</td><td><b>${esc(p.combo)}</b></td><td class="n">${pct(p.prob)}</td><td class="n">${p.odds}倍</td><td class="n"><b>${p.ev.toFixed(2)}</b></td></tr>`;
+    });
+    const sm = Object.entries(r.summary).map(([t, s]) => `${t} ${s.n}点：どれかが当たる確率 約${pct(s.hit)}／期待回収率 約${Math.round(s.ret * 100)}%`).join("　");
+    html += `<tr class="sum"><td colspan="4"></td><td colspan="5">${esc(sm)}（各${BET}円）</td></tr>`;
+  }
+  $("live").innerHTML = html + "</table>";
+}
+
+$("ev-sel").onchange = () => {
+  const custom = $("ev-sel").value === "custom";
+  $("ev-in").style.display = custom ? "" : "none";
+  if (!custom) $("ev-in").value = Number($("ev-sel").value).toFixed(2);
+};
+$("save").onclick = async () => {
+  const ev = $("ev-sel").value === "custom" ? Number($("ev-in").value) : Number($("ev-sel").value);
+  if (!(ev >= 1 && ev <= 10)) { $("save-msg").textContent = "しきい値は1.00〜10.00で入れてください"; return; }
+  const r = await post("settings", "ai2-settings", { ev, auto: $("auto").checked });
+  $("save-msg").textContent = r.ok ? `保存しました（次の判定から ${r.ev.toFixed(2)} で選びます）` : r.reason || "保存できませんでした";
+  if (r.ok) loadLive();
+};
+$("mail").onclick = async () => {
+  $("mail").disabled = true;
+  $("mail-msg").textContent = "送信中…";
+  const r = await post("mail", "ai2-mail");
+  $("mail-msg").textContent = r.ok ? `${r.count}レース分を送りました` : r.reason;
+  $("mail").disabled = false;
+};
+
+// ---- 予実 ----
+function parseCsv(text) {
+  const rows = [];
+  let row = [], cell = "", q = false;
+  text = text.replace(/^﻿/, "");
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n") { row.push(cell.replace(/\r$/, "")); rows.push(row); row = []; cell = ""; }
+    else cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+async function loadLog() {
+  const rows = parseCsv(await (await fetch("log.csv", { cache: "no-store" })).text());
+  if (!rows.length) { LOG = []; return; }
+  const head = rows[0];
+  LOG = rows.slice(1).filter((r) => r.length === head.length).map((r) => {
+    const g = (k) => r[head.indexOf(k)];
+    return {
+      date: g("日付"), venue: g("会場"), no: g("レース"), deadline: g("締切"), type: g("式別"), combo: g("組番"),
+      prob: Number(g("AI確率")) / 100, odds: Number(g("オッズ（5分前）")), ev: Number(g("期待値")), th: g("しきい値"), at: g("判定時刻"),
+      result: g("結果"), hit: g("的中") === "1", pay: Number(g("払戻")) || 0,
+    };
+  });
+}
+
+function agg(xs) {
+  const done = xs.filter((x) => x.result);
+  const n = done.length;
+  const s = (f) => done.reduce((a, x) => a + f(x), 0);
+  return {
+    n, wait: xs.length - n, cost: n * BET, expHit: s((x) => x.prob), hit: s((x) => (x.hit ? 1 : 0)),
+    expRet: n ? s((x) => x.ev) / n : null, ret: n ? s((x) => x.pay) / (n * BET) : null, profit: s((x) => x.pay) - n * BET,
+  };
+}
+
+const COLS = `<th class="n">点数</th><th class="n">予想的中数</th><th class="n">実際の的中数</th><th class="n">予想的中率</th><th class="n">実際の的中率</th><th class="n">期待回収率</th><th class="n">実際の回収率</th><th class="n">収支</th>`;
+function line(label, a, extra = "") {
+  return `<tr class="${extra}"><td>${esc(label)}</td><td class="n">${a.n}${a.wait ? `<span class="muted">（+${a.wait}待ち）</span>` : ""}</td><td class="n">${a.expHit.toFixed(1)}</td><td class="n">${a.hit}</td>
+    <td class="n">${a.n ? pct(a.expHit / a.n) : "－"}</td><td class="n">${a.n ? pct(a.hit / a.n) : "－"}</td>
+    <td class="n">${a.expRet == null ? "－" : pct(a.expRet, 0)}</td><td class="n ${a.ret == null ? "" : cls(a.ret - 1)}">${a.ret == null ? "－" : pct(a.ret, 0)}</td><td class="n ${cls(a.profit)}">${yen(a.profit)}</td></tr>`;
+}
+function table(groups, first) {
+  const all = groups.flatMap(([, xs]) => xs);
+  if (!all.length) return `<div class="empty">まだ記録がありません。</div>`;
+  return `<table><tr><th>${first}</th>${COLS}</tr>${groups.map(([k, xs]) => line(k, agg(xs))).join("")}${groups.length > 1 ? line("合計", agg(all), "total") : ""}</table>`;
+}
+
+function renderYj() {
+  const today = LIVE ? LIVE.today : new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+  const from = PERIOD ? new Date(Date.parse(today) - (PERIOD - 1) * 864e5).toISOString().slice(0, 10) : "";
+  const xs = LOG.filter((x) => x.date >= from);
+  const a = agg(xs);
+  $("kpis").innerHTML = [
+    ["買った点数", `${a.n}点`, `購入額 ${a.cost.toLocaleString()}円${a.wait ? `／結果待ち ${a.wait}点` : ""}`],
+    ["的中（予想 → 実績）", `${a.expHit.toFixed(1)} → ${a.hit}`, a.n ? `的中率 ${pct(a.expHit / a.n)} → ${pct(a.hit / a.n)}` : "－"],
+    ["回収率（期待 → 実績）", a.n ? `${pct(a.expRet, 0)} → ${pct(a.ret, 0)}` : "－", "100%を超えるとプラス"],
+    ["収支", yen(a.profit), "各100円で買った場合"],
+  ].map(([k, v, s]) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join("");
+  const by = (f, order) => { const m = new Map(order.map((k) => [k, []])); for (const x of xs) { const k = f(x); if (!m.has(k)) m.set(k, []); m.get(k).push(x); } return [...m].filter(([, v]) => v.length); };
+  $("by-type").innerHTML = table(by((x) => x.type, ["3連単", "3連複"]), "式別");
+  const band = (v) => (v < 1.2 ? "1.0〜1.2未満" : v < 1.5 ? "1.2〜1.5未満" : v < 2 ? "1.5〜2.0未満" : v < 3 ? "2.0〜3.0未満" : "3.0以上");
+  $("by-ev").innerHTML = table(by((x) => band(x.ev), ["1.0〜1.2未満", "1.2〜1.5未満", "1.5〜2.0未満", "2.0〜3.0未満", "3.0以上"]), "期待値（5分前）");
+  $("by-day").innerHTML = table(by((x) => x.date, [...new Set(xs.map((x) => x.date))].sort().reverse()), "日付");
+  $("yj-note").textContent = "予想的中数＝判定した舟券のAI確率の合計（何点当たるはずだったか）。結果待ちの点は数に入れていません。";
+  renderLog();
+}
+
+function renderLog() {
+  const xs = LOG.slice(-200).reverse();
+  if (!xs.length) { $("log").innerHTML = `<div class="empty">まだ記録がありません。</div>`; return; }
+  $("log").innerHTML = `<table><tr><th>日付</th><th>会場</th><th>R</th><th>締切</th><th>判定</th><th>式別</th><th>組番</th><th class="n">AI確率</th><th class="n">オッズ</th><th class="n">期待値</th><th class="n">しきい値</th><th>結果</th><th class="n">払戻</th></tr>
+    ${xs.map((x) => `<tr><td>${esc(x.date)}</td><td>${esc(x.venue)}</td><td>${esc(x.no)}R</td><td>${esc(x.deadline)}</td><td>${esc(x.at)}</td><td>${esc(x.type)}</td><td><b>${esc(x.combo)}</b></td><td class="n">${pct(x.prob)}</td><td class="n">${x.odds}倍</td><td class="n">${x.ev.toFixed(2)}</td><td class="n">${esc(x.th)}</td>
+      <td>${x.result ? `${esc(x.result)} ${x.hit ? '<span class="plus">的中</span>' : ""}` : '<span class="warn">結果待ち</span>'}</td><td class="n">${x.result ? `${x.pay.toLocaleString()}円` : "－"}</td></tr>`).join("")}</table>
+    <p class="muted" style="margin:6px 8px">新しい順に200件まで（全${LOG.length}件はCSVで見られます）</p>`;
+}
+
+$("period").onclick = (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  PERIOD = Number(b.dataset.p);
+  for (const x of $("period").children) x.classList.toggle("on", x === b);
+  renderYj();
+};
+
+async function refresh() {
+  try { await loadLive(); } catch { $("status").textContent = "読み込めませんでした"; }
+  try { await loadLog(); } catch { LOG = []; }
+  renderYj();
+}
+refresh();
+setInterval(refresh, 60e3);
+</script>
+</body></html>

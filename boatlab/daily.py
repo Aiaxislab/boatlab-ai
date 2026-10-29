@@ -12,7 +12,7 @@ import datetime as dt
 import json
 from pathlib import Path
 
-from . import grade, ledger, ml, render, sources
+from . import ai2, grade, ledger, ml, render, sources
 from .parse import parse_program, parse_results
 from .venues import VENUES
 
@@ -78,6 +78,17 @@ def update_ledger(graded: list[dict]) -> None:
     print(f"ダッシュボードのCSVに {added}レース追加しました")
 
 
+def fill_ai2_results(history: dict) -> None:
+    """BoatLab AI 2 の記録で、レース直後に結果を取れなかった行を公式の成績で埋める。"""
+    path = OUT / "admin" / "ai2" / "log.csv"
+    if not path.exists():
+        return
+    text, filled = ai2.fill_results(path.read_text(encoding="utf-8"), history)
+    if filled:
+        path.write_text(text, encoding="utf-8")
+    print(f"BoatLab AI 2 の記録に結果を {filled}件 入れました")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", help="対象日（YYYY-MM-DD）。省略すると今日（日本時間）")
@@ -94,6 +105,7 @@ def main() -> None:
     stats, graded = regrade(history, generated)
     print(f"成績データ {len(history)}日分、答え合わせ {stats['total'].get('races', 0)}レース")
     update_ledger(graded)
+    fill_ai2_results(history)
 
     text = sources.mbrace_text("B", today)
     if not text:
@@ -113,7 +125,7 @@ def main() -> None:
     pdf_dir.mkdir(parents=True, exist_ok=True)
 
     preds = dict(date=today.isoformat(), generated=generated, model=model_name, venues={})
-    listing, pairs, picks = [], [], []
+    listing, pairs, picks, ai2_venues = [], [], [], {}
     for jcd in sorted(program):
         prog = program[jcd]
         if not prog["races"] or jcd not in VENUES:
@@ -136,6 +148,7 @@ def main() -> None:
             buy_prob=round(r["pred"]["buy_prob"], 4), trio=[list(c) for c in r["pred"]["trio"]],
             trio_prob=round(r["pred"]["trio_prob"], 4), pdf=f"pdf/{today.isoformat()}/{jcd}.pdf",
         ) for r in ctx["races"] if now < _deadline(today, r["deadline"])]
+        ai2_venues[jcd] = (VENUES[jcd]["name"], [r for r in ctx["races"] if now < _deadline(today, r["deadline"])])
         listing.append(dict(
             jcd=jcd, name=VENUES[jcd]["name"], title=prog["title"], day=prog["day"],
             pdf=f"pdf/{today.isoformat()}/{jcd}.pdf",
@@ -161,6 +174,8 @@ def main() -> None:
     _save(OUT / "data" / "today.json", today_json)
     _save(OUT / "data" / "archive.json", archive)
     _save(OUT / "admin" / "picks.json", dict(date=today.isoformat(), generated=generated, model=model_name, races=picks))
+    n = ai2.export(OUT / "admin" / "ai2", today.isoformat(), generated, model_name, ai2_venues)
+    print(f"BoatLab AI 2 用の確率を {n}レース分 書き出しました")
     print(f"{today}: {len(listing)}場のPDFを作成しました")
 
 
