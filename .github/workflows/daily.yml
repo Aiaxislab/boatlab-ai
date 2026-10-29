@@ -69,6 +69,9 @@ jobs:
           get admin/races.csv
           get admin/meta.json
           get admin/ml/model.json # AI学習モデル（週1回の学習で作る。無ければ簡易モデルで予想）
+          mkdir -p out/admin/ai2
+          get admin/ai2/log.csv # BoatLab AI 2 の記録（結果が空欄の行を、公式の成績で埋める）
+          [ -f out/admin/ai2/log.csv ] && md5sum out/admin/ai2/log.csv > ai2-log.md5 || true
 
       - name: PDFを作る
         run: |
@@ -100,6 +103,15 @@ jobs:
           done
           npx wrangler r2 object put boatlab/admin/races.csv --file out/admin/races.csv --content-type "text/csv; charset=utf-8" --remote
           npx wrangler r2 object put boatlab/admin/picks.json --file out/admin/picks.json --content-type "application/json; charset=utf-8" --remote
+          # BoatLab AI 2：全組み合わせの確率（締切5分前に Worker がオッズと比べる）
+          for f in out/admin/ai2/probs/*.json out/admin/ai2/schedule.json; do
+            key="${f#out/}"
+            npx wrangler r2 object put "boatlab/$key" --file "$f" --content-type "application/json; charset=utf-8" --remote
+          done
+          # 記録は結果を埋めたときだけ戻す（Worker が書いた行を上書きしないように）
+          if [ -f ai2-log.md5 ] && ! md5sum -c --quiet ai2-log.md5 2>/dev/null; then
+            npx wrangler r2 object put boatlab/admin/ai2/log.csv --file out/admin/ai2/log.csv --content-type "text/csv; charset=utf-8" --remote
+          fi
           # 以前は成績を公開していた。今は管理者ダッシュボードだけで見るので、公開側のファイルは消す
           npx wrangler r2 object delete boatlab/data/stats.json --remote || true
 

@@ -107,4 +107,5 @@ def predict(race: dict, lanes: list[float], runs: dict, n_buy: int = 6, scores: 
         top5=[(c, p) for c, p in ranked[:5]],
         buy=[c for c, _ in buy], buy_each=[p for _, p in buy], buy_prob=sum(p for _, p in buy),
         trio=[c for c, _ in trio_ranked[:3]], trio_prob=sum(p for _, p in trio_ranked[:3]),
+        tri_all=tri, trio_all=trio,  # 全組み合わせの確率（BoatLab AI 2 でオッズと比べる）
     )

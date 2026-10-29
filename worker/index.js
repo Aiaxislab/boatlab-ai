@@ -5,6 +5,7 @@
 import { handleAdmin } from "./admin.js";
 import { dailyMail } from "./mail.js";
 import { FX_CRON, fxScheduled, handleFxShare } from "./fx/fx.js";
+import { AI2_CRON, ai2Scheduled } from "./ai2/ai2.js";
 import { cached, checkUsage, isPaused, pausedResponse, rateLimited, tooMany } from "./guard.js";
 
 const VENUE_NAMES = { "01": "桐生", "02": "戸田", "03": "江戸川", "04": "平和島", "05": "多摩川", "06": "浜名湖", "07": "蒲郡", "08": "常滑", "09": "津", "10": "三国", "11": "びわこ", "12": "住之江", "13": "尼崎", "14": "鳴門", "15": "丸亀", "16": "児島", "17": "宮島", "18": "徳山", "19": "下関", "20": "若松", "21": "芦屋", "22": "福岡", "23": "唐津", "24": "大村" };
@@ -32,7 +33,12 @@ export default {
   // 30分おき。使用量を見て、無料枠に近づいていたらサイトを一時停止する（guard.js）。
   // 朝 6:00〜8:30（日本時間）は、今日の予想ができていれば高確率のレースをメールする（1日1回）
   // FX_CRON（8:00〜10:55 の5分おき）は FX の毎朝のメールだけ（fx/fx.js）
+  // AI2_CRON（8:00〜23:59 の1分おき）は BoatLab AI 2 の締切5分前の判定と答え合わせだけ（ai2/ai2.js）
   async scheduled(event, env, ctx) {
+    if (event.cron === AI2_CRON) {
+      ctx.waitUntil(ai2Scheduled(event, env).then((r) => console.log("ai2", JSON.stringify(r))));
+      return;
+    }
     if (event.cron === FX_CRON) {
       ctx.waitUntil(fxScheduled(event, env).then((r) => console.log("fx", JSON.stringify(r))));
       return;

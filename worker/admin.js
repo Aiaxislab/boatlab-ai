@@ -10,6 +10,7 @@ import PAGE from "./admin.html";
 import { BUY_LIMIT_MAX, BUY_MAX_CHOICES, BUY_MIN_CHOICES, buildBuyList, buySettings, okLimit } from "./buy.js";
 import { checkUsage, LIMITS, RATE, readGuard, writeGuard } from "./guard.js";
 import { handleFxAdmin } from "./fx/fx.js";
+import { handleAi2Admin } from "./ai2/ai2.js";
 import { dailyMail, LOG_KEY, SETTINGS_KEY, MIN_CHOICES, MAX_CHOICES, mailMinPct, mailMaxPct } from "./mail.js";
 
 const CSV_KEY = "admin/races.csv";
@@ -81,6 +82,7 @@ export async function handleAdmin(request, env, url) {
 
   const sub = url.pathname.slice(root.length) || "/";
   if (sub === "/fx" || sub.startsWith("/fx/")) return handleFxAdmin(request, env, url, sub, PRIVATE);
+  if (sub === "/ai2" || sub.startsWith("/ai2/")) return handleAi2Admin(request, env, url, sub, PRIVATE);
   if (sub === "/" && request.method === "GET") {
     if (!url.pathname.endsWith("/")) return Response.redirect(`${url.origin}${root}/`, 302);
     return new Response(PAGE, { headers: { ...PRIVATE, "content-type": "text/html; charset=utf-8", "content-security-policy": "default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'" } });
